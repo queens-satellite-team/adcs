@@ -1,21 +1,26 @@
 #include <Arduino_FreeRTOS.h>
 
+//function definition
+void flash(int pin){
+    digitalWrite(pin, HIGH);
+    vTaskDelay( 10 );
+    digitalWrite(pin, LOW);
+    vTaskDelay( 10 );
+}
+
 // define two tasks for Blink & AnalogRead
 void TaskBlink( void *pvParameters );
 void Comms( void *pvParameters );
 
-// the setup function runs once when you press reset or power the board
 void setup() {
-
 // initialize serial communication at 9600 bits per second:
 Serial.begin(9600);
 
 xTaskCreate(TaskBlink,"Blink",128,NULL,1,NULL);
 xTaskCreate(Comms,"Comms",128,NULL,2,NULL);
 
+//start scheduler
 vTaskStartScheduler();
-
-  // Now the task scheduler, which takes over control of scheduling individual tasks, is automatically started.
 }
 
 void loop()
@@ -23,51 +28,46 @@ void loop()
   // Empty. Things are done in Tasks.
 }
 
+
 /*--------------------------------------------------*/
 /*---------------------- Tasks ---------------------*/
 /*--------------------------------------------------*/
 
-void TaskBlink(void *pvParameters)  // This is a task.
-{
-  
-  // initialize digital pin 13 as an output.
+void TaskBlink(void *pvParameters){
+  (void) pvParameters;
+// initialize digital pin 13 as an output
   pinMode(13, OUTPUT);
-
-  while(1) // A Task shall never return or exit.
-  {
-    digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
-    vTaskDelay( 10 ); // wait for one second
-    digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
-    vTaskDelay( 10 ); // wait for one second
+//flash pin continually while working
+  while(1){
+    flash(13);
+//indicates functional RTOS
   }
 }
 
-void Comms(void *pvParameters)  // This is a task.
-{
-
+void Comms(void *pvParameters){
   (void) pvParameters;
-
+//2 is output, init variables
   pinMode(2, OUTPUT);
-
-  while(1)
-  {
-    
-  if (Serial.available())
-  {
-  // Read one value from the Serial buffer and store it in the variable com
-  int com = Serial.read();
-  // Act according to the value received
-  if (com == 'x')
-  {
-  // stop the led
-  digitalWrite(2, LOW);
-  }
-  else if (com == 'a')
-  {
-  // Start the LED
-  digitalWrite(2, HIGH);
-  }
-  }
-    vTaskDelay(1);  // one tick delay (15ms) in between reads for stability
+  String msg;
+//read serial and react
+  while(1){
+//check availability
+    if (Serial.available()){
+//pause RTOS for communication
+      vTaskSuspendAll();
+      msg = Serial.readStringUntil('\n');
+      switch(msg[1]){
+        case 'n':
+          digitalWrite(2,HIGH);
+          break;
+        case 'f':
+          digitalWrite(2,LOW);
+          break;
+      }
+//resume RTOS
+      xTaskResumeAll();
+    }
+//delay for RTOS
+    vTaskDelay(10);
   }
 }

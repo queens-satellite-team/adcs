@@ -54,7 +54,10 @@ if(!SD.exists("data.txt")){
   sensorData.write(heading.c_str(), heading.length());
   Serial.print("File not found, initialized\n");
 }
-else{Serial.print("File found\n");}
+else{
+  sensorData = SD.open("data.txt",FILE_WRITE);
+  Serial.print("File found\n");
+}
 
 //settings for orient sensor
 bno.begin();

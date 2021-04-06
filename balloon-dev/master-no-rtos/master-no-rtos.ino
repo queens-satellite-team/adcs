@@ -4,12 +4,16 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <Adafruit_MPU6050.h>
+#include <SparkFun_I2C_GPS_Arduino_Library.h>
+#include <TinyGPS++.h>
 
 //Booleans controlling what is being read
+int GPS_get_time = 1;
+int GPS_get_coords = 1;
 int BNO_get_orient = 1;
 int BNO_get_gyro = 1;
 int BNO_get_acc = 1;
-int BNO_get_mag = 0;
+int BNO_get_mag = 1;
 int BNO_get_temp = 1;
 int MPU_get_gyro = 1;
 int MPU_get_acc = 1;
@@ -18,7 +22,8 @@ int MPU_get_temp = 1;
 //controlling read rate
 int x_time = 1000;
 
-//setup BNO055 Reader
+//setup GPS,BNO055,MPU6050
+TinyGPSPlus gps;
 Adafruit_BNO055 bno = Adafruit_BNO055(55,0x28);
 Adafruit_MPU6050 mpu;
 Adafruit_Sensor *mpu_temp, *mpu_accel, *mpu_gyro;
@@ -33,21 +38,23 @@ unsigned long lastMillis = 0;
 void writeData(){
   //write any available data to SD
   unsigned int chunkSize = sensorData.availableForWrite();
-//  Serial.print(chunkSize);
-//  Serial.print("\t");
-//  Serial.print(buffer.length());
-//  Serial.print("\n");
+  Serial.print(chunkSize);
+  Serial.print("\t");
+  Serial.print(buffer.length());
+  Serial.print("\n");
 //  Serial.print(buffer.c_str());
 //  Serial.print("\n");
   if (chunkSize && buffer.length() >= chunkSize) {
     //write to file and blink LED
     digitalWrite(LED_BUILTIN, HIGH);
-//    Serial.print(buffer.c_str());
-//    Serial.print("\n");
+    Serial.print(buffer.c_str());
+    Serial.print("\n");
     sensorData.write(buffer.c_str(), chunkSize);
     digitalWrite(LED_BUILTIN, LOW);
     //remove written data from buffer
     buffer.remove(0, chunkSize);
+    sensorData.close();
+    sensorData = SD.open("data.csv",FILE_WRITE);
   }
 }
 
@@ -55,6 +62,32 @@ void writeData(){
 int relayData(String data){
   Serial1.write(data.c_str());
   Serial.write(data.c_str());
+}
+
+//GPS data read and bundling
+String readGPS(){
+  String data = "";
+  String time_data = ",,";
+  String coords_data = ",";
+  String alt_data = "";
+  //read gps
+  while(myI2CGPS.available()){
+    gps.encode(myI2CGPS.read());
+  }
+  if(GPS_get_time == 1){
+    time_data = String(gps.time.hour())+","+String(gps.time.minute())+","+String(gps.time.second());
+  }
+  if(GPS_get_coords == 1){
+    coords_data = String(gps.location.lat(),6)+","+String(gps.location.lng(),6);
+  }
+  if(GPS_get_alt == 1){
+    alt_data = String(gps.altitude.meters());
+  }
+  //return bundled data
+  data = time_data+","+coords_data+","+alt_data;
+//  Serial.print(data);
+//  Serial.print("\n");
+  return data;
 }
 
 //MPU6050 data read and bundling
@@ -100,7 +133,7 @@ String readBNO(){
   sensors_event_t event;
   bno.getEvent(&event);
   if(BNO_get_orient == 1){
-    String orient_data = String(event.orientation.x)+","+String(event.orientation.y)+","+String(event.orientation.x);
+    orient_data = String(event.orientation.x)+","+String(event.orientation.y)+","+String(event.orientation.x);
 //    Serial.print("BNO Orient: \t");
 //    Serial.print(event.orientation.x);
 //    Serial.print("\n");
@@ -128,7 +161,6 @@ String readBNO(){
 }
 
 void setup() {
-//initialize serial communication at 115200 bits per second:
 Serial.begin(115200);
 //Serial1.begin(115200);
 Serial.print("Begin\n");
@@ -136,8 +168,9 @@ Serial.print("Begin\n");
 pinMode(LED_BUILTIN,OUTPUT);
 digitalWrite(LED_BUILTIN,LOW);
 
-//init SD file and headings
-String heading = String("Time,BNO_X,BNO_Y,BNO_Z,BNO_GYRO_X,BNO_GYRO_Y,BNO_GYRO_Z,")+
+//init SD file and headers
+String heading = String("MEGA_Time,GPS_Hour,GPS_Minute,GPS_Second,GPS_Lat,GPS_Long,GPS_Alt,")+
+    String("BNO_X,BNO_Y,BNO_Z,BNO_GYRO_X,BNO_GYRO_Y,BNO_GYRO_Z,")+
     String("BNO_ACC_X,BNO_ACC_Y,BNO_ACC_Z,BNO_MAG_X,BNO_MAG_Y,BNO_MAG_Z,BNO_TEMP,")+
     String("MPU_GYRO_X,MPU_GYRO_Y,MPU_GYRO_Z,MPU_ACC_X,MPU_ACC_Y,MPU_ACC_Z,MPU_TEMP")+"\r\n";
 SD.begin(chipSelect);
@@ -150,6 +183,13 @@ else{
   sensorData = SD.open("data.csv",FILE_WRITE);
   Serial.print("File found\n");
 }
+
+//Initialize GPS
+while(!myI2CGPS.begin()){
+  Serial.print("Waiting for GPS to initialize\n");
+  delay(500);
+}
+Serial.print("GPS Initialized\n");
 
 //Initialize BNO055
 while(!bno.begin()){
@@ -175,25 +215,25 @@ Serial.print("MPU Initialized\n");
 
 void loop(){
 
-  //if it's been x_time ms, add a new measure to the buffer
-  x_time = 1000;
   unsigned long now = millis();
 //  Serial.print(now);
 //  Serial.print("\n");
   if((now - lastMillis) >= x_time){
     lastMillis = now;
     // add a new line to the buffer
+    String gps_data = readGPS();
     String bno_data = readBNO();
     String mpu_data = readMPU();
     buffer += String(now)+",";
+    buffer += gps_data+",";
     buffer += bno_data+",";
     buffer += mpu_data+",";
     buffer += "\r\n";
     if(Serial1.available()){
-      relayData(bno_data);
+      relayData(gps_data);
     } 
     else{
-      Serial.print("Serial1 Communication Failure\n");
+      Serial.print("Serial 1 Communication Failure\n");
     }
   }
   

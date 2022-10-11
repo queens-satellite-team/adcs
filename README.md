@@ -6,3 +6,6 @@ Holds depricated code that is no longer in production
 
 ## csdc-6
 Contains all ADCS firmware, simulations, and other software used for the CSDC-6 revision of the ADCS.
+
+## python-boost-tutorial
+Has a tutorial describing how to use Boost to compile C++ libraries to be accessible in Python scripts.

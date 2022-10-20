@@ -154,6 +154,8 @@ class adcs_timer {
          *
          */
         void sleep(timestamp time);
+
+        void sim_update_cur_time(timestamp time);
 };
 
 /*

@@ -14,8 +14,10 @@
 **/
 
 #include <stdint.h>
+#include <Eigen/Dense>
 
 #pragma once
+using namespace std;
 
 /******************************************* DEFINITIONS *******************************************/
 
@@ -36,7 +38,9 @@
 #define INTERFACE SIM_INTERFACE
 
 /* Physical definitions */
-const uint32_t num_dim = 3;
+
+/* depends on use of Euler angles or Quaternions */
+const uint32_t vec_dim = 3;
 const uint32_t num_reaction_wheels = 4;
 
 /********************************************* TYPES *********************************************/
@@ -174,7 +178,7 @@ class timestamp
  */
 typedef struct measurement
 {
-    float vec[num_dim];
+    Eigen::MatrixXf vec;
     timestamp time_taken;
 };
 
@@ -186,7 +190,7 @@ typedef struct measurement
  *
  */
 typedef struct action {
-    float required_values[num_dim];
+    Eigen::MatrixXf required_values;
     timestamp time_requested;
 };
 

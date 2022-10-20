@@ -39,9 +39,11 @@ class Sensor : public ADCS_device {
         virtual measurement take_measurement() = 0;
 
         /*
-         * @name
+         * @name    sim_set_current_vals
+         *
+         * @details this function sets the new raw sensor values from the simulation and 
          */
-        virtual void sim_set_current_vals(float** new_vals, uint32_t axes, uint32_t num_sensors) = 0;
+        virtual void sim_set_current_vals(Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>) = 0;
 
     private:
         /* Latest measurement value taken */
@@ -52,9 +54,6 @@ class Sensor : public ADCS_device {
 
         /* Number of axes per physical sensor */
         uint32_t num_axes;
-
-        /* Array of all current raw values. First dimension is sensors, second dimension is axes */
-        measurement** current_raw_sensor_values;
 };
 
 /*
@@ -83,10 +82,10 @@ class Actuator : public ADCS_device {
          * @name    set_output
          *
          * @param   new_value the new value to set the actuators to. This is called by the control
-         *          code
+         *          code. The size should be the number of actuators.
          *
          */
-        virtual void set_output(action* new_values, uint32_t num_actuators) = 0; // TODO >> this may need a return value
+        virtual void set_output(Eigen::Matrix<action, Eigen::Dynamic, 1> new_values) = 0; // TODO >> this may need a return value
 
         /*
          * @name    sim_get_current_accelerations
@@ -100,7 +99,7 @@ class Actuator : public ADCS_device {
          * @param num_actuators
          *          the number of actuators in (ie size of) the current_acclerations array.
          */
-        virtual void sim_get_current_accelerations(action* current_accelerations, uint32_t num_actuators) = 0;
+        virtual void sim_get_current_accelerations(Eigen::Matrix<action, Eigen::Dynamic, 1> current_accelerations) = 0;
 
         /*
          * @name    sim_get_current_velocities
@@ -114,17 +113,17 @@ class Actuator : public ADCS_device {
          * @param num_actuators
          *          the number of actuators in (ie size of) the current_velocities array.
          */
-        virtual void sim_get_current_velocities(action* current_velocities, uint32_t num_actuators) = 0;
+        virtual void sim_get_current_velocities(Eigen::Matrix<action, Eigen::Dynamic, 1> current_velocities) = 0;
 
     private:
         /* Number of physical actuators in the sensor unit*/
         uint32_t num_actuators;
 
         /* Current acceleration values for each actuator*/
-        action* current_accelerations;
+        Eigen::Matrix<action, Eigen::Dynamic, 1> current_accelerations;
 
         /* Current velocity values for each actuator */
-        action* current_velocities;
+        Eigen::Matrix<action, Eigen::Dynamic, 1> current_velocities;
 
 };
 
@@ -136,14 +135,14 @@ class Actuator : public ADCS_device {
  * @details this class defines all timing interactions.
  *
  */
-class adcs_timer {
+class ADCS_timer {
     public:
         /*
          * @name get_time
          *
          * @returns the current time
          */
-        timestamp   get_time();
+        timestamp get_time();
 
         /*
          * @name sleep
@@ -165,7 +164,7 @@ class adcs_timer {
  *
  * @implements ADCS_device, Sensor
  */
-class accelerometer : public Sensor {};
+class Accelerometer : public Sensor {};
 
 /*
  * @class gyroscope
@@ -174,7 +173,7 @@ class accelerometer : public Sensor {};
  *
  * @implements ADCS_device, Sensor
  */
-class gyroscope : public Sensor {};
+class Gyroscope : public Sensor {};
 
 /*
  * @class reaction_wheel
@@ -183,8 +182,8 @@ class gyroscope : public Sensor {};
  *
  * @implements ADCS_device, Actuator
  */
-class reaction_wheel : public Actuator {
+class Reaction_wheel : public Actuator {
     public:
-        reaction_wheel(uint32_t num_wheels) : Actuator(num_wheels) {};
+        Reaction_wheel(uint32_t num_wheels) : Actuator(num_wheels) {};
 };
 #endif

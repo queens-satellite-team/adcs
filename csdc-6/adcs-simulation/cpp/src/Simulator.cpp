@@ -1,3 +1,15 @@
+/** @file Simulator.hpp
+ *
+ * @details This is a class file which defines the functionality of the ADCS 
+ *          Simulator class. Implements the "Simulator.hpp" header file.
+ *
+ * @authors Justin Paoli
+ *
+ * Last Edited
+ * 2022-10-21
+ *
+**/
+
 #include <vector>
 #include "Simulator.hpp"
 

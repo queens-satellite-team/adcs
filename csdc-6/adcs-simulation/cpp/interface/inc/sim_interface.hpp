@@ -165,7 +165,7 @@ class adcs_timer {
  *
  * @implements ADCS_device, Sensor
  */
-class accelerometer : public Sensor {};
+class Accelerometer : public Sensor {};
 
 /*
  * @class gyroscope
@@ -174,7 +174,7 @@ class accelerometer : public Sensor {};
  *
  * @implements ADCS_device, Sensor
  */
-class gyroscope : public Sensor {};
+class Gyroscope : public Sensor {};
 
 /*
  * @class reaction_wheel
@@ -183,8 +183,8 @@ class gyroscope : public Sensor {};
  *
  * @implements ADCS_device, Actuator
  */
-class reaction_wheel : public Actuator {
+class Reaction_wheel : public Actuator {
     public:
-        reaction_wheel(uint32_t num_wheels) : Actuator(num_wheels) {};
+        Reaction_wheel(uint32_t num_wheels) : Actuator(num_wheels) {};
 };
 #endif

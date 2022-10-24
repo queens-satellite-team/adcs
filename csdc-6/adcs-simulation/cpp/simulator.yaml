@@ -1,0 +1,42 @@
+Actuators:
+  ReactionWheel1:
+    type: ReactionWheel
+    Moment: [[1,2,3],
+             [4,5,6],
+             [7,8,9]]
+    MaxAngVel: 88
+    MaxAngAccel: 8
+    UnitVector: [0.1, 0.2, 0.3]
+  ReactionWheel2:
+    type: ReactionWheel
+    Moment: [[1,2,3],
+             [4,5,6],
+             [7,8,9]]
+    MaxAngVel: 88
+    MaxAngAccel: 8
+    UnitVector: [0.1, 0.2, 0.3]
+  ReactionWheel3:
+    type: ReactionWheel
+    Moment: [[1,2,3],
+             [4,5,6],
+             [7,8,9]]
+    MaxAngVel: 88
+    MaxAngAccel: 8
+    UnitVector: [0.1, 0.2, 0.3]
+
+Sensors:
+  Gyro1:
+    type: Gyroscope
+  Accel1:
+    type: Accelerometer
+
+####change this inputs based on our final time solution####
+
+# this is the amount of time each "tick" of the simulator simulates for
+TimeStep: 0.0001
+
+# this is the amount of time a tick is targeted to take to process set to be the same as TimeStep for real time operation
+TickPeriod: 0.001
+PrintStats: True
+
+###########################################################

@@ -12,8 +12,7 @@
 #ifndef SIMULATOR_HPP_
 #define SIMULATOR_HPP_
 
-#include "Actuator.hpp"
-#include "Sensor.hpp"
+#include "sim_interface.hpp"
 #include <memory>
 #include <vector>
 

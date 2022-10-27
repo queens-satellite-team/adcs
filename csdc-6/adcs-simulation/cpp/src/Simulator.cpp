@@ -2,7 +2,7 @@
  *
  *@details class file that would configure and propagate the simulation
  *
- *@authors Lily de Loe
+ *@authors Lily de Loe, Justin Paoli
  *
  *Last Edited
  *2022-10-24
@@ -10,8 +10,7 @@
 **/
 #include "Simulator.hpp"
 #include "ConfigurationSingleton.cpp"
-#include "simulator/SensorActuatorFactory.hpp"
-
+#include "SensorActuatorFactory.hpp"
 
 using namespace std::chrono_literals;
 Simulator::Simulator(const std::string &configFile):doStats(true) {
@@ -34,6 +33,16 @@ Simulator::Simulator(const std::string &configFile):doStats(true) {
     //these would be used if GetTimeStep and PrintStats() are used
     //timestep = config.GetTimeStep();
     doStats = config.IsPrintStats();
+
+    this->simulation_time = 0;
+    this->timestep_length = timestep_length;
+
+    this->satellite = new Satellite {
+        Eigen::Vector3f(),
+        Eigen::Vector3f(),
+        Eigen::Vector3f(),
+        Eigen::Matrix3f(),
+    };
 }
 
 //create sensor based on name
@@ -136,4 +145,43 @@ void Simulator::print_stats() {
     std::cout << sens.first << ": \t\t"
         << sens.second->GetLastTickDuration() << std::endl;
   }
+}
+
+timestamp Simulator::update_simulation() {
+
+}
+
+timestamp Simulator::set_adcs_sleep(timestamp duration) {
+
+}
+
+timestamp Simulator::determine_time_passed() {
+
+}
+
+void Simulator::simulate(timestamp t) {
+    
+}
+
+void Simulator::timestep() {
+    // TODO: Check what type each actuator is and process accordingly
+    Eigen::Vector3f total_rw_torques = Eigen::Vector3f::Zero();
+    for (const auto &a : actuators) {
+        Eigen::Vector3f omega_i = a.sim_get_current_velocities();
+        Eigen::Vector3f alpha_i = a.sim_get_current_accelerations();
+        Eigen::Matrix3f inertia_i = a.sim_get_inertia_matrix();
+        total_rw_torques -= inertia_i * alpha_i;
+        total_rw_torques -= satellite->omega_b.cross(inertia_i * omega_i);
+    }
+
+    Eigen::Matrix3f inertia_b_inverse = satellite->inertia_b.inverse();
+    satellite->alpha_b = -inertia_b_inverse * 
+        (satellite->omega_b.cross(satellite->inertia_b * satellite->omega_b));
+
+    satellite->omega_b += satellite->alpha_b * (float) timestep_length;
+    satellite->theta_b += satellite->omega_b * (float) timestep_length;
+}
+
+void Simulator::update_adcs_devices() {
+
 }

@@ -2,10 +2,10 @@
  *
  *@details header file for class file that would configure and propagate the simulation
  *
- *@authors Lily de Loe
+ *@authors Lily de Loe, Justin Paoli
  *
  *Last Edited
- *2022-10-24
+ *2022-10-28
  *
 **/
 
@@ -64,8 +64,8 @@ public:
 private:
     //test using a dummy function in the control code  
     void step(); //advances each sensor -> remove this because the control code will update
-    void create_actuator(const std::string &name, const std::string &type);
-    void create_sensor(const std::string &name, const std::string &type);
+    void create_actuator(const std::string &name);
+    void create_sensor(const std::string &name);
     void set_command(std::string name, double command);
     double get_sensor_value(std::string name);
     void Simulator::print_stats(); //use to read the simulator data
@@ -107,6 +107,14 @@ private:
     timestamp simulation_time;
 
     /*
+    * @property last_called [timestamp]
+    *
+    * @details The timestamp that the simulation was last called at. Used to determine
+    * the amount of time that has passed while the control code was running.
+    */
+    timestamp last_called;
+
+    /*
     * @property timestep_length [timestamp]
     *
     * @details The resolution of the simulation. Each timestep that is calcuated
@@ -135,7 +143,6 @@ private:
     std::unordered_map<std::string, std::unique_ptr<Sensor>> sensors;
     std::unordered_map<std::string, std::unique_ptr<Actuator>> actuators;
 
-    SatelliteState state;
     bool doStats; //use for printstats()
 };
 

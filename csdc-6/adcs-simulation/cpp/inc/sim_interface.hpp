@@ -43,7 +43,7 @@ class Sensor : public ADCS_device {
          *
          * @details this function sets the new raw sensor values from the simulation and 
          */
-        virtual void sim_set_current_vals(float** new_vals, uint32_t axes, uint32_t num_sensors);
+        virtual void sim_set_current_vals(Eigen::VectorXf new_vals);
 
     private:
         /* Latest measurement value taken */

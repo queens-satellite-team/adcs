@@ -20,6 +20,6 @@ class SensorActuatorFactory {
 public:
     static std::unique_ptr<Sensor> GetSensor(const std::string &name);
     static std::unique_ptr<Actuator> GetActuator(const std::string &name);
-}
+};
 
 #endif

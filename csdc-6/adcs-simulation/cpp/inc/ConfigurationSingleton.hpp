@@ -59,10 +59,10 @@ public:
     };
 
     //get all the sensors/actuators
-    inline const std::shared_ptr<SensorConfig> &GetSensorConfigs(const std::string &name) {
+    inline const std::unordered_map<std::string, std::shared_ptr<SensorConfig>> &GetSensorConfigs() {
         return sensorConfigs;
     };
-    inline const std::shared_ptr<ActuatorConfig> &GetActuatorConfigs(const std::string &name) {
+    inline const std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> &GetActuatorConfigs() {
         return actuatorConfigs;
     };  
   

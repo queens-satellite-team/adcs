@@ -9,8 +9,7 @@
  *
 **/
 
-#ifndef CONFIGURATIONSINGLETON_HPP_
-#define CONFIGURATIONSINGLETON_HPP_
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -66,12 +65,6 @@ public:
         return actuatorConfigs;
     };  
   
-    //would be used for configuring the simulation in main
-    /*
-    inline double GetTimeStep() { return timeStep; };
-    inline double GetTickPeriod() { return tickPeriod; };
-    */
-
     //use to print stats
     inline bool IsPrintStats(){return printStats;};
 
@@ -86,13 +79,6 @@ private:
     std::unordered_map<std::string, std::shared_ptr<SensorConfig>> sensorConfigs;
     std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> actuatorConfigs;
 
-    //would be used with GetTimeStep() and GetTickPeriod()
-    /*
-    double timeStep;
-    double tickPeriod;
-    */
     //use for printStats()
     bool printStats;
 };
-
-#endif

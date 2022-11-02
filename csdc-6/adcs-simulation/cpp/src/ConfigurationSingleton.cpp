@@ -13,11 +13,11 @@
 
 //sensor, actuator config constructors
 //node is commented out so an exception isn't thrown
-GyroConfig::GyroConfig(const YAML::Node &/*node*/) : SensorConfig(SensorType::Gyroscope) { 
-    /* code goes here, uncomment node once there's code */ 
+GyroConfig::GyroConfig(const YAML::Node &/*node*/) : SensorConfig(SensorType::Gyroscope) {
+    /* code goes here, uncomment node once there's code */
     }
 
-AccelerometerConfig::Config(const YAML::Node & /*node*/) : SensorConfig(SensorType::Accelerometer) { 
+AccelerometerConfig::Config(const YAML::Node & /*node*/) : SensorConfig(SensorType::Accelerometer) {
     /* code goes here, uncomment node once there's code */
     }
 
@@ -34,7 +34,7 @@ bool Configuration::Load(const std::string &configFile) {
         std::cout << "YAML File Load failure for file: " << configFile << " : " << e.what() << std::endl;
         return false;
     }
-  
+
     //load sensors
     try {
         YAML::Node sensors = top["Sensors"];

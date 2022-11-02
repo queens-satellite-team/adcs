@@ -125,7 +125,7 @@ void Simulator::step() {
 }
 */
 
-//propogate the math forwards in time 
+//propogate the math forwards in time
 //this is where simulation the math should go in my implementation
 /*
 void Simulator::call_simulation() {}

@@ -63,8 +63,8 @@ public:
     };
     inline const std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> &GetActuatorConfigs() {
         return actuatorConfigs;
-    };  
-  
+    };
+
     //use to print stats
     inline bool IsPrintStats(){return printStats;};
 

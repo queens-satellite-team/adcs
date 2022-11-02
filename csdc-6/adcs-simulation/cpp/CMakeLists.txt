@@ -10,10 +10,10 @@ find_package(yaml-cpp REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_executable(simulator 
-    cpp/src/main.cpp 
-    cpp/src/Simulator.cpp 
-    cpp/src/SensorActuatorFactory.cpp 
+add_executable(simulator
+    cpp/src/main.cpp
+    cpp/src/Simulator.cpp
+    cpp/src/SensorActuatorFactory.cpp
     cpp/src/ConfigurationSingleton.cpp
     cpp/src/Accelerometer.cpp
     cpp/src/Actuator.cpp

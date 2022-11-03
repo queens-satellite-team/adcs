@@ -5,12 +5,11 @@
  *@authors Lily de Loe, Justin Paoli
  *
  *Last Edited
- *2022-10-28
+ *2022-11-03
  *
 **/
 
-#ifndef SIMULATOR_HPP_
-#define SIMULATOR_HPP_
+#pragma once
 
 #include "sim_interface.hpp"
 #include <memory>
@@ -37,9 +36,17 @@ typedef struct {
 
 class Simulator {
 public:
+    /** 
+    * @class Simulator
+    * @param configFile [string], the filename of the YAML config file
+    * 
+    * @details constructor for the simulator class. Calls the configuration
+    * singleton to instantiate all of the sensors and actuators present in the
+    * simulation based on the properties of the provided YAML configuration file.
+    */
     Simulator(const std::string &configFile);
 
-    /*
+    /**
     * @name update_simulation
     * @returns [timestamp], the simulation time at the end of calculations
     *
@@ -49,7 +56,7 @@ public:
     */
     timestamp update_simulation();
 
-    /*
+    /**
     * @name set_adcs_sleep
     * @param duration [timestamp], the additional time to simulate
     * @returns [timestamp], the simulation time at the end of calculations
@@ -63,14 +70,11 @@ public:
 
 private:
     //test using a dummy function in the control code  
-    void step(); //advances each sensor -> remove this because the control code will update
     void create_actuator(const std::string &name);
     void create_sensor(const std::string &name);
-    void set_command(std::string name, double command);
-    double get_sensor_value(std::string name);
-    void Simulator::print_stats(); //use to read the simulator data
+    void print_stats(); //use to read the simulator data
 
-    /*
+    /**
     * @name simulate
     * @param t [timestamp], the amount of time to be simulated
     * 
@@ -80,14 +84,14 @@ private:
     */
     void simulate(timestamp t);
 
-    /*
+    /**
     * @name timestep
     *
     * @details Used to perform a single timestep of simulation.
     */
     void timestep();
 
-    /*
+    /**
     * @name update_adcs_devices
     *
     * @details Iterates through all the known sensors and actuators and updates
@@ -97,7 +101,7 @@ private:
     void update_adcs_devices();
 
 private:
-    /*
+    /**
     * @property simulation_time [timestamp]
     *
     * @details The timestamp that has so far been simulated to. Initialized 
@@ -106,7 +110,7 @@ private:
     */
     timestamp simulation_time;
 
-    /*
+    /**
     * @property last_called [timestamp]
     *
     * @details The timestamp that the simulation was last called at. Used to determine
@@ -114,7 +118,7 @@ private:
     */
     timestamp last_called;
 
-    /*
+    /**
     * @property timestep_length [timestamp]
     *
     * @details The resolution of the simulation. Each timestep that is calcuated
@@ -122,7 +126,7 @@ private:
     */
     timestamp timestep_length;
 
-    /*
+    /**
     * @property satellite [Satellite]
     *
     * @details An instance of a satellite used to start rotational positions,
@@ -130,12 +134,13 @@ private:
     */
     Satellite* satellite;
 
-    /*
+    /**
     * @name determine_time_passed
     * @returns timestamp
     * 
     * @details Used to determine the time the control code spent running in order
-    * to account for the real-life losses due to processing speed.
+    * to account for the real-life losses due to processing speed. Does not take
+    * into account the processor the control code is running on.
     */
     timestamp determine_time_passed();
 
@@ -145,5 +150,3 @@ private:
 
     bool doStats; //use for printstats()
 };
-
-#endif

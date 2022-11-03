@@ -164,7 +164,7 @@ class timestamp
             return result;
         }
 
-        explicit operator float() const { return this->millisecond / 1000.0 + this->second; }
+        explicit operator float() const { return this->millisecond / 1000.0 + (float) this->second; }
 
     private:
         uint32_t millisecond;

@@ -5,12 +5,12 @@
  *@authors Lily de Loe, Justin Paoli
  *
  *Last Edited
- *2022-10-28
+ *2022-11-03
  *
 **/
 #include <chrono>
 #include "Simulator.hpp"
-#include "ConfigurationSingleton.cpp"
+#include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
 
 Simulator::Simulator(const std::string &configFile):doStats(true) {
@@ -78,74 +78,6 @@ void Simulator::create_actuator(const std::string &name) {
 
     this->actuators[name] = std::move(actPtr);
 }
-
-// void Simulator::set_command(std::string name, double command)
-// {
-//     //need a check that the actuator name is in the map
-//     this->actuators[name]->SetCommandValue(command);
-// }
-
-// double Simulator::get_sensor_value(std::string name)
-// {
-//     //need a check that the sensor name is in the map
-//     return this->sensors[name]->GetValue();
-// }
-
-//will be necessary if time step functionality is added to this class
-/*
-void Simulator::step() {
-    //propagate sensors forward in time
-    //in series instead of parallel (single threaded)
-    for (auto &sens : sensors) {
-        //tick would belong to adcs device
-        sens->Tick(timestep, state);
-    }
-
-    //propagate actuators forward in time
-    for (auto &act : actuators) {
-        //tick would belong to adcs device
-        act->Tick(timestep, state);
-    }
-
-    for (const auto &act : actuators) {
-        //GetChangeInState() would belong to actuator
-        state += act.second->GetChangeInState(); //change in ang vel, accel, pos, from each actuator
-    }
-
-    //simulation would be called here
-    //call_simulation();
-
-    //this is where print_stats() would be called in this implementation
-    if (doStats) {
-        print_stats();
-    }
-  
-    //incrament time
-    currentTime += timestep;
-}
-*/
-
-//propogate the math forwards in time 
-//this is where simulation the math should go in my implementation
-/*
-void Simulator::call_simulation() {}
-*/
-
-//print statistics on code performance
-//optional, but will be good for debugging
-//in my implementation, this is called in step()
-// void Simulator::print_stats() {
-//   std::cout << "NAME: \t\tTIME" << std::endl;
-//   for (const auto &act : actuators) {
-//     std::cout << act.first<< ": \t\t"
-//         << act.second->GetLastTickDuration() << std::endl;
-//   }
-
-//   for (const auto &sens : sensors) {
-//     std::cout << sens.first << ": \t\t"
-//         << sens.second->GetLastTickDuration() << std::endl;
-//   }
-// }
 
 timestamp Simulator::update_simulation() {
     timestamp time_passed = this->determine_time_passed();

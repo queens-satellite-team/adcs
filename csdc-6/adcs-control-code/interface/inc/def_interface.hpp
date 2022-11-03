@@ -164,6 +164,8 @@ class timestamp
             return result;
         }
 
+        explicit operator float() const { return this->millisecond / 1000.0 + (float) this->second; }
+
     private:
         uint32_t millisecond;
         uint32_t second;
@@ -215,7 +217,7 @@ class ADCS_device {
          * @returns 0 if the device is already in a good state, otherwise the amount of time until
          *          it is ready to be polled again.
          */
-        virtual timestamp   time_until_ready()  = 0;
+        virtual timestamp   time_until_ready();
 };
 
 #if DEF_INTERFACE == INTERFACE

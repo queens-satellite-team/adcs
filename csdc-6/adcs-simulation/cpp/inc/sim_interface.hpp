@@ -41,9 +41,9 @@ class Sensor : public ADCS_device {
         /*
          * @name    sim_set_current_vals
          *
-         * @details this function sets the new raw sensor values from the simulation and 
+         * @details this function sets the new raw sensor values from the simulation and
          */
-        virtual void sim_set_current_vals(Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>) = 0;
+        virtual void sim_set_current_vals(Eigen::VectorXf new_vals);
 
     private:
         /* Latest measurement value taken */
@@ -85,7 +85,7 @@ class Actuator : public ADCS_device {
          *          code. The size should be the number of actuators.
          *
          */
-        virtual void set_output(Eigen::Matrix<action, Eigen::Dynamic, 1> new_values) = 0; // TODO >> this may need a return value
+        virtual void set_output(); // TODO >> this may need a return value
 
         /*
          * @name    sim_get_current_accelerations
@@ -99,7 +99,7 @@ class Actuator : public ADCS_device {
          * @param num_actuators
          *          the number of actuators in (ie size of) the current_acclerations array.
          */
-        virtual void sim_get_current_accelerations(Eigen::Matrix<action, Eigen::Dynamic, 1> current_accelerations) = 0;
+        virtual Eigen::Vector3f sim_get_current_accelerations();
 
         /*
          * @name    sim_get_current_velocities
@@ -113,7 +113,9 @@ class Actuator : public ADCS_device {
          * @param num_actuators
          *          the number of actuators in (ie size of) the current_velocities array.
          */
-        virtual void sim_get_current_velocities(Eigen::Matrix<action, Eigen::Dynamic, 1> current_velocities) = 0;
+        virtual Eigen::Vector3f sim_get_current_velocities();
+
+        virtual Eigen::Matrix3f sim_get_inertia_matrix();
 
     private:
         /* Number of physical actuators in the sensor unit*/

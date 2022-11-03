@@ -13,7 +13,7 @@
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
 
-Simulator::Simulator(const std::string &configFile):doStats(true) {
+Simulator::Simulator(const std::string &configFile) {
 
     auto &config = Configuration::GetInstance();
     if (!config.Load(configFile)) {
@@ -29,10 +29,6 @@ Simulator::Simulator(const std::string &configFile):doStats(true) {
         //first is string, second is data (from map)
         this->create_actuator(actuator.first);
     }
-
-    //these would be used if GetTimeStep and PrintStats() are used
-    //timestep = config.GetTimeStep();
-    this->doStats = config.IsPrintStats();
 
     this->simulation_time = 0;
     this->last_called = -1;

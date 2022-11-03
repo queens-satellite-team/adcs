@@ -35,8 +35,4 @@ Sensors:
 # this is the amount of time each "tick" of the simulator simulates for
 TimeStep: 0.0001
 
-# this is the amount of time a tick is targeted to take to process set to be the same as TimeStep for real time operation
-TickPeriod: 0.001
-PrintStats: True
-
 ###########################################################

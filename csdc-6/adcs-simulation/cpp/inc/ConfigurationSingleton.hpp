@@ -65,10 +65,6 @@ public:
         return actuatorConfigs;
     };
 
-    //use to print stats
-    inline bool IsPrintStats(){return printStats;};
-
-
 private:
     Configuration(){};
 
@@ -78,7 +74,4 @@ private:
 
     std::unordered_map<std::string, std::shared_ptr<SensorConfig>> sensorConfigs;
     std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> actuatorConfigs;
-
-    //use for printStats()
-    bool printStats;
 };

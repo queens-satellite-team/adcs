@@ -72,7 +72,6 @@ private:
     //test using a dummy function in the control code  
     void create_actuator(const std::string &name);
     void create_sensor(const std::string &name);
-    void print_stats(); //use to read the simulator data
 
     /**
     * @name simulate
@@ -147,6 +146,4 @@ private:
     //unorder_maps relate strings to the names of objects
     std::unordered_map<std::string, std::unique_ptr<Sensor>> sensors;
     std::unordered_map<std::string, std::unique_ptr<Actuator>> actuators;
-
-    bool doStats; //use for printstats()
 };

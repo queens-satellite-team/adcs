@@ -9,11 +9,9 @@
  *
 **/
 
-#ifndef SENSORACTUATORFACTORY_HPP_
-#define SENSORACTUATORFACTORY_HPP_
+#pragma once
 
-// #include "Sensor.hpp"
-// #include "Actuator.hpp"
+#include "sim_interface.hpp"
 #include <memory>
 
 class SensorActuatorFactory {
@@ -21,5 +19,3 @@ public:
     static std::unique_ptr<Sensor> GetSensor(const std::string &name);
     static std::unique_ptr<Actuator> GetActuator(const std::string &name);
 };
-
-#endif

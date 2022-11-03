@@ -13,29 +13,31 @@
 #include "ConfigurationSingleton.hpp"
 
 //for type sensor
-std::unique_ptr<Sensor>
-SensorActuatorFactory::GetSensor(const std::string &name) {
+std::unique_ptr<Sensor> SensorActuatorFactory::GetSensor(const std::string &name) {
     auto &config = Configuration::GetInstance();
     const auto type = config.GetSensorConfig(name)->type;
+    std::unique_ptr<Sensor> ret = {};
+
     switch(type){
     case SensorType::Accelerometer:
-        return std::make_unique<Accelerometer>(name);
+        ret = std::make_unique<Accelerometer>(name);
     case SensorType::Gyroscope:
-        return std::make_unique<Gyroscope>(name);
+        ret = std::make_unique<Gyroscope>(name);
     }
-    return {};
+    return ret;
 }
 
 //for type actuator
-std::unique_ptr<Actuator>
-SensorActuatorFactory::GetActuator(const std::string &name) {
+std::unique_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &name) {
     auto &config = Configuration::GetInstance();
     const auto type = config.GetActuatorConfig(name)->type;
+    std::unique_ptr<Actuator> ret = {};
+
     //set up to extend to more actuator types
     switch(type){
-    case ActuatorType::ReactionWheel:
-        return std::make_unique<ReactionWheel>(name);
+    case ActuatorType::Reaction_wheel:
+        ret = std::make_unique<Reaction_wheel>(name);
     }
-    return {};
-}
 
+    return ret;
+}

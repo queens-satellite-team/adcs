@@ -14,7 +14,6 @@
 **/
 
 #include <stdint.h>
-#include <Eigen/Dense>
 
 #pragma once
 using namespace std;
@@ -37,14 +36,7 @@ using namespace std;
 /* Flag to indicate which interface version to use */
 #define INTERFACE SIM_INTERFACE
 
-/* Physical definitions */
-
-/* depends on use of Euler angles or Quaternions */
-const uint32_t vec_dim = 3;
-const uint32_t num_reaction_wheels = 4;
-
 /********************************************* TYPES *********************************************/
-
 /* Generic return type from the driver interface.
  *
  * @param sensor_return the measurement of the sensor
@@ -166,6 +158,69 @@ class timestamp
 
         explicit operator float() const { return this->millisecond / 1000.0 + (float) this->second; }
 
+        /*
+         * @name operator+ overload
+         *
+         * @details adds two timestamps. Overflow of milliseconds increments seconds. Overflow of
+         *          seconds is explicitly allowed, the caller should deal with consequences of
+         *          second overflow.
+         *
+         * @returns result of addition.
+         */
+        timestamp operator+=(const timestamp& b)
+        {
+            return *this + b;
+        }
+
+        friend bool operator<(const timestamp& l, const timestamp& r)
+        {
+            bool ret = false;
+
+            if ( (l.second      < r.second)      ||
+               ( (l.millisecond < r.millisecond) && 
+                 (l.second      <= r.second)     ))
+            {
+                ret = true;
+            }
+
+            return ret;
+        }
+
+        friend bool operator>(const timestamp& l, const timestamp& r)
+        {
+            return r < l;
+        }
+
+        friend bool operator<=(const timestamp& l, const timestamp& r)
+        {
+            return !(l > r);
+        }
+
+        friend bool operator>=(const timestamp& l, const timestamp& r)
+        {
+            return !(l < r);
+        }
+
+        friend bool operator==(const timestamp& l, const timestamp& r)
+        {
+            bool ret = false;
+            if ((l.second      == r.second) &&
+                (l.millisecond == r.millisecond))
+            {
+                true;
+            }
+            return ret;
+        }
+
+        friend bool operator!=(const timestamp& l, const timestamp& r)
+        {
+            return !(l==r);
+        }
+
+        /*
+         * CAST FROM UINT32_T IN MS TO TIMESTAMP
+         */
+
     private:
         uint32_t millisecond;
         uint32_t second;
@@ -180,8 +235,8 @@ class timestamp
  */
 typedef struct measurement
 {
-    Eigen::MatrixXf vec;
-    timestamp time_taken;
+    vector<float> vec;
+    timestamp       time_taken;
 };
 
 /* Actuator measurement structure. Used to quantify how much an actuator needs to change.
@@ -191,13 +246,16 @@ typedef struct measurement
  * @param time_requested    time the actuator change was originally requested by the control code.
  *
  */
-typedef struct action {
-    Eigen::MatrixXf required_values;
-    timestamp time_requested;
+typedef struct actuator_state {
+    float       acceleration;
+    float       velocity;
+    float       position;
+    timestamp   time;
 };
 
 /******************************************* INTERFACES ******************************************/
 
+#if DEF_INTERFACE == INTERFACE
 /*
  * @class   Interface_Object
  *
@@ -208,7 +266,7 @@ typedef struct action {
  *
  */
 class ADCS_device {
-    private:
+    public:
         /*
          * @name    time_until_ready
          *
@@ -217,10 +275,10 @@ class ADCS_device {
          * @returns 0 if the device is already in a good state, otherwise the amount of time until
          *          it is ready to be polled again.
          */
-        virtual timestamp   time_until_ready();
+        virtual timestamp time_until_ready();
+
 };
 
-#if DEF_INTERFACE == INTERFACE
 /*
  * @class Sensor
  *
@@ -242,7 +300,7 @@ class Sensor : public ADCS_device {
          * @returns the required measurement if succesful.
          *
          */
-        virtual measurement take_measurement()  = 0;
+        virtual measurement take_measurement();
 
     private:
         /* latest measurement value taken */
@@ -266,7 +324,7 @@ class Actuator : public ADCS_device {
          * @param new_value the new value to set the actuators to
          *
          */
-        virtual void set_output(action new_value)    = 0; // TODO >> this may need a return value
+        virtual void set_current_accelerations(action new_value); // TODO >> this may need a return value
 
 };
 
@@ -317,11 +375,13 @@ class accelerometer : public Sensor {};
 class gyroscope : public Sensor {};
 
 /*
- * @class reaction_wheel
+ * @class Reaction_wheel
+
  *
  * @details concrete Sensor implementation for reaction wheels
  *
  * @implements ADCS_device, Actuator
  */
-class reaction_wheel : public Actuator {};
+class Reaction_wheel
+ : public Actuator {};
 #endif

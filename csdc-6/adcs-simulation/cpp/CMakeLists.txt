@@ -17,7 +17,7 @@ add_executable(simulator
     cpp/src/ConfigurationSingleton.cpp
     cpp/src/Accelerometer.cpp
     cpp/src/Actuator.cpp
-    cpp/src/ReactionWheel.cpp
+    cpp/src/Reaction_wheel.cpp
     cpp/src/Sensor.cpp
   )
 #ament_target_dependencies(simulator rclcpp std_msgs yaml-cpp)

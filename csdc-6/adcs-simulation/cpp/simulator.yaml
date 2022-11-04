@@ -1,8 +1,33 @@
+# file: simulator.yaml
+#
+# details: input file that outlines the satellite configuration. the simulator 
+# configuration adheres to the following format:
+#
+# author: Lily de Loe
+#
+# last edited: 2022-11-04
+
+# Satellite:
+#   Moment: [3-dimensional matrix]
+#   Position: [3-dimensional vector]
+#   Velcoity: [3-dimensional vector]
 Satellite:
   Moment: [[1,2,3],
            [4,5,6],
            [7,8,9]]
+  Position: [1,2,3]
+  Velocity: [1.2,3]
 
+# Actuators:
+#   Name: [name of actuator]
+#     type: [actuator type], ReactionWheel
+#     Moment: [3-dimensional matrix]
+#     MaxAngVel: [float]
+#     MaxAngAccel: [float]
+#     MinAngVel: [float]
+#     MinAngAccel: [float]
+#     PollingTime: [float]
+#     Position: [3-dimensional vector]
 Actuators:
   ReactionWheel1:
     type: ReactionWheel
@@ -13,7 +38,6 @@ Actuators:
     MaxAngAccel: 8
     MinAngVel: 0
     MinAngAccel: 0
-    UnitVector: [0.1, 0.2, 0.3]
     PollingTime: 10
     Position: [1,2,3]
   ReactionWheel2:
@@ -25,7 +49,6 @@ Actuators:
     MaxAngAccel: 8
     MinAngVel: 0
     MinAngAccel: 0
-    UnitVector: [0.1, 0.2, 0.3]
     PollingTime: 10
     Position: [1,2,3]
   ReactionWheel3:
@@ -37,20 +60,23 @@ Actuators:
     MaxAngAccel: 8
     MinAngVel: 0
     MinAngAccel: 0
-    UnitVector: [0.1, 0.2, 0.3]
     PollingTime: 10
     Position: [1,2,3]
 
+# Sensors:
+#   Name: [name of sensor]
+#     type: [sensor type], Gyroscope, Accelerometer
+#     PollingTime: [float]
+#     Position: [3-dimensional matrix]
 Sensors:
   Gyro1:
     type: Gyroscope
     PollingTime: 10
-    Position: [[1,2,3]] #3-dimensional matrix to allow for future sun sensor configurations
+    Position: [[1,2,3]]
   Accel1:
     type: Accelerometer    
     PollingTime: 10
     Position: [[1,2,3]]
 
-
-# timestep to simulate at
+# Timestep: [float]
 TimeStep: 0.0001

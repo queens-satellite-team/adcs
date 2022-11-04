@@ -1,13 +1,15 @@
-/** @file Simulator.cpp
+/** 
+ * @file Simulator.cpp
  *
- *@details class file to create the sensor and actuator objects
+ * @details class file to create the sensor and actuator objects
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-10-24
+ * Last Edited
+ * 2022-10-24
  *
 **/
+
 #include "sim_interface.hpp"
 #include "SensorActuatorFactory.hpp"
 #include "ConfigurationSingleton.hpp"

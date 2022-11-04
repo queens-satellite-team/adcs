@@ -1,11 +1,12 @@
-/** @file Simulator.cpp
+/** 
+ * @file Simulator.cpp
  *
- *@details class file that would configure and propagate the simulation
+ * @details class file that would configure and propagate the simulation
  *
- *@authors Lily de Loe, Justin Paoli
+ * @authors Lily de Loe, Justin Paoli
  *
- *Last Edited
- *2022-11-03
+ * Last Edited
+ * 2022-11-03
  *
 **/
 

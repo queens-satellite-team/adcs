@@ -1,12 +1,12 @@
 /** 
- *@file CommonStructs.hpp
+ * @file CommonStructs.hpp
  *
- *@details strongly typed sensors and actuators
+ * @details strongly typed sensors and actuators
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-11-03
+ * Last Edited
+ * 2022-11-03
  *
 **/
 #pragma once

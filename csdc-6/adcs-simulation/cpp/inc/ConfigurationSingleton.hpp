@@ -1,12 +1,12 @@
 /**
- *@file ConfigurationSingleton.hpp
+ * @file ConfigurationSingleton.hpp
  *
- *@details hpp file for singleton class used to configure the user's sensor/actuator inputs
+ * @details hpp file for singleton class used to configure the user's sensor/actuator inputs
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-11-03
+ * Last Edited
+ * 2022-11-03
  *
 **/
 
@@ -97,6 +97,12 @@ struct ReactionWheelConfig {
 
 };
 
+/**
+ * @class Configuration
+ *
+ * @details class used in configuring the satellite based on its input YAML file
+ *
+ */
 class Configuration {
 public:
     /**
@@ -107,12 +113,12 @@ public:
     bool Load(const std::string &fileName);
 
     /**
-    * @details explicitly deletes a function so C++ doesn't auto-generate it
+    * @details copy constructor is explicitly deleted to prevent C++ from auto-generating one
     */
     Configuration(const Configuration &) = delete;
 
     /**
-    * @details explicitly deletes a function so C++ doesn't auto-generate it
+    * @details equals operator is explicitly deleted to prevent C++ from auto-generating one
     */
     void operator=(Configuration &) = delete;
 
@@ -173,11 +179,32 @@ public:
     * @name GetSatelliteMoment
     * @return the intertia matrix for the satellite
     * 
-    * @details getter for shared pointer to the actuator config
+    * @details getter for shared pointer to the satellite's moment of inertia
     */
     inline const Eigen::Matrix3f &GetSatelliteMoment() {
         return satelliteMomentOfIntertia;
     };
+
+    /**
+    * @name GetSatellitePosition
+    * @return the 3-dimensional vector representing satellite position
+    * 
+    * @details getter for shared pointer to the satellite's position
+    */
+    inline const Eigen::Vector3f &GetSatellitePosition() {
+        return satellitePosition;
+    };
+
+    /**
+    * @name GetSatelliteVelocity
+    * @return the 3-dimensional vector representing satellite velocity
+    * 
+    * @details getter for shared pointer to the satellite's velocity
+    */
+    inline const Eigen::Vector3f &GetSatelliteVelocity() {
+        return satelliteVelocity;
+    };
+
 
 private:
     /**
@@ -206,4 +233,14 @@ private:
     * @details 3-dimensional matrix storing the satellite's moment of inertia
     */
     Eigen::Matrix3f satelliteMomentOfIntertia;
+
+    /**
+    * @details 3-dimensional vector storing the satellite's position
+    */
+    Eigen::Matrix3f satellitePosition;
+
+    /**
+    * @details 3-dimensional matrix storing the satellite's velocity
+    */
+    Eigen::Matrix3f satelliteVelocity;
 };

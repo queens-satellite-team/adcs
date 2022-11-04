@@ -1,14 +1,15 @@
 /** 
- *@file ConfigurationSingleton.cpp
+ * @file ConfigurationSingleton.cpp
  *
- *@details singleton class used to configure the user's sensor/actuator inputs
+ * @details singleton class used to configure the user's sensor/actuator inputs
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-11-03
+ * Last Edited
+ * 2022-11-03
  *
 **/
+
 #include "ConfigurationSingleton.hpp"
 #include <iostream>
 
@@ -60,7 +61,6 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     for (const auto &n : node["Position"]) {
         position(i++) = n.as<double>();
     }
-    position.normalize();
 }
 
 bool Configuration::Load(const std::string &configFile) {
@@ -80,10 +80,20 @@ bool Configuration::Load(const std::string &configFile) {
         for (const auto &n : satellite["Moment"]) {
             j = 0;
             for (const auto &a : n) {
-                SatelliteMomentOfInertia(i, j++) = a.as<double>();
+                satelliteMomentOfInertia(i, j++) = a.as<double>();
             }
             ++i;
         }
+
+        i = 0;
+        for (const auto &n : satellite["Position"]) {
+            satellitePosition(i++) = n.as<double>();
+        }
+
+        i = 0;
+        for (const auto &n : satellite["Velocity"]) {
+            satelliteVelocity(i++) = n.as<double>();
+        }        
 
     } catch (YAML::Exception &e){
         std::cout << "YAML ERROR ON SATELLITE STATE: " << e.what() <<std::endl;

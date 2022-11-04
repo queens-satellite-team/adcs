@@ -1,12 +1,12 @@
 /** 
- *@file Simulator.cpp
+ * @file Simulator.cpp
  *
- *@details header file for class to create the sensor and actuator objects
+ * @details header file for class to create the sensor and actuator objects
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-10-24
+ * Last Edited
+ * 2022-10-24
  *
 **/
 
@@ -15,6 +15,12 @@
 #include "sim_interface.hpp"
 #include <memory>
 
+/**
+ * @class SensorActuatorFactory
+ *
+ * @details factory class used in creating sensor and actuator objects
+ *
+ */
 class SensorActuatorFactory {
 public:
     /**

@@ -1,12 +1,12 @@
 /** 
- *@file Simulator.hpp
+ * @file Simulator.hpp
  *
- *@details header file for class file that would configure and propagate the simulation
+ * @details header file for class file that would configure and propagate the simulation
  *
- *@authors Lily de Loe, Justin Paoli
+ * @authors Lily de Loe, Justin Paoli
  *
- *Last Edited
- *2022-11-03
+ * Last Edited
+ * 2022-11-03
  *
 **/
 
@@ -35,6 +35,12 @@ typedef struct {
     Eigen::Matrix3f inertia_b;
 } Satellite;
 
+/**
+ * @class Simulator
+ *
+ * @details class for the simulator object, which is based on the YAML config file
+ *
+ */
 class Simulator {
 public:
     /** 

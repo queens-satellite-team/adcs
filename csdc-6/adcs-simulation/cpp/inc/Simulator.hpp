@@ -85,7 +85,7 @@ private:
     void create_actuator(const std::string &name);
 
     /**
-    * @name creat_sensor
+    * @name create_sensor
     * @param name [string], the name of the sensor to be created
     *
     * @details creates a sensor object

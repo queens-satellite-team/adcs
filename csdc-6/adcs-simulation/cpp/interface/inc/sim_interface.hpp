@@ -116,7 +116,7 @@ class Sensor : public ADCS_device {
          *                          is the number of sensors, and the matrix size is the number of
          *                          axis for each measurement.
          */
-        virtual void set_current_vals(vector<vector<float>> physical_vals, timestamp time);
+        virtual void set_current_vals(vector<Eigen::VectorXf> physical_vals, timestamp time);
 
         /*
          * @name    get_positions

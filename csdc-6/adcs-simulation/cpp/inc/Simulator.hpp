@@ -1,11 +1,12 @@
-/** @file Simulator.hpp
+/** 
+ * @file Simulator.hpp
  *
- *@details header file for class file that would configure and propagate the simulation
+ * @details header file for class file that would configure and propagate the simulation
  *
- *@authors Lily de Loe, Justin Paoli
+ * @authors Lily de Loe, Justin Paoli
  *
- *Last Edited
- *2022-11-03
+ * Last Edited
+ * 2022-11-03
  *
 **/
 
@@ -15,7 +16,7 @@
 #include <memory>
 #include <vector>
 
-/*
+/**
 * @name Satellite
 * @property theta_b [Eigen::Vector3f], the angular position of the satellite body
 * @property omega_b [Eigen::Vector3f], the angular velocity of the satellite body
@@ -34,6 +35,12 @@ typedef struct {
     Eigen::Matrix3f inertia_b;
 } Satellite;
 
+/**
+ * @class Simulator
+ *
+ * @details class for the simulator object, which is based on the YAML config file
+ *
+ */
 class Simulator {
 public:
     /** 
@@ -69,8 +76,20 @@ public:
     timestamp set_adcs_sleep(timestamp duration);
 
 private:
-    //test using a dummy function in the control code  
+    /**
+    * @name create_actuator
+    * @param name [string], the name of the actuator to be created
+    *
+    * @details creates an actuator object
+    */  
     void create_actuator(const std::string &name);
+
+    /**
+    * @name create_sensor
+    * @param name [string], the name of the sensor to be created
+    *
+    * @details creates a sensor object
+    */
     void create_sensor(const std::string &name);
 
     /**
@@ -143,7 +162,13 @@ private:
     */
     timestamp determine_time_passed();
 
-    //unorder_maps relate strings to the names of objects
+    /**
+    * @details unordered map of sensors that relates strings to names
+    */
     std::unordered_map<std::string, std::unique_ptr<Sensor>> sensors;
+
+    /**
+    * @details unordered map of actuators that relates strings to names
+    */
     std::unordered_map<std::string, std::unique_ptr<Actuator>> actuators;
 };

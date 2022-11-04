@@ -1,18 +1,19 @@
-/** @file Simulator.cpp
+/** 
+ * @file Simulator.cpp
  *
- *@details class file to create the sensor and actuator objects
+ * @details class file to create the sensor and actuator objects
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-10-24
+ * Last Edited
+ * 2022-10-24
  *
 **/
+
 #include "sim_interface.hpp"
 #include "SensorActuatorFactory.hpp"
 #include "ConfigurationSingleton.hpp"
 
-//for type sensor
 std::unique_ptr<Sensor> SensorActuatorFactory::GetSensor(const std::string &name) {
     auto &config = Configuration::GetInstance();
     const auto type = config.GetSensorConfig(name)->type;
@@ -27,17 +28,15 @@ std::unique_ptr<Sensor> SensorActuatorFactory::GetSensor(const std::string &name
     return ret;
 }
 
-//for type actuator
 std::unique_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &name) {
     auto &config = Configuration::GetInstance();
     const auto type = config.GetActuatorConfig(name)->type;
     std::unique_ptr<Actuator> ret = {};
 
-    //set up to extend to more actuator types
+    //this is set up to extend to more actuator types
     switch(type){
     case ActuatorType::Reaction_wheel:
         ret = std::make_unique<Reaction_wheel>(name);
     }
-
     return ret;
 }

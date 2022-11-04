@@ -1,13 +1,15 @@
-/** @file main.cpp
+/** 
+ * @file main.cpp
  *
- *@details main file to control the adcs simulator
+ * @details main file to control the adcs simulator
  *
- *@authors Lily de Loe
+ * @authors Lily de Loe
  *
- *Last Edited
- *2022-10-24
+ * Last Edited
+ * 2022-10-24
  *
 **/
+
 #include <cstdio>
 
 #include <cstdio>

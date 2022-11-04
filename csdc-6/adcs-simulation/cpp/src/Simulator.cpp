@@ -1,13 +1,15 @@
-/** @file Simulator.cpp
+/** 
+ * @file Simulator.cpp
  *
- *@details class file that would configure and propagate the simulation
+ * @details class file that would configure and propagate the simulation
  *
- *@authors Lily de Loe, Justin Paoli
+ * @authors Lily de Loe, Justin Paoli
  *
- *Last Edited
- *2022-11-04
+ * Last Edited
+ * 2022-11-04
  *
 **/
+
 #include <chrono>
 #include <iostream>
 #include "Simulator.hpp"
@@ -35,7 +37,6 @@ Simulator::Simulator(const std::string &configFile) {
     this->last_called = -1;
 }
 
-//create sensor based on name
 void Simulator::create_sensor(const std::string &name) {
     if (name.empty()) {
         std::cout <<"Device name must be populated. Got "
@@ -52,7 +53,6 @@ void Simulator::create_sensor(const std::string &name) {
     this->sensors[name] = std::move(sensorPtr);
 }
 
-//create actuator based on name
 void Simulator::create_actuator(const std::string &name) {
     if (name.empty()) {
         std::cout << "Device name must be populated. Got "

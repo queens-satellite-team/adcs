@@ -8,6 +8,7 @@
  *2022-11-03
  *
 **/
+
 #include <chrono>
 #include "Simulator.hpp"
 #include "ConfigurationSingleton.hpp"
@@ -41,7 +42,6 @@ Simulator::Simulator(const std::string &configFile) {
     };
 }
 
-//create sensor based on name
 void Simulator::create_sensor(const std::string &name) {
     if (name.empty()) {
         std::cout <<"Device name must be populated. Got "
@@ -58,7 +58,6 @@ void Simulator::create_sensor(const std::string &name) {
     this->sensors[name] = std::move(sensorPtr);
 }
 
-//create actuator based on name
 void Simulator::create_actuator(const std::string &name) {
     if (name.empty()) {
         std::cout << "Device name must be populated. Got "

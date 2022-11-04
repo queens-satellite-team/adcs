@@ -1,3 +1,8 @@
+Satellite:
+  Moment: [[1,2,3],
+           [4,5,6],
+           [7,8,9]]
+
 Actuators:
   ReactionWheel1:
     type: ReactionWheel
@@ -6,7 +11,11 @@ Actuators:
              [7,8,9]]
     MaxAngVel: 88
     MaxAngAccel: 8
+    MinAngVel: 0
+    MinAngAccel: 0
     UnitVector: [0.1, 0.2, 0.3]
+    PollingTime: 10
+    Position: [1,2,3]
   ReactionWheel2:
     type: ReactionWheel
     Moment: [[1,2,3],
@@ -14,7 +23,11 @@ Actuators:
              [7,8,9]]
     MaxAngVel: 88
     MaxAngAccel: 8
+    MinAngVel: 0
+    MinAngAccel: 0
     UnitVector: [0.1, 0.2, 0.3]
+    PollingTime: 10
+    Position: [1,2,3]
   ReactionWheel3:
     type: ReactionWheel
     Moment: [[1,2,3],
@@ -22,17 +35,22 @@ Actuators:
              [7,8,9]]
     MaxAngVel: 88
     MaxAngAccel: 8
+    MinAngVel: 0
+    MinAngAccel: 0
     UnitVector: [0.1, 0.2, 0.3]
+    PollingTime: 10
+    Position: [1,2,3]
 
 Sensors:
   Gyro1:
     type: Gyroscope
+    PollingTime: 10
+    Position: [[1,2,3]] #3-dimensional matrix to allow for future sun sensor configurations
   Accel1:
-    type: Accelerometer
+    type: Accelerometer    
+    PollingTime: 10
+    Position: [[1,2,3]]
 
-####change this inputs based on our final time solution####
 
-# this is the amount of time each "tick" of the simulator simulates for
+# timestep to simulate at
 TimeStep: 0.0001
-
-###########################################################

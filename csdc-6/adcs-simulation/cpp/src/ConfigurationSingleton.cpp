@@ -1,31 +1,68 @@
-/** @file ConfigurationSingleton.cpp
+/** 
+ *@file ConfigurationSingleton.cpp
  *
  *@details singleton class used to configure the user's sensor/actuator inputs
  *
  *@authors Lily de Loe
  *
  *Last Edited
- *2022-10-24
+ *2022-11-03
  *
 **/
 #include "ConfigurationSingleton.hpp"
 #include <iostream>
 
-//sensor, actuator config constructors
-//node is commented out so an exception isn't thrown
-GyroConfig::GyroConfig(const YAML::Node &/*node*/) : SensorConfig(SensorType::Gyroscope) {
-    /* code goes here, uncomment node once there's code */
+GyroConfig::GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyroscope) {
+    pollingTime = node["PollingTime"].as<double>();
+    int i = 0;
+    int j = 0;
+    for (const auto &n : node["Position"]) {
+        j = 0;
+        for (const auto &a : n) {
+            position(i, j++) = a.as<double>();
+        }
+        ++i;
+    }
+}
+
+AccelerometerConfig::Config(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer) {
+    pollingTime = node["PollingTime"].as<double>();
+    int i = 0;
+    int j = 0;
+    for (const auto &n : node["Position"]) {
+        j = 0;
+        for (const auto &a : n) {
+            position(i, j++) = a.as<double>();
+        }
+        ++i;
+    }   
+}
+
+ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfig(ActuatorType::Actuator) {
+    int i = 0;
+    int j = 0;
+    for (const auto &n : node["Moment"]) {
+        j = 0;
+        for (const auto &a : n) {
+            momentOfInertia(i, j++) = a.as<double>();
+        }
+        ++i;
     }
 
-AccelerometerConfig::Config(const YAML::Node & /*node*/) : SensorConfig(SensorType::Accelerometer) {
-    /* code goes here, uncomment node once there's code */
+    maxAngVel = node["MaxAngVel"].as<double>();
+    maxAngAccel = node["MaxAngAccel"].as<double>();
+    minAngVel = node["MinAngVel"].as<double>();
+    minAngAccel = node["MinAngAccel"].as<double>();
+    
+    pollingTime = node["PollingTime"].as<double>();
+    
+    i = 0;
+    for (const auto &n : node["Position"]) {
+        position(i++) = n.as<double>();
     }
+    position.normalize();
+}
 
-ReactionWheelConfig::ReactionWheelConfig(const YAML::Node & /*node*/) : ActuatorConfig(ActuatorType::Actuator) {
-    /* code goes here, uncomment node once there's code */
-    }
-
-//sensor configuration
 bool Configuration::Load(const std::string &configFile) {
     //load the yaml config file
     try {
@@ -33,6 +70,23 @@ bool Configuration::Load(const std::string &configFile) {
     } catch (YAML::Exception &e) {
         std::cout << "YAML File Load failure for file: " << configFile << " : " << e.what() << std::endl;
         return false;
+    }
+
+    //load initial satellite configuration
+    try {
+        YAML::Node satellite = top["Satellite"];
+        int i = 0;
+        int j = 0;
+        for (const auto &n : satellite["Moment"]) {
+            j = 0;
+            for (const auto &a : n) {
+                SatelliteMomentOfInertia(i, j++) = a.as<double>();
+            }
+            ++i;
+        }
+
+    } catch (YAML::Exception &e){
+        std::cout << "YAML ERROR ON SATELLITE STATE: " << e.what() <<std::endl;
     }
 
     //load sensors

@@ -14,7 +14,7 @@
 #include <sim_interface.hpp>
 #include <Simulator.hpp>
 
-Actuator::Actuator(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals) : ADCS_device(polling_time, sim)
+Actuator::Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals) : ADCS_device(polling_time, sim)
 {
     this->max_state_values = max_vals;
     this->min_state_values = min_vals;
@@ -70,7 +70,7 @@ void Actuator::set_target_state(actuator_state new_target)
     return;
 }
 
-vector<float> Actuator::get_postition()
+Eigen::Vector3f Actuator::get_postition()
 {
     return this->postition;
 }

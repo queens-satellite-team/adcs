@@ -12,7 +12,7 @@
 #include <sim_interface.hpp>
 #include <Simulator.hpp>
 
-Sensor::Sensor(timestamp polling_time, Simulator* sim, vector<vector<float>> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time, sim)
+Sensor::Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time, sim)
 {
     if (num_sensors != positions.size())
     {
@@ -59,7 +59,7 @@ void Sensor::set_current_vals(vector<vector<float>> physical_vals, timestamp tim
     return;
 }
 
-vector<vector<float>> Sensor::get_positions()
+vector<Eigen::Vector3f> Sensor::get_positions()
 {
     return positions;
 }

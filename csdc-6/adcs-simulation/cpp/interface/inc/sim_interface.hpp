@@ -92,7 +92,7 @@ class Sensor : public ADCS_device {
          *          polling_time and sim to parent class, and populates all other parameters if
          *          they are valid.
          */
-        Sensor(timestamp polling_time, Simulator* sim, vector<vector<float>> positions, uint32_t num_sensors, uint32_t num_axes);
+        Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes);
 
         /*
          * @name    take_measurement
@@ -125,7 +125,7 @@ class Sensor : public ADCS_device {
          *
          * @returns positions of each physical sensor.
          */
-        vector<vector<float>> get_positions();
+        vector<Eigen::Vector3f> get_positions();
 
     private:
         /* Latest measurement value taken */
@@ -138,7 +138,7 @@ class Sensor : public ADCS_device {
         uint32_t num_axes;
 
         /* Positions of each satellite within the satellite body. Dimensions are num_sensors x 3 */
-        vector<vector<float>> positions;
+        vector<Eigen::Vector3f> positions;
 };
 
 /*
@@ -157,7 +157,7 @@ class Actuator : public ADCS_device
          *
          * @details constructor for actuators. Initial values for current and target states are 0.
          */
-        Actuator(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals);
+        Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals);
 
         /*
          * @name    get_current_state
@@ -207,7 +207,7 @@ class Actuator : public ADCS_device
          *
          * @returns the position within the satellite of the actuator.
          */
-        vector<float> get_postition();
+        Eigen::Vector3f get_postition();
 
     private:
 
@@ -226,7 +226,7 @@ class Actuator : public ADCS_device
         actuator_state min_state_values;
 
         /* The position in the satellite of the actuator. */
-        vector<float> postition;
+        Eigen::Vector3f postition;
 };
 
 /**************************************** CONCRETE CLASSES ***************************************/
@@ -278,7 +278,7 @@ class ADCS_timer
  */
 class Accelerometer : public Sensor {
     public:
-        Accelerometer(timestamp polling_time, Simulator* sim, vector<vector<float>> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
+        Accelerometer(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
 };
 
 /*
@@ -290,7 +290,7 @@ class Accelerometer : public Sensor {
  */
 class Gyroscope : public Sensor {
     public:
-        Gyroscope(timestamp polling_time, Simulator* sim, vector<vector<float>> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
+        Gyroscope(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
 };
 
 /*

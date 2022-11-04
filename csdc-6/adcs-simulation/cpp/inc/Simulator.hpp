@@ -150,7 +150,7 @@ private:
     * @details An instance of a satellite used to start rotational positions,
     * velocities, and accelerations.
     */
-    Satellite* satellite;
+    std::unique_ptr<Satellite> satellite = std::make_unique<Satellite>(new Satellite);
 
     /**
     * @name determine_time_passed

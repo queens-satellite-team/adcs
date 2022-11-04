@@ -43,7 +43,7 @@ measurement Sensor::take_measurement()
     return this->current_vector_value;
 }
 
-void Sensor::set_current_vals(vector<vector<float>> physical_vals, timestamp time)
+void Sensor::set_current_vals(vector<Eigen::VectorXf> physical_vals, timestamp time)
 {
     if ( (3 != num_axes)                  ||
          (1 != physical_vals.size())      ||
@@ -53,8 +53,11 @@ void Sensor::set_current_vals(vector<vector<float>> physical_vals, timestamp tim
     }
 
     /* Default behaviour is to assume that the physical values require no modification. */
+    int vals_length = physical_vals.at(0).size();
+    vector<float> values_vector{physical_vals.at(0).data(), physical_vals.at(0).data() + vals_length};
+
     current_vector_value.time_taken = time;
-    current_vector_value.vec = physical_vals.at(0);
+    current_vector_value.vec = values_vector;
 
     return;
 }

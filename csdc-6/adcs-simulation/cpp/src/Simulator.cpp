@@ -5,12 +5,11 @@
  *
  * @authors Lily de Loe, Justin Paoli
  *
- * Last Edited
- * 2022-11-03
  *
 **/
 
 #include <chrono>
+#include <iostream>
 #include "Simulator.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
@@ -34,13 +33,6 @@ Simulator::Simulator(const std::string &configFile) {
 
     this->simulation_time = 0;
     this->last_called = -1;
-
-    this->satellite = new Satellite {
-        Eigen::Vector3f(),
-        Eigen::Vector3f(),
-        Eigen::Vector3f(),
-        Eigen::Matrix3f(),
-    };
 }
 
 void Simulator::create_sensor(const std::string &name) {
@@ -91,7 +83,7 @@ timestamp Simulator::determine_time_passed() {
     timestamp now = (timestamp) ms;
     timestamp time_passed = now - this->last_called;
     this->last_called = now;
-    return time_passed
+    return time_passed;
 }
 
 void Simulator::simulate(timestamp t) {
@@ -103,14 +95,22 @@ void Simulator::simulate(timestamp t) {
 }
 
 void Simulator::timestep() {
-    // TODO: Check what type each actuator is and process accordingly
     Eigen::Vector3f total_rw_torques = Eigen::Vector3f::Zero();
     for (const auto &a : actuators) {
-        Eigen::Vector3f omega_i = a.second->sim_get_current_velocities();
-        Eigen::Vector3f alpha_i = a.second->sim_get_current_accelerations();
-        Eigen::Matrix3f inertia_i = a.second->sim_get_inertia_matrix();
-        total_rw_torques -= inertia_i * alpha_i;
-        total_rw_torques -= this->satellite->omega_b.cross(inertia_i * omega_i);
+        // Attempt to cast the actuator to a specific type, if it succeeds
+        // we know it was an actuator of that type and can proceed. If it fails
+        // dynamic_cast() will return nullptr and we proceed to the next case
+        if (Reaction_wheel *rw = dynamic_cast<Reaction_wheel*>(a.second.get())) {
+            actuator_state state = rw->get_current_state();
+            Eigen::Vector3f rw_position = rw->get_postition();
+            Eigen::Vector3f omega_i = state.velocity * rw_position;
+            Eigen::Vector3f alpha_i = state.acceleration * rw_position;
+            Eigen::Matrix3f inertia_i = rw->get_inertia_matrix();
+            total_rw_torques -= inertia_i * alpha_i;
+            total_rw_torques -= this->satellite->omega_b.cross(inertia_i * omega_i);
+            delete rw;
+            continue;
+        }
     }
 
     Eigen::Matrix3f inertia_b_inverse = this->satellite->inertia_b.inverse();
@@ -123,7 +123,13 @@ void Simulator::timestep() {
 
 void Simulator::update_adcs_devices() {
     for (const auto &s : sensors) {
-        Eigen::Vector3f r = s.second->sim_get_position();
-        s.second->sim_set_current_vals(this->satellite->alpha_b.cross(r));
+        // Similar typechecking/casting procedure as in the timestep() function
+        if (Accelerometer *a = dynamic_cast<Accelerometer *>(s.second.get())) {
+            Eigen::Vector3f r = a->get_positions()[0];
+            vector<Eigen::VectorXf> new_vals = { this->satellite->alpha_b.cross(r) };
+            s.second->set_current_vals(new_vals, this->simulation_time);
+            delete a;
+            continue;
+        }
     }
 }

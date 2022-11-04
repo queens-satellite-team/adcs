@@ -169,6 +169,16 @@ public:
         return actuatorConfigs;
     };
 
+    /**
+    * @name GetSatelliteMoment
+    * @return the intertia matrix for the satellite
+    * 
+    * @details getter for shared pointer to the actuator config
+    */
+    inline const Eigen::Matrix3f &GetSatelliteMoment() {
+        return satelliteMomentOfIntertia;
+    };
+
 private:
     /**
     * @name Configuration

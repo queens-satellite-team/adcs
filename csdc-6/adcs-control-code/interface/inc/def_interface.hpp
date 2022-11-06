@@ -14,6 +14,8 @@
 **/
 
 #include <stdint.h>
+#include <string>
+#include <iomanip>
 
 #pragma once
 using namespace std;
@@ -215,6 +217,20 @@ class timestamp
         friend bool operator!=(const timestamp& l, const timestamp& r)
         {
             return !(l==r);
+        }
+
+        string pretty_string()
+        {
+            uint32_t out_sec = (second + millisecond/1000);
+            uint32_t out_mil = millisecond % 1000;
+            uint32_t out_min = out_sec / 60;
+            out_sec %= 60;
+
+            stringstream formatter;
+            formatter << "[" << out_min << ":" << setw(10) << setfill('0') << out_sec << ":";
+            formatter << setw(10) << setfill('0') << out_mil << "]";
+
+            return formatter.str();
         }
 
         /*

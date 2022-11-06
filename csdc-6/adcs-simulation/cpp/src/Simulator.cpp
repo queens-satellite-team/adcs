@@ -15,6 +15,7 @@
 #include "Simulator.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
+#include "PointingModeController.hpp"
 
 Simulator::Simulator(const std::string &configFile) {
 
@@ -86,6 +87,11 @@ timestamp Simulator::determine_time_passed() {
     timestamp time_passed = now - this->last_called;
     this->last_called = now;
     return time_passed;
+}
+
+void Simulator::begin() {
+    PointingModeController controller(sensors, actuators);
+    controller.begin({ 0 });
 }
 
 void Simulator::simulate(timestamp t) {

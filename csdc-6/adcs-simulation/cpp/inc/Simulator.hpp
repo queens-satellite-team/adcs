@@ -54,6 +54,13 @@ public:
     Simulator(const std::string &configFile);
 
     /**
+    * @name begin
+    * 
+    * @details Initializes the simulation by triggering the controller loop.
+    */
+    void begin();
+
+    /**
     * @name update_simulation
     * @returns [timestamp], the simulation time at the end of calculations
     *

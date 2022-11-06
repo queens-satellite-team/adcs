@@ -157,7 +157,7 @@ private:
     * @details An instance of a satellite used to start rotational positions,
     * velocities, and accelerations.
     */
-    std::unique_ptr<Satellite> satellite = std::make_unique<Satellite>(new Satellite);
+    std::shared_ptr<Satellite> satellite = std::make_shared<Satellite>();
 
     /**
     * @name determine_time_passed
@@ -172,10 +172,10 @@ private:
     /**
     * @details unordered map of sensors that relates strings to names
     */
-    std::unordered_map<std::string, std::unique_ptr<Sensor>> sensors;
+    std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
 
     /**
     * @details unordered map of actuators that relates strings to names
     */
-    std::unordered_map<std::string, std::unique_ptr<Actuator>> actuators;
+    std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 };

@@ -9,8 +9,8 @@
  *
 **/
 
-#include <sim_interface.hpp>
-#include <Simulator.hpp>
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
 
 Sensor::Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time, sim)
 {

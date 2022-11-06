@@ -18,6 +18,15 @@
 #include <iostream>
 
 #include "UI.hpp"
+#include "PointingModeController.hpp"
+
+
+UI::UI()
+{
+    allowed_commands["start_sim"] = run_simulation;
+    allowed_commands["resume_sim"] = resume_simulation;
+    allowed_commands["exit"] = quit;
+}
 
 void UI::start_ui_loop()
 {
@@ -116,7 +125,7 @@ void UI::run_simulation(vector<string> args)
     }
 
     string initial_state_yaml   = args.at(1);
-    string exit_conditions_yaml = args.at(2);
+    // string exit_conditions_yaml = args.at(2);
 
     /* 
      * We can check for the file path existing here, but it is a race condition. The simulator
@@ -128,34 +137,28 @@ void UI::run_simulation(vector<string> args)
     // add try catch for above problem?
     Simulator simulator(initial_state_yaml);
 
-    string final_state_yaml_path;
+    // string final_state_yaml_path;
    
     /*
      * In init, simulator should create a Control code class that has all of the sensors and 
      * actuators. Then, this function should call simulator with a function like:
      */
 
-    // final_state_yaml_path = simulator.begin(exit_conditions_yaml)
+    simulator.begin();
 
-    /*
-     * which then interprets the exit conditions (to check for), and passes them off to the
-     * controller as necessary (controller will need to know what to point at). Maybe there can be
-     * a similar function in the controller: 
-     * 
-     * controller.begin(desired_attitude)
-     * 
+    /* 
      * Again when passing the exit_conditions_yaml there's a possibility that it is an invalid
      * path. Same problem arises with it being a race condition though.
      */
 
-    if (!final_state_yaml_path.empty())
-    {
-        /* TODO this could also check if the yaml is a valid path, but race condition again. Still,
-         * in this case it is probably worth checking because there's no point in saving it as a
-         * variable if it's invalid to start with.
-         */
-        this->previous_end_state_yaml = final_state_yaml_path;
-    }
+    // if (!final_state_yaml_path.empty())
+    // {
+    //     /* TODO this could also check if the yaml is a valid path, but race condition again. Still,
+    //      * in this case it is probably worth checking because there's no point in saving it as a
+    //      * variable if it's invalid to start with.
+    //      */
+    //     this->previous_end_state_yaml = final_state_yaml_path;
+    // }
 
     return;
 }

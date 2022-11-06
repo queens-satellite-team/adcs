@@ -14,8 +14,8 @@
 #include "PointingModeController.hpp"
 
 PointingModeController::PointingModeController(
-    unordered_map<string, unique_ptr<Sensor>> sensors, 
-    unordered_map<string, unique_ptr<Actuator>> actuators
+    unordered_map<string, shared_ptr<Sensor>> sensors, 
+    unordered_map<string, shared_ptr<Actuator>> actuators
 ) {
     this->sensors = sensors;
     this->actuators = actuators;

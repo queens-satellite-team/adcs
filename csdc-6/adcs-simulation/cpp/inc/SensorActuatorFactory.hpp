@@ -15,6 +15,8 @@
 #include "sim_interface.hpp"
 #include <memory>
 
+class Simulator;
+
 /**
  * @class SensorActuatorFactory
  *
@@ -30,7 +32,7 @@ public:
     * @details getter for a sensor object from singleton class instance. Returns a unique
     * pointer of the type of sensor matching the configuration
     */
-    static std::unique_ptr<Sensor> GetSensor(const std::string &name);
+    static std::shared_ptr<Sensor> GetSensor(const std::string &name, Simulator* sim);
 
     /**
     * @name GetActuator
@@ -39,5 +41,5 @@ public:
     * @details getter for actuator object from singleton class instance. Returns a unique
     * pointer of the type of actuator matching the configuration
     */
-    static std::unique_ptr<Actuator> GetActuator(const std::string &name);
+    static std::shared_ptr<Actuator> GetActuator(const std::string &name, Simulator* sim);
 };

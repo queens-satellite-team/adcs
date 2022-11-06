@@ -26,7 +26,7 @@ GyroConfig::GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyrosc
     }
 }
 
-AccelerometerConfig::Config(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer) {
+AccelerometerConfig::AccelerometerConfig(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer) {
     pollingTime = node["PollingTime"].as<double>();
     int i = 0;
     int j = 0;

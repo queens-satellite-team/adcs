@@ -12,12 +12,14 @@
 #include <vector>
 #include <Eigen/Dense>
 
-#include <def_interface.hpp>
-#include <Simulator.hpp>
+#include "def_interface.hpp"
 
 #pragma once
 
 #if SIM_INTERFACE == INTERFACE
+
+
+class Simulator;
 
 /*
  * @class   Interface_Object
@@ -35,6 +37,8 @@ class ADCS_device {
          * @details constructor for ADCS_device. Only check is to see if the sim is void.
          */
         ADCS_device(timestamp polling_time, Simulator* sim);
+
+        ~ADCS_device(){}
 
         /*
          * @name    time_until_ready
@@ -93,6 +97,8 @@ class Sensor : public ADCS_device {
          *          they are valid.
          */
         Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes);
+
+        ~Sensor() = default;
 
         /*
          * @name    take_measurement
@@ -158,6 +164,8 @@ class Actuator : public ADCS_device
          * @details constructor for actuators. Initial values for current and target states are 0.
          */
         Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals);
+
+        ~Actuator() = default;
 
         /*
          * @name    get_current_state
@@ -279,6 +287,8 @@ class ADCS_timer
 class Accelerometer : public Sensor {
     public:
         Accelerometer(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
+        Accelerometer();
+        ~Accelerometer() = default;
 };
 
 /*
@@ -291,6 +301,7 @@ class Accelerometer : public Sensor {
 class Gyroscope : public Sensor {
     public:
         Gyroscope(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
+        ~Gyroscope() = default;
 };
 
 /*
@@ -309,6 +320,8 @@ class Reaction_wheel : public Actuator
          * @details constructor for the Reaction_wheel.
          */
         Reaction_wheel(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix);
+
+        ~Reaction_wheel(){}
 
         /*
          * @name    get_inertia_matrix

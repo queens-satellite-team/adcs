@@ -11,8 +11,8 @@
 
 #include <Eigen/Dense>
 
-#include <sim_interface.hpp>
-#include <Simulator.hpp>
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
 
 Actuator::Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals) : ADCS_device(polling_time, sim)
 {

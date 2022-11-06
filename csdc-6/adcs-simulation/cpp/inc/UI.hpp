@@ -18,9 +18,8 @@
 
 #pragma once
 
-#include <String>
+#include <string>
 #include <vector>
-#include <any>
 
 #include "Simulator.hpp"
 #include "sim_interface.hpp"
@@ -54,6 +53,7 @@ static const struct
 class UI
 {
     public:
+        UI();
 
         /**
          * @name    start_ui_loop
@@ -168,12 +168,7 @@ class UI
         void quit(vector<string> args);
 
         /* Map linking each command to it's function implementation. Used by "run_command" */
-        const unordered_map<string, commandFunc> allowed_commands = 
-        {
-            {"start_sim",   run_simulation},
-            {"resume_sim",  resume_simulation},
-            {"exit",        quit}
-        };
+        unordered_map<string, commandFunc> allowed_commands;
 
         /* Character used to denote user control of the terminal. */
         const string prompt_char = ">";

@@ -11,7 +11,7 @@
 **/
 
 #include <chrono>
-#include <iostream>
+// #include <iostream>
 #include "Simulator.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
@@ -21,7 +21,7 @@ Simulator::Simulator(const std::string &configFile) {
 
     auto &config = Configuration::GetInstance();
     if (!config.Load(configFile)) {
-        std::cout <<"Configuration Failed to load"<< std::endl;
+        // std::cout <<"Configuration Failed to load"<< std::endl;
     }
 
     for (const auto &sensor : config.GetSensorConfigs()) {
@@ -40,14 +40,13 @@ Simulator::Simulator(const std::string &configFile) {
 
 void Simulator::create_sensor(const std::string &name) {
     if (name.empty()) {
-        std::cout <<"Device name must be populated. Got "
-        << name << std::endl;
+        // std::cout <<"Device name must be populated. Got " << name << std::endl;
         return;
     }
 
-    auto sensorPtr = SensorActuatorFactory::GetSensor(name);
+    auto sensorPtr = SensorActuatorFactory::GetSensor(name, this);
     if (!sensorPtr) {
-        std::cout << "Unknown sensor type: " << name << std::endl;
+        // std::cout << "Unknown sensor type: " << name << std::endl;
         return;
     }
 
@@ -56,14 +55,13 @@ void Simulator::create_sensor(const std::string &name) {
 
 void Simulator::create_actuator(const std::string &name) {
     if (name.empty()) {
-        std::cout << "Device name must be populated. Got "
-        << name << std::endl;
+        // std::cout << "Device name must be populated. Got " << name << std::endl;
         return;
     }
 
-    auto actPtr = SensorActuatorFactory::GetActuator(name);
+    auto actPtr = SensorActuatorFactory::GetActuator(name, this);
     if (!actPtr) {
-        std::cout << "Unknown actuator type: " << name << std::endl;
+        // std::cout << "Unknown actuator type: " << name << std::endl;
         return;
     }
 

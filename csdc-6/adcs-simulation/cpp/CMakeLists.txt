@@ -11,17 +11,25 @@ find_package(yaml-cpp REQUIRED)
 # find_package(<dependency> REQUIRED)
 
 add_executable(simulator
-    cpp/src/main.cpp
-    cpp/src/Simulator.cpp
-    cpp/src/SensorActuatorFactory.cpp
-    cpp/src/ConfigurationSingleton.cpp
-    cpp/src/Accelerometer.cpp
-    cpp/src/Actuator.cpp
-    cpp/src/Reaction_wheel.cpp
-    cpp/src/Sensor.cpp
+    src/main.cpp
+    src/Simulator.cpp
+    src/SensorActuatorFactory.cpp
+    src/ConfigurationSingleton.cpp
+    src/UI.cpp
+    interface/src/Actuator.cpp
+    interface/src/ADCS_device.cpp
+    interface/src/ADCS_timer.cpp
+    interface/src/Reaction_wheel.cpp
+    interface/src/Sensor.cpp
+    ../../adcs-control-code/src/PointingModeController.cpp
   )
 #ament_target_dependencies(simulator rclcpp std_msgs yaml-cpp)
 target_link_libraries(${PROJECT_NAME} ${YAML_CPP_LIBRARIES})
-target_include_directories(simulator PUBLIC
-    cpp/inc)
+include_directories(
+    "${CMAKE_SOURCE_DIR}/inc",
+    "${CMAKE_SOURCE_DIR}/interface/inc",
+    "${CMAKE_SOURCE_DIR}/../../adcs-control-code/inc",
+    "${CMAKE_SOURCE_DIR}/../../adcs-control-code/interface/inc",
+    "/mnt/g/Program Files/eigen-3.4.0")
 target_compile_features(simulator PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+set(EXECUTABLE_OUTPUT_PATH "/build")

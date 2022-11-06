@@ -237,10 +237,10 @@ private:
     /**
     * @details 3-dimensional vector storing the satellite's position
     */
-    Eigen::Matrix3f satellitePosition;
+    Eigen::Vector3f satellitePosition;
 
     /**
     * @details 3-dimensional matrix storing the satellite's velocity
     */
-    Eigen::Matrix3f satelliteVelocity;
+    Eigen::Vector3f satelliteVelocity;
 };

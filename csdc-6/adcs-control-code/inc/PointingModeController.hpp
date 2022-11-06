@@ -18,16 +18,16 @@ class PointingModeController {
 public:
     /** 
     * @class PointingModeController
-    * @param sensors [unordered_map<string, unique_ptr<Sensor>], pointers to the satellite sensors
-    * @param actuators [unordered_map<string, unique_ptr<Actuator>], pointers to the satellite actuators
+    * @param sensors [unordered_map<string, shared_ptr<Sensor>], pointers to the satellite sensors
+    * @param actuators [unordered_map<string, shared_ptr<Actuator>], pointers to the satellite actuators
     * 
     * @details Constructor for the pointing mode controller class. Initializes the internal references
     * to the satellite sensors and actuators which will be used to request information from the sensors
     * and send commands to the actuators.
     */
     PointingModeController(
-        unordered_map<string, unique_ptr<Sensor>> sensors, 
-        unordered_map<string, unique_ptr<Actuator>> actuators
+        unordered_map<string, shared_ptr<Sensor>> sensors, 
+        unordered_map<string, shared_ptr<Actuator>> actuators
     );
 
     /**
@@ -41,18 +41,18 @@ public:
 
 private:
     /**
-    * @property sensors [unordered_map<string, unique_ptr<Sensor>>] 
+    * @property sensors [unordered_map<string, shared_ptr<Sensor>>] 
     * 
     * @details An unordered map containing references to the satellite sensors.
     */
-    unordered_map<string, unique_ptr<Sensor>> sensors;
+    unordered_map<string, shared_ptr<Sensor>> sensors;
 
     /**
-    * @property actuators [unordered_map<string, unique_ptr<Actuator>>] 
+    * @property actuators [unordered_map<string, shared_ptr<Actuator>>] 
     * 
     * @details An unordered map containing references to the satellite actuators.
     */
-    unordered_map<string, unique_ptr<Actuator>> actuators;
+    unordered_map<string, shared_ptr<Actuator>> actuators;
     
     /**
     * @name take_updated_measurements

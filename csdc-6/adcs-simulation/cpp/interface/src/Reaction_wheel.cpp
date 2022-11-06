@@ -10,8 +10,10 @@
  *
 **/
 
-#include <interface.hpp>
 #include <Eigen/Dense>
+
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
 
 Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix) : Actuator(polling_time, sim, position, max_vals, min_vals)
 {

@@ -72,11 +72,11 @@ Sensors:
   Gyro1:
     type: Gyroscope
     PollingTime: 10
-    Position: [[1,2,3]]
+    Position: [1,2,3]
   Accel1:
     type: Accelerometer    
     PollingTime: 10
-    Position: [[1,2,3]]
+    Position: [1,2,3]
 
 # Timestep: [float]
 TimeStep: 0.0001

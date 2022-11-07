@@ -17,6 +17,7 @@
 
 #include "CommonStructs.hpp"
 #include <yaml-cpp/yaml.h>
+#include <Eigen/Dense>
 
 /**
 * @name SensorConfig
@@ -26,8 +27,17 @@
 * config and type
 */
 struct SensorConfig {
-    SensorConfig(SensorType t) : type(t){};
+    SensorConfig(SensorType t, const YAML::Node &node) : type(t){
+        pollingTime = node["PollingTime"].as<double>();
+        int j = 0;
+        for (const auto &n : node["Position"]) {
+            position(j++) = n.as<double>();
+        }
+    };
+    virtual ~SensorConfig() = default;
+    float pollingTime;
     SensorType type;
+    Eigen::Vector3f position;
 };
 
 /**
@@ -39,6 +49,7 @@ struct SensorConfig {
 */
 struct ActuatorConfig {
     ActuatorConfig(ActuatorType t) : type(t){};
+    virtual ~ActuatorConfig() = default;
     ActuatorType type;
 };
 
@@ -50,11 +61,9 @@ struct ActuatorConfig {
 * @details struct outling the configuration of a gryoscope according to the input YAML
 * parameters
 */
-struct GyroConfig {
+struct GyroConfig : public SensorConfig {
     GyroConfig(const YAML::Node &node);
 
-    float pollingTime;
-    Eigen::Matrix3f position;
 };
 
 /**
@@ -65,15 +74,14 @@ struct GyroConfig {
 * @details struct outling the configuration of an accelerometer according to the input YAML
 * parameters
 */
-struct AccelerometerConfig {
+struct AccelerometerConfig : public SensorConfig {
     AccelerometerConfig(const YAML::Node &node);
-    float pollingTime;
-    Eigen::Matrix3f position;
+
 };
 
 /**
  * @name ReactionWheelConfig
- * @property momentOfIntertia [Eigen::Matrix3f], matrix representing the moment of inertia
+ * @property momentOfInertia [Eigen::Matrix3f], matrix representing the moment of inertia
  * @property maxAngVel [float], maximium angular velocity
  * @property maxAngAccel [float], maximimum angular acceleration
  * @property minAngVel [float], minimium angular velocity
@@ -84,10 +92,10 @@ struct AccelerometerConfig {
  * @details struct outling the configuration of a reaction wheel according to the input YAML
 * parameters
 */
-struct ReactionWheelConfig {
+struct ReactionWheelConfig : public ActuatorConfig {
     ReactionWheelConfig(const YAML::Node &node);
 
-    Eigen::Matrix3f momentOfIntertia;
+    Eigen::Matrix3f momentOfInertia;
     float maxAngVel;
     float maxAngAccel;
     float minAngVel;
@@ -177,12 +185,12 @@ public:
 
     /**
     * @name GetSatelliteMoment
-    * @return the intertia matrix for the satellite
+    * @return the Inertia matrix for the satellite
     * 
     * @details getter for shared pointer to the satellite's moment of inertia
     */
     inline const Eigen::Matrix3f &GetSatelliteMoment() {
-        return satelliteMomentOfIntertia;
+        return satelliteMomentOfInertia;
     };
 
     /**
@@ -232,7 +240,7 @@ private:
     /**
     * @details 3-dimensional matrix storing the satellite's moment of inertia
     */
-    Eigen::Matrix3f satelliteMomentOfIntertia;
+    Eigen::Matrix3f satelliteMomentOfInertia;
 
     /**
     * @details 3-dimensional vector storing the satellite's position

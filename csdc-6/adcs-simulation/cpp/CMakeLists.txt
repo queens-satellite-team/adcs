@@ -6,6 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(yaml-cpp REQUIRED)
+find_package(Eigen3 3.3 REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -25,11 +26,11 @@ add_executable(simulator
   )
 #ament_target_dependencies(simulator rclcpp std_msgs yaml-cpp)
 target_link_libraries(${PROJECT_NAME} ${YAML_CPP_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)
 include_directories(
     "${CMAKE_SOURCE_DIR}/inc",
     "${CMAKE_SOURCE_DIR}/interface/inc",
     "${CMAKE_SOURCE_DIR}/../../adcs-control-code/inc",
-    "${CMAKE_SOURCE_DIR}/../../adcs-control-code/interface/inc",
-    "/mnt/g/Program Files/eigen-3.4.0")
+    "${CMAKE_SOURCE_DIR}/../../adcs-control-code/interface/inc"
+    )
 target_compile_features(simulator PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-set(EXECUTABLE_OUTPUT_PATH "/build")

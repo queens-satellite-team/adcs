@@ -12,7 +12,7 @@
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
-Sensor::Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time, sim)
+Sensor::Sensor(timestamp polling_time, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time)
 {
     if (num_sensors != positions.size())
     {
@@ -33,9 +33,9 @@ Sensor::Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> p
 }
 
 
-measurement Sensor::take_measurement()
+measurement Sensor::take_measurement(timestamp curr_time)
 {
-    if (this->time_until_ready() > 0)
+    if (this->time_until_ready(curr_time) > 0)
     {
         /* THROW APPROPRIATE EXCEPTION */
     }

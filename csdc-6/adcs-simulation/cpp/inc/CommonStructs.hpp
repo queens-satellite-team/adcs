@@ -23,5 +23,5 @@ enum class SensorType{
 * @details enum class for actuator type, which defines all valid actuator types
 */
 enum class ActuatorType{
-    Reaction_wheel
+    ReactionWheel
 };

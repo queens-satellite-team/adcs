@@ -11,14 +11,17 @@
 **/
 
 #include <Eigen/Dense>
+#include <iostream>
 
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
-Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix) : Actuator(polling_time, sim, position, max_vals, min_vals)
+Reaction_wheel::Reaction_wheel(timestamp polling_time, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix) : Actuator(polling_time, position, max_vals, min_vals)
 {
     if (Eigen::Matrix3f::Zero() == inertia_matrix)
     {
+        std::cout << "YEEEET" << std::endl;
+        throw -1;
         // throw exception
     }
 

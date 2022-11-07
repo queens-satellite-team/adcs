@@ -16,6 +16,6 @@
 
 #if SIM_INTERFACE == INTERFACE
 #include <sim_interface.hpp>
-#else if STM_INTERFACE == INTERFACE
+#elif STM_INTERFACE == INTERFACE
 #include <stm_interface.hpp>
 #endif

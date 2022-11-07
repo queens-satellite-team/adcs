@@ -32,6 +32,6 @@ void PointingModeController::begin(vector<float> desired_attitude) {
 
 void PointingModeController::take_updated_measurements() {
     for (const auto &s : sensors) {
-        s.second->take_measurement();
+        s.second->take_measurement(timestamp(7.0f));
     }
 }

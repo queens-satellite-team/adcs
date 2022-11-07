@@ -11,7 +11,8 @@
 **/
 
 #include <chrono>
-// #include <iostream>
+#include <iostream>
+
 #include "Simulator.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
@@ -40,13 +41,13 @@ Simulator::Simulator(const std::string &configFile) {
 
 void Simulator::create_sensor(const std::string &name) {
     if (name.empty()) {
-        // std::cout <<"Device name must be populated. Got " << name << std::endl;
+        std::cout <<"Device name must be populated. Got " << name << std::endl;
         return;
     }
 
-    auto sensorPtr = SensorActuatorFactory::GetSensor(name, this);
+    auto sensorPtr = SensorActuatorFactory::GetSensor(name);
     if (!sensorPtr) {
-        // std::cout << "Unknown sensor type: " << name << std::endl;
+        std::cout << "Unknown sensor type: " << name << std::endl;
         return;
     }
 
@@ -55,13 +56,13 @@ void Simulator::create_sensor(const std::string &name) {
 
 void Simulator::create_actuator(const std::string &name) {
     if (name.empty()) {
-        // std::cout << "Device name must be populated. Got " << name << std::endl;
+        std::cout << "Device name must be populated. Got " << name << std::endl;
         return;
     }
 
-    auto actPtr = SensorActuatorFactory::GetActuator(name, this);
+    auto actPtr = SensorActuatorFactory::GetActuator(name);
     if (!actPtr) {
-        // std::cout << "Unknown actuator type: " << name << std::endl;
+        std::cout << "Unknown actuator type: " << name << std::endl;
         return;
     }
 
@@ -114,7 +115,6 @@ void Simulator::timestep() {
             Eigen::Matrix3f inertia_i = rw->get_inertia_matrix();
             total_rw_torques -= inertia_i * alpha_i;
             total_rw_torques -= this->satellite->omega_b.cross(inertia_i * omega_i);
-            delete rw;
             continue;
         }
     }
@@ -134,7 +134,6 @@ void Simulator::update_adcs_devices() {
             Eigen::Vector3f r = a->get_positions()[0];
             vector<Eigen::VectorXf> new_vals = { this->satellite->alpha_b.cross(r) };
             s.second->set_current_vals(new_vals, this->simulation_time);
-            delete a;
             continue;
         }
     }

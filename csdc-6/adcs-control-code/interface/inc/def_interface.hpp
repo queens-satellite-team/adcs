@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <vector>
 // #include <iomanip>
 
 #pragma once
@@ -55,6 +56,7 @@ class timestamp
          */
         timestamp(uint32_t milliseconds = 0, uint32_t seconds = 0) : millisecond(milliseconds), second(seconds) {}
 
+        explicit timestamp(float real_person_time) : millisecond((float)(real_person_time - ((int)real_person_time)) * 1000.0), second(real_person_time){}; // check this conversion later its a bit hacky
         /*
          * @name milliseconds
          *
@@ -239,7 +241,7 @@ class timestamp
  */
 typedef struct
 {
-    vector<float> vec;
+    std::vector<float> vec;
     timestamp       time_taken;
 } measurement;
 

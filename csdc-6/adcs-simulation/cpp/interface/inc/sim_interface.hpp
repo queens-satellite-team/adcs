@@ -36,7 +36,7 @@ class ADCS_device {
          *
          * @details constructor for ADCS_device. Only check is to see if the sim is void.
          */
-        ADCS_device(timestamp polling_time, Simulator* sim);
+        ADCS_device(timestamp polling_time);
 
         ~ADCS_device(){}
 
@@ -48,7 +48,7 @@ class ADCS_device {
          * @returns 0 if the device is already in a good state, otherwise the amount of time until
          *          it is ready to be polled again.
          */
-        virtual timestamp time_until_ready();
+        virtual timestamp time_until_ready(timestamp current_time);
 
     private:
         // TODO: This may need an accessor - for now not implementing.
@@ -96,7 +96,7 @@ class Sensor : public ADCS_device {
          *          polling_time and sim to parent class, and populates all other parameters if
          *          they are valid.
          */
-        Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes);
+        Sensor(timestamp polling_time, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes);
 
         ~Sensor() = default;
 
@@ -108,7 +108,7 @@ class Sensor : public ADCS_device {
          *
          * @returns the required measurement if succesful.
          */
-        measurement take_measurement();
+        measurement take_measurement(timestamp curr_time);
 
         /*
          * @name    set_current_vals
@@ -163,9 +163,7 @@ class Actuator : public ADCS_device
          *
          * @details constructor for actuators. Initial values for current and target states are 0.
          */
-        Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals);
-
-        ~Actuator() = default;
+        Actuator(timestamp polling_time, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals);
 
         /*
          * @name    get_current_state
@@ -206,7 +204,7 @@ class Actuator : public ADCS_device
          * @param   target_state the new state the control code would like to be in.
          *
          */
-        void set_target_state(actuator_state target_state);
+        void set_target_state(actuator_state target_state, timestamp curr_time);
 
         /*
          * @name    get_postition
@@ -286,9 +284,7 @@ class ADCS_timer
  */
 class Accelerometer : public Sensor {
     public:
-        Accelerometer(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
-        Accelerometer();
-        ~Accelerometer() = default;
+        Accelerometer(timestamp polling_time, Eigen::Vector3f positions) : Sensor(polling_time, {positions}, 1, 3) {}
 };
 
 /*
@@ -300,8 +296,7 @@ class Accelerometer : public Sensor {
  */
 class Gyroscope : public Sensor {
     public:
-        Gyroscope(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions) : Sensor(polling_time, sim, positions, 1, 3) {}
-        ~Gyroscope() = default;
+        Gyroscope(timestamp polling_time, Eigen::Vector3f positions) : Sensor(polling_time, {positions}, 1, 3) {}
 };
 
 /*
@@ -319,9 +314,7 @@ class Reaction_wheel : public Actuator
          *
          * @details constructor for the Reaction_wheel.
          */
-        Reaction_wheel(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix);
-
-        ~Reaction_wheel(){}
+        Reaction_wheel(timestamp polling_time, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix);
 
         /*
          * @name    get_inertia_matrix

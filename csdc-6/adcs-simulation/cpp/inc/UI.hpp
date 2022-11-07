@@ -20,11 +20,13 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "Simulator.hpp"
 #include "sim_interface.hpp"
 
-using namespace std;
+// this is considered to be very bad practice
+// using namespace std;
 
 /**
  * @struct  text_colour
@@ -106,7 +108,7 @@ class UI
          * @details function pointer for internal commands. Used to map strings of commands to
          *          their function implementation.
         **/
-        typedef void (UI::*commandFunc)(vector<string>);
+        using commandFunc = std::function<void(std::vector<std::string>)>;
 
         /**
          * @name    process_input_buffer

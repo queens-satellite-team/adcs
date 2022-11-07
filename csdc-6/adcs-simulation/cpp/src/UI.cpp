@@ -10,9 +10,7 @@
  *
 **/
 
-#pragma once
-
-#include <String>
+#include <string>
 #include <vector>
 #include <any>
 #include <iostream>
@@ -23,9 +21,9 @@
 
 UI::UI()
 {
-    allowed_commands["start_sim"] = run_simulation;
-    allowed_commands["resume_sim"] = resume_simulation;
-    allowed_commands["exit"] = quit;
+    allowed_commands["start_sim"] = std::bind(&UI::run_simulation, this, std::placeholders::_1);
+    allowed_commands["resume_sim"] = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
+    allowed_commands["exit"] = std::bind(&UI::quit, this, std::placeholders::_1);
 }
 
 void UI::start_ui_loop()
@@ -84,7 +82,8 @@ void UI::run_command(vector<string> args)
     {
         try
         {
-            (this->*command)(args);
+            // (this->*command)(args); // code in modern C++
+            command(args);
         }
         catch(invalid_ui_args e)
         {

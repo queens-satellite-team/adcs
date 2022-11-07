@@ -13,18 +13,22 @@
 #include <Eigen/Dense>
 
 #include "sim_interface.hpp"
+#include "Simulator.hpp"
 
-ADCS_device::ADCS_device(timestamp polling_time) : min_polling_increment(polling_time)
+ADCS_device::ADCS_device(timestamp polling_time, Simulator* sim) : min_polling_increment(polling_time)
 {
 	if (NULL == sim)
 	{
 		/* THROW APPROPRIATE EXCEPTION */
 	}
+
+	this->sim = sim;
 }
 
-timestamp ADCS_device::time_until_ready(timestamp current_time)
+timestamp ADCS_device::time_until_ready()
 {
 	timestamp ret = 0;
+	timestamp current_time = sim->update_simulation();
 	timestamp difference = current_time - this->last_polled;
 
 	if (difference < this->min_polling_increment)

@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <Eigen/Dense>
 // #include <iomanip>
 
 #pragma once
@@ -241,7 +242,7 @@ class timestamp
  */
 typedef struct
 {
-    std::vector<float> vec;
+    Eigen::Vector3f vec;
     timestamp       time_taken;
 } measurement;
 

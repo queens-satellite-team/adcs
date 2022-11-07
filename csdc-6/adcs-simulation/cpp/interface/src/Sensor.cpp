@@ -12,7 +12,7 @@
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
-Sensor::Sensor(timestamp polling_time, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time)
+Sensor::Sensor(timestamp polling_time, Simulator* sim, vector<Eigen::Vector3f> positions, uint32_t num_sensors, uint32_t num_axes) : ADCS_device(polling_time, sim)
 {
     if (num_sensors != positions.size())
     {
@@ -32,17 +32,6 @@ Sensor::Sensor(timestamp polling_time, vector<Eigen::Vector3f> positions, uint32
     this->num_axes      = num_axes;
 }
 
-
-measurement Sensor::take_measurement(timestamp curr_time)
-{
-    if (this->time_until_ready(curr_time) > 0)
-    {
-        /* THROW APPROPRIATE EXCEPTION */
-    }
-
-    return this->current_vector_value;
-}
-
 void Sensor::set_current_vals(vector<Eigen::VectorXf> physical_vals, timestamp time)
 {
     if ( (3 != num_axes)                  ||
@@ -53,11 +42,8 @@ void Sensor::set_current_vals(vector<Eigen::VectorXf> physical_vals, timestamp t
     }
 
     /* Default behaviour is to assume that the physical values require no modification. */
-    int vals_length = physical_vals.at(0).size();
-    vector<float> values_vector{physical_vals.at(0).data(), physical_vals.at(0).data() + vals_length};
-
     current_vector_value.time_taken = time;
-    current_vector_value.vec = values_vector;
+    current_vector_value.vec = physical_vals.at(0);
 
     return;
 }

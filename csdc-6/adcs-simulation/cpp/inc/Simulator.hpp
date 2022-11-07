@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "sim_interface.hpp"
+#include "def_interface.hpp"
 #include <memory>
 #include <vector>
 
@@ -35,6 +35,34 @@ typedef struct {
     Eigen::Matrix3f inertia_b;
 } Satellite;
 
+typedef struct
+{
+    Eigen::Vector3f omega;
+    Eigen::Vector3f alpha;
+    Eigen::Matrix3f inertia;
+    Eigen::Vector3f position;
+} sim_reaction_wheel;
+
+typedef struct
+{
+    Eigen::Vector3f measurement;
+    Eigen::Vector3f position;
+} sim_accelerometer;
+
+typedef struct
+{
+    Eigen::Vector3f measurement;
+    Eigen::Vector3f position;
+} sim_gyroscope;
+
+typedef struct 
+{
+    Satellite                   satellite;
+    sim_accelerometer           accelerometer;
+    sim_gyroscope               gyroscope;
+    vector<sim_reaction_wheel>  reaction_wheels;
+} sim_config;
+
 /**
  * @class Simulator
  *
@@ -51,14 +79,14 @@ public:
     * singleton to instantiate all of the sensors and actuators present in the
     * simulation based on the properties of the provided YAML configuration file.
     */
-    Simulator(const std::string &configFile);
+    Simulator();
 
     /**
-    * @name begin
+    * @name init
     * 
-    * @details Initializes the simulation by triggering the controller loop.
+    * @details Initializes the simulation with starting values.
     */
-    void begin();
+    void init(sim_config initial_values);
 
     /**
     * @name update_simulation
@@ -82,23 +110,15 @@ public:
     */
     timestamp set_adcs_sleep(timestamp duration);
 
+    timestamp reaction_wheel_update_desired_state(Eigen::Vector3f wheel_position, actuator_state new_target);
+
+    actuator_state reaction_wheel_get_current_state(Eigen::Vector3f position);
+
+    timestamp gyroscope_take_measurement(Eigen::Vector3f *measurement);
+
+    timestamp accelerometer_take_measurement(Eigen::Vector3f *measurement);
+
 private:
-    /**
-    * @name create_actuator
-    * @param name [string], the name of the actuator to be created
-    *
-    * @details creates an actuator object
-    */  
-    void create_actuator(const std::string &name);
-
-    /**
-    * @name create_sensor
-    * @param name [string], the name of the sensor to be created
-    *
-    * @details creates a sensor object
-    */
-    void create_sensor(const std::string &name);
-
     /**
     * @name simulate
     * @param t [timestamp], the amount of time to be simulated
@@ -116,14 +136,14 @@ private:
     */
     void timestep();
 
-    /**
-    * @name update_adcs_devices
-    *
-    * @details Iterates through all the known sensors and actuators and updates
-    * their values according to the simulation to be used in the control
-    * code.
-    */
-    void update_adcs_devices();
+    // /**
+    // * @name update_adcs_devices
+    // *
+    // * @details Iterates through all the known sensors and actuators and updates
+    // * their values according to the simulation to be used in the control
+    // * code.
+    // */
+    // void update_adcs_devices();
 
 private:
     /**
@@ -157,7 +177,7 @@ private:
     * @details An instance of a satellite used to start rotational positions,
     * velocities, and accelerations.
     */
-    std::shared_ptr<Satellite> satellite = std::make_shared<Satellite>();
+    // std::shared_ptr<Satellite> satellite = std::make_shared<Satellite>();
 
     /**
     * @name determine_time_passed
@@ -169,13 +189,15 @@ private:
     */
     timestamp determine_time_passed();
 
+    sim_config system_vals; 
+
     /**
     * @details unordered map of sensors that relates strings to names
     */
-    std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
+    // std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
 
     /**
     * @details unordered map of actuators that relates strings to names
     */
-    std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
+    // std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 };

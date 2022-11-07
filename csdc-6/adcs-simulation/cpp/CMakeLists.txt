@@ -21,6 +21,8 @@ add_executable(simulator
     interface/src/ADCS_device.cpp
     interface/src/ADCS_timer.cpp
     interface/src/Reaction_wheel.cpp
+    interface/src/Gyroscope.cpp
+    interface/src/Accelerometer.cpp
     interface/src/Sensor.cpp
     ../../adcs-control-code/src/PointingModeController.cpp
   )
@@ -34,3 +36,5 @@ include_directories(
     "${CMAKE_SOURCE_DIR}/../../adcs-control-code/interface/inc"
     )
 target_compile_features(simulator PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+set_target_properties(simulator PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)

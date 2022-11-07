@@ -22,8 +22,8 @@
 #include <vector>
 #include <functional>
 
-#include "Simulator.hpp"
 #include "sim_interface.hpp"
+#include "ConfigurationSingleton.hpp"
 
 // this is considered to be very bad practice
 // using namespace std;
@@ -103,14 +103,6 @@ class UI
 
     private:
         /**
-         * @typedef UI::*commandFunc
-         * 
-         * @details function pointer for internal commands. Used to map strings of commands to
-         *          their function implementation.
-        **/
-        using commandFunc = std::function<void(std::vector<std::string>)>;
-
-        /**
          * @name    process_input_buffer
          * 
          * @details splits the user input buffer into word-arguments.
@@ -146,6 +138,12 @@ class UI
         **/
         void run_simulation(vector<string> args);
 
+        void create_sensor(const std::string &name, Simulator *sim, std::unordered_map<std::string, std::shared_ptr<Sensor>> *sensors);
+
+        void create_actuator(const std::string &name, Simulator *sim, std::unordered_map<std::string, std::shared_ptr<Actuator>> *actuators);
+
+        sim_config get_sim_config(Configuration &config);
+
         /**
          * @name    resume_simulation
          * 
@@ -168,6 +166,14 @@ class UI
          *              args[0] command "exit"
         **/
         void quit(vector<string> args);
+
+        /**
+         * @typedef UI::*commandFunc
+         * 
+         * @details function pointer for internal commands. Used to map strings of commands to
+         *          their function implementation.
+        **/
+        using commandFunc = std::function<void(std::vector<std::string>)>;
 
         /* Map linking each command to it's function implementation. Used by "run_command" */
         unordered_map<string, commandFunc> allowed_commands;

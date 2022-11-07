@@ -1,4 +1,4 @@
-/** 
+/**
  * @file main.cpp
  *
  * @details main file to control the adcs simulator

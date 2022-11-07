@@ -1,4 +1,4 @@
-/** 
+/**
  * @file Simulator.cpp
  *
  * @details class file that would configure and propagate the simulation
@@ -18,7 +18,13 @@
 #include "PointingModeController.hpp"
 #include "Simulator.hpp"
 
-Simulator::Simulator() {
+Simulator::Simulator(Messenger *messenger)
+{
+    if (nullptr != messenger)
+    {
+        this->messenger = messenger;
+    }
+
     this->simulation_time = 0;
     this->last_called = -1;
 }
@@ -36,7 +42,7 @@ timestamp Simulator::update_simulation() {
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
     timestamp time_passed = this->determine_time_passed();
-    this->simulate(time_passed + duration);    
+    this->simulate(time_passed + duration);
 }
 
 timestamp Simulator::determine_time_passed() {
@@ -71,7 +77,7 @@ void Simulator::timestep() {
     }
 
     Eigen::Matrix3f inertia_b_inverse = system_vals.satellite.inertia_b.inverse();
-    system_vals.satellite.alpha_b = -inertia_b_inverse * 
+    system_vals.satellite.alpha_b = -inertia_b_inverse *
         (system_vals.satellite.omega_b.cross(system_vals.satellite.inertia_b * system_vals.satellite.omega_b));
 
     system_vals.satellite.omega_b += system_vals.satellite.alpha_b * (float) timestep_length;

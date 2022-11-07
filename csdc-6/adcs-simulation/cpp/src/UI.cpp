@@ -1,4 +1,4 @@
-/** 
+/**
  * @file    UI.cpp
  *
  * @details This file implements the UI class as defined in UI.hpp
@@ -32,7 +32,7 @@ UI::UI()
 void UI::start_ui_loop()
 {
     this->terminal_active = true;
-    cout << prompt_char;
+    messenger.prompt_char();
 
     /*
      * For now terminal_active remains true. Future commands may change the flag to false to break
@@ -41,22 +41,22 @@ void UI::start_ui_loop()
     while (terminal_active)
     {
         // get user input
-        string buffer;
-        getline(cin, buffer);
+        std::string buffer;
+        std::getline(std::cin, buffer);
 
-        vector<string> args = process_input_buffer(buffer);
+        std::vector<std::string> args = process_input_buffer(buffer);
         run_command(args);
 
-        cout << prompt_char;
+        messenger.prompt_char();
     }
     return;
 }
 
-vector<string> UI::process_input_buffer(string buffer)
+std::vector<std::string> UI::process_input_buffer(std::string buffer)
 {
-    stringstream   buffer_stream(buffer);
-    string         word;
-    vector<string> args;
+    std::stringstream           buffer_stream(buffer);
+    std::string                 word;
+    std::vector<std::string>    args;
 
     while (buffer_stream >> word)
     {
@@ -66,7 +66,7 @@ vector<string> UI::process_input_buffer(string buffer)
     return args;
 }
 
-void UI::run_command(vector<string> args)
+void UI::run_command(std::vector<std::string> args)
 {
     commandFunc command;
     bool valid_function = true;
@@ -77,7 +77,7 @@ void UI::run_command(vector<string> args)
     }
     catch(const std::out_of_range& e)
     {
-        this->send_warning("Command not found.");
+        messenger.send_warning("Command not found.");
         valid_function = false;
     }
 
@@ -90,20 +90,20 @@ void UI::run_command(vector<string> args)
         }
         catch(invalid_ui_args e)
         {
-            this->send_warning(e.what());
+            messenger.send_warning(e.what());
         }
         catch(...)
         {
             // This block catches all exceptions, and prints the error message. The user can decide
             // if it requires restarting the simulation, or exiting.
-            exception_ptr e = current_exception();
+            std::exception_ptr e = std::current_exception();
             try
             {
-                rethrow_exception(e);
+                std::rethrow_exception(e);
             }
-            catch(const exception& e)
+            catch(const std::exception& e)
             {
-                cerr << e.what() << endl;
+                std::cerr << e.what() << std::endl;
             }
         }
     }
@@ -111,14 +111,14 @@ void UI::run_command(vector<string> args)
     return;
 }
 
-void UI::run_simulation(vector<string> args)
+void UI::run_simulation(std::vector<std::string> args)
 {
     if (num_run_simulation_args != args.size())
     {
         throw invalid_ui_args("Invalid number of arguments.");
     }
 
-    for (string arg : args)
+    for (std::string arg : args)
     {
         if (arg.empty())
         {
@@ -126,11 +126,11 @@ void UI::run_simulation(vector<string> args)
         }
     }
 
-    string config_yaml = args.at(1);
+    std::string config_yaml = args.at(1);
     // string exit_conditions_yaml = args.at(2);
 
     /* Empty simulator */
-    Simulator simulator;
+    Simulator simulator(&messenger);
 
     /* Initialize Interface Objects */
     std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
@@ -138,7 +138,7 @@ void UI::run_simulation(vector<string> args)
 
     Configuration &config = Configuration::GetInstance();
 
-    if (!config.Load(config_yaml)) 
+    if (!config.Load(config_yaml))
     {
         // std::cout <<"Configuration Failed to load"<< std::endl;
     }
@@ -146,7 +146,7 @@ void UI::run_simulation(vector<string> args)
     /* Get Simulation config info */
     simulator.init(this->get_sim_config(config));
 
-    for (const auto &sensor : config.GetSensorConfigs()) 
+    for (const auto &sensor : config.GetSensorConfigs())
     {
         //first is string, second is data (from map)
         this->create_sensor(sensor.first, &simulator, &sensors);
@@ -162,7 +162,7 @@ void UI::run_simulation(vector<string> args)
 
     controller.begin({0}); // Empty desired attitude for now
 
-    /* 
+    /*
      * We can check for the file path existing here, but it is a race condition. The simulator
      * should check it when it opens it and will return an exception, we can have a simple check
      * for an "invalid file path" exception when instantiating the simulator, which is probably a
@@ -172,13 +172,13 @@ void UI::run_simulation(vector<string> args)
     // add try catch for above problem?
 
     // string final_state_yaml_path;
-   
+
     /*
-     * In init, simulator should create a Control code class that has all of the sensors and 
+     * In init, simulator should create a Control code class that has all of the sensors and
      * actuators. Then, this function should call simulator with a function like:
      */
 
-    /* 
+    /*
      * Again when passing the exit_conditions_yaml there's a possibility that it is an invalid
      * path. Same problem arises with it being a race condition though.
      */
@@ -196,7 +196,7 @@ void UI::run_simulation(vector<string> args)
 }
 
 void UI::create_sensor(const std::string &name, Simulator *sim,
-                       std::unordered_map<std::string, std::shared_ptr<Sensor>> *sensors) 
+                       std::unordered_map<std::string, std::shared_ptr<Sensor>> *sensors)
 {
     if (name.empty()) {
         std::cout <<"Device name must be populated. Got " << name << std::endl;
@@ -237,7 +237,7 @@ sim_config UI::get_sim_config(Configuration &config)
     initial_values.satellite.theta_b   = config.GetSatellitePosition();
     initial_values.satellite.inertia_b = config.GetSatelliteMoment();
 
-    for (const auto &sensor : config.GetSensorConfigs()) 
+    for (const auto &sensor : config.GetSensorConfigs())
     {
         const auto & sensor_config = config.GetSensorConfig(sensor.first);
         switch(sensor_config->type)
@@ -272,14 +272,14 @@ sim_config UI::get_sim_config(Configuration &config)
     return initial_values;
 }
 
-void UI::resume_simulation(vector<string> args)
+void UI::resume_simulation(std::vector<std::string> args)
 {
     if (num_resume_simulation_args != args.size())
     {
         throw invalid_ui_args("Invalid number of arguments.");
     }
 
-    for (string arg : args)
+    for (std::string arg : args)
     {
         if (arg.empty())
         {
@@ -288,7 +288,7 @@ void UI::resume_simulation(vector<string> args)
     }
 
     /* Use previous final state yaml as new initial state */
-    vector<string> new_args = {
+    std::vector<std::string> new_args = {
         "unused",
         this->previous_end_state_yaml,
         args.at(1)
@@ -296,53 +296,13 @@ void UI::resume_simulation(vector<string> args)
     this->run_simulation(new_args);
 }
 
-void UI::quit(vector<string> args)
+void UI::quit(std::vector<std::string> args)
 {
     if (num_exit_args != args.size())
     {
         throw invalid_ui_args("Invalid number of arguments.");
     }
-    
-    send_message("exiting." + text_colour.reset);
+
+    messenger.send_message("exiting.");
     exit(0);
-}
-
-void UI::send_message(string msg)
-{
-    if (msg.empty())
-    {
-        // This may need to be a different exception.
-        throw invalid_ui_args("Message to send to UI is empty.");
-    }
-
-    // This can be formatted nicely later.
-    cout << text_colour.green << msg << text_colour.reset << endl;
-    return;
-}
-
-
-void UI::send_warning(string msg)
-{
-    if (msg.empty())
-    {
-        // This may need to be a different exception.
-        throw invalid_ui_args("Warning to send to UI is empty.");
-    }
-
-    // This can be formatted nicely later.
-    cout << text_colour.yellow << "WARNING: " << msg << text_colour.reset << endl;
-    return;
-}
-
-void UI::update_simulation_state(Satellite state, timestamp time)
-{
-    // Do we need any checks on state?
-
-    // for now just text dump - next step is graphs for each.
-    cout << text_colour.reset << time.pretty_string() << "\t";
-    cout << state.theta_b.x() << ", " << state.theta_b.y() << ", " << state.theta_b.z() << ";\t";
-    cout << state.omega_b.x() << ", " << state.omega_b.y() << ", " << state.omega_b.z() << ";\t";
-    cout << state.alpha_b.x() << ", " << state.alpha_b.y() << ", " << state.alpha_b.z() << endl;
-
-    return;
 }

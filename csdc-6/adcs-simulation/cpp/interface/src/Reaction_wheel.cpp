@@ -58,7 +58,7 @@ void Reaction_wheel::set_target_state(actuator_state new_target)
     return;
 }
 
-actuator_state Reaction_wheel::get_current_state() 
+actuator_state Reaction_wheel::get_current_state()
 {
     this->sim->reaction_wheel_get_current_state(this->position);
     return this->current_state;

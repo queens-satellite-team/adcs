@@ -1,6 +1,6 @@
 # file: simulator.yaml
 #
-# details: input file that outlines the satellite configuration. the simulator 
+# details: input file that outlines the satellite configuration. the simulator
 # configuration adheres to the following format:
 #
 # author: Lily de Loe
@@ -74,7 +74,7 @@ Sensors:
     PollingTime: 10
     Position: [1,2,3]
   Accel1:
-    type: Accelerometer    
+    type: Accelerometer
     PollingTime: 10
     Position: [1,2,3]
 

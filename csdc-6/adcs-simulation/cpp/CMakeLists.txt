@@ -17,6 +17,7 @@ add_executable(simulator
     src/SensorActuatorFactory.cpp
     src/ConfigurationSingleton.cpp
     src/UI.cpp
+    src/Messenger.cpp
     interface/src/Actuator.cpp
     interface/src/ADCS_device.cpp
     interface/src/ADCS_timer.cpp

@@ -15,12 +15,10 @@
 
 #include <stdint.h>
 #include <string>
-#include <vector>
 #include <Eigen/Dense>
 // #include <iomanip>
 
 #pragma once
-using namespace std;
 
 /******************************************* DEFINITIONS *******************************************/
 
@@ -170,7 +168,7 @@ class timestamp
             bool ret = false;
 
             if ( (l.second      < r.second)      ||
-               ( (l.millisecond < r.millisecond) && 
+               ( (l.millisecond < r.millisecond) &&
                  (l.second      <= r.second)     ))
             {
                 ret = true;
@@ -210,7 +208,7 @@ class timestamp
             return !(l==r);
         }
 
-        string pretty_string()
+        std::string pretty_string()
         {
             uint32_t out_sec = (second + millisecond/1000);
             uint32_t out_mil = millisecond % 1000;

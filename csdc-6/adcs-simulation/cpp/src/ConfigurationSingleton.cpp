@@ -1,4 +1,4 @@
-/** 
+/**
  * @file ConfigurationSingleton.cpp
  *
  * @details singleton class used to configure the user's sensor/actuator inputs
@@ -18,7 +18,7 @@ GyroConfig::GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyrosc
 }
 
 AccelerometerConfig::AccelerometerConfig(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer, node) {
-  
+
 }
 
 ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfig(ActuatorType::ReactionWheel) {
@@ -36,9 +36,9 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     maxAngAccel = node["MaxAngAccel"].as<double>();
     minAngVel = node["MinAngVel"].as<double>();
     minAngAccel = node["MinAngAccel"].as<double>();
-    
+
     pollingTime = node["PollingTime"].as<double>();
-    
+
     i = 0;
     for (const auto &n : node["Position"]) {
         position(i++) = n.as<double>();
@@ -75,7 +75,7 @@ bool Configuration::Load(const std::string &configFile) {
         i = 0;
         for (const auto &n : satellite["Velocity"]) {
             satelliteVelocity(i++) = n.as<double>();
-        }        
+        }
 
     } catch (YAML::Exception &e){
         std::cout << "YAML ERROR ON SATELLITE STATE: " << e.what() <<std::endl;

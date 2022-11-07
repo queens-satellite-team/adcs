@@ -1,4 +1,4 @@
-/** 
+/**
  * @file Simulator.cpp
  *
  * @details class file to create the sensor and actuator objects

@@ -12,11 +12,11 @@
 #   Position: [3-dimensional vector]
 #   Velcoity: [3-dimensional vector]
 Satellite:
-  Moment: [[1,2,3],
-           [4,5,6],
-           [7,8,9]]
+  Moment: [[1,0,0],
+           [0,1,0],
+           [0,0,1]]
   Position: [1,2,3]
-  Velocity: [1.2,3]
+  Velocity: [1,2,3]
 
 # Actuators:
 #   Name: [name of actuator]
@@ -31,9 +31,9 @@ Satellite:
 Actuators:
   ReactionWheel1:
     type: ReactionWheel
-    Moment: [[1,2,3],
-             [4,5,6],
-             [7,8,9]]
+    Moment: [[1,0,0],
+             [0,1,0],
+             [0,0,1]]
     MaxAngVel: 88
     MaxAngAccel: 8
     MinAngVel: 0

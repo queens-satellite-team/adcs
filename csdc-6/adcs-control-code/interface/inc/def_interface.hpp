@@ -166,7 +166,7 @@ class timestamp
         friend bool operator<(const timestamp& l, const timestamp& r)
         {
             bool ret = false;
-
+            
             if ( (l.second      < r.second)      ||
                ( (l.millisecond < r.millisecond) &&
                  (l.second      <= r.second)     ))

@@ -232,7 +232,7 @@ sim_config UI::get_sim_config(Configuration &config)
 {
     sim_config initial_values;
     Satellite temp;
-    initial_values.satellite.alpha_b.Zero();
+    initial_values.satellite.alpha_b = Eigen::Vector3f::Zero();
     initial_values.satellite.omega_b   = config.GetSatelliteVelocity();
     initial_values.satellite.theta_b   = config.GetSatellitePosition();
     initial_values.satellite.inertia_b = config.GetSatelliteMoment();
@@ -244,11 +244,11 @@ sim_config UI::get_sim_config(Configuration &config)
         {
             case SensorType::Accelerometer:
                 initial_values.accelerometer.position = sensor_config->position;
-                initial_values.accelerometer.measurement.Zero();
+                initial_values.accelerometer.measurement = Eigen::Vector3f::Zero();
                 break;
             case SensorType::Gyroscope:
                 initial_values.gyroscope.position = sensor_config->position;
-                initial_values.gyroscope.measurement.Zero();
+                initial_values.gyroscope.measurement = Eigen::Vector3f::Zero();
                 break;
         }
     }
@@ -261,8 +261,8 @@ sim_config UI::get_sim_config(Configuration &config)
             {
                 const ReactionWheelConfig* reaction_config = dynamic_cast<const ReactionWheelConfig*>(actuator_config.get());
                 sim_reaction_wheel initial_reac_values;
-                initial_reac_values.alpha.Zero();
-                initial_reac_values.omega.Zero(); // TODO: this should actually be an initial value?
+                initial_reac_values.alpha = Eigen::Vector3f::Ones();
+                initial_reac_values.omega = Eigen::Vector3f::Zero(); // TODO: this should actually be an initial value?
                 initial_reac_values.inertia  = reaction_config->momentOfInertia;
                 initial_reac_values.position = reaction_config->position;
                 initial_values.reaction_wheels.push_back(initial_reac_values);

@@ -21,7 +21,7 @@ measurement Accelerometer::take_measurement()
     }
 
     Eigen::Vector3f measurement;
-    measurement.Zero();
+    measurement = Eigen::Vector3f::Zero();
 
     timestamp current_time = this->sim->accelerometer_take_measurement(&measurement);
     this->update_poll_time(current_time);

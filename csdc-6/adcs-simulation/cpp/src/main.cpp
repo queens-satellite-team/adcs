@@ -14,7 +14,7 @@
 
 #include "UI.hpp"
 
-int main(int argc, char **argv) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
     UI ui;
     ui.start_ui_loop();
     return 0;

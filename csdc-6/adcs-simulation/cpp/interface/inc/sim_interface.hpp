@@ -125,7 +125,11 @@ class Sensor : public ADCS_device {
          *
          * @returns the required measurement if succesful.
         **/
-        virtual measurement take_measurement(){} // MAY need to create a default implementation
+        virtual measurement take_measurement() // MAY need to create a default implementation
+        {
+            measurement empty;
+            return empty;
+        } 
 
         /**
          * @name    set_current_vals
@@ -199,7 +203,11 @@ class Actuator : public ADCS_device
          *
          * @returns the current state of the actuator
         **/
-        virtual actuator_state get_current_state(){} // May need to add a default implementation
+        virtual actuator_state get_current_state() // May need to add a default implementation
+        {
+            actuator_state empty;
+            return empty;
+        }
 
         /**
          * @name    get_target_state
@@ -220,7 +228,11 @@ class Actuator : public ADCS_device
          * @param   target_state the new state the control code would like to be in.
          *
         **/
-        virtual void set_target_state(actuator_state target_state){} // MAY NEED TO REMOVE THIS OR CHANGE IT
+        virtual void set_target_state(actuator_state target_state)
+        {
+            this->target_state = target_state;
+            return;
+        } // MAY NEED TO REMOVE THIS OR CHANGE IT
 
         /**
          * @name    get_position

@@ -20,7 +20,7 @@ Sensor::Sensor(timestamp polling_time, Simulator* sim, std::vector<Eigen::Vector
         /* THROW EXCEPTION**/
     }
 
-    for (int i = 0; i < num_sensors; i++)
+    for (uint32_t i = 0; i < num_sensors; i++)
     {
         if (num_axes != positions.at(i).size())
         {

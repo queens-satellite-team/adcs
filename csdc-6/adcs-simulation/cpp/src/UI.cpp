@@ -88,7 +88,7 @@ void UI::run_command(std::vector<std::string> args)
             // (this->*command)(args); // code in modern C++
             command(args);
         }
-        catch(invalid_ui_args e)
+        catch(invalid_ui_args& e)
         {
             messenger.send_warning(e.what());
         }

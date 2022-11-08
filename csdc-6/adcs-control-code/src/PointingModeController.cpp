@@ -22,6 +22,8 @@ PointingModeController::PointingModeController(
 }
 
 void PointingModeController::begin(std::vector<float> desired_attitude) {
+    (void) desired_attitude;    /*  Silences "unsued parameter" compiler warning. This function will be
+                                    updated later anyway so for now this is fine. */
     //TODO: convert to while and add exit condition
     for (int i = 0; i < 10; i++) {
         this->take_updated_measurements();

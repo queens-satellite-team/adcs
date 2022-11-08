@@ -179,12 +179,12 @@ class UI
 class invalid_ui_args : public std::exception
 {
     public:
-        invalid_ui_args(char* msg) : message(msg) {}
-        char* what()
+        invalid_ui_args(const char* msg) : message(msg) {}
+        const char* what()
         {
             return message;
         }
 
     private:
-        char* message;
+        const char* message;
 };

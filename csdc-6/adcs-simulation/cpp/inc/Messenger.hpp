@@ -104,12 +104,12 @@ class Messenger
 class invalid_message : public std::exception
 {
     public:
-        invalid_message(char* msg) : message(msg) {}
-        char* what()
+        invalid_message(const char* msg) : message(msg) {}
+        const char* what()
         {
             return message;
         }
 
     private:
-        char* message;
+        const char* message;
 };

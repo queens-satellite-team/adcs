@@ -41,11 +41,15 @@ void Simulator::init(sim_config initial_values)
 timestamp Simulator::update_simulation() {
     timestamp time_passed = this->determine_time_passed();
     this->simulate(time_passed);
+
+    return this->simulation_time;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
     timestamp time_passed = this->determine_time_passed();
     this->simulate(time_passed + duration);
+
+    return this->simulation_time;
 }
 
 timestamp Simulator::determine_time_passed() {

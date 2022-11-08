@@ -110,24 +110,24 @@ struct ReactionWheelConfig : public ActuatorConfig {
  *
  * @details class used in configuring the satellite based on its input YAML file
  *
- */
+**/
 class Configuration {
 public:
     /**
     * @name Load
     * @param fileName [string], the input YAML file's name
     * @details loads the input YAML file
-    */
+   **/
     bool Load(const std::string &fileName);
 
     /**
     * @details copy constructor is explicitly deleted to prevent C++ from auto-generating one
-    */
+   **/
     Configuration(const Configuration &) = delete;
 
     /**
     * @details equals operator is explicitly deleted to prevent C++ from auto-generating one
-    */
+   **/
     void operator=(Configuration &) = delete;
 
     /**
@@ -135,7 +135,7 @@ public:
     * @return instance of the satellite configuration
     *
     * @details getter for an instance of the satellite's configuration
-    */
+   **/
     inline static Configuration &GetInstance() {
         static Configuration instance;
         return instance;
@@ -147,7 +147,7 @@ public:
     * @return the sensor config
     *
     * @details getter for shared pointer to the sensor config
-    */
+   **/
     inline const std::shared_ptr<SensorConfig> &GetSensorConfig(const std::string &name) {
         return sensorConfigs[name];
     };
@@ -158,7 +158,7 @@ public:
     * @return the actuator config
     *
     * @details getter for shared pointer to the actuator config
-    */
+   **/
     inline const std::shared_ptr<ActuatorConfig> &GetActuatorConfig(const std::string &name) {
         return actuatorConfigs[name];
     };
@@ -168,7 +168,7 @@ public:
     * @return the sensor configs
     *
     * @details getter for the map of sensor configs
-    */
+   **/
     inline const std::unordered_map<std::string, std::shared_ptr<SensorConfig>> &GetSensorConfigs() {
         return sensorConfigs;
     };
@@ -178,7 +178,7 @@ public:
     * @return the actuator configs
     *
     * @details getter for the map of actuator configs
-    */
+   **/
     inline const std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> &GetActuatorConfigs() {
         return actuatorConfigs;
     };
@@ -188,7 +188,7 @@ public:
     * @return the Inertia matrix for the satellite
     *
     * @details getter for shared pointer to the satellite's moment of inertia
-    */
+   **/
     inline const Eigen::Matrix3f &GetSatelliteMoment() {
         return satelliteMomentOfInertia;
     };
@@ -198,7 +198,7 @@ public:
     * @return the 3-dimensional vector representing satellite position
     *
     * @details getter for shared pointer to the satellite's position
-    */
+   **/
     inline const Eigen::Vector3f &GetSatellitePosition() {
         return satellitePosition;
     };
@@ -208,7 +208,7 @@ public:
     * @return the 3-dimensional vector representing satellite velocity
     *
     * @details getter for shared pointer to the satellite's velocity
-    */
+   **/
     inline const Eigen::Vector3f &GetSatelliteVelocity() {
         return satelliteVelocity;
     };
@@ -218,37 +218,37 @@ private:
     /**
     * @name Configuration
     * @details hidden default constructor for the satellite configuration
-    */
+   **/
     Configuration(){};
 
 private:
     /**
     * @details YAML node for the top-most heading in the YAML input file
-    */
+   **/
     YAML::Node top;
 
     /**
     * @details unordered map of sensor configs that relates strings to names
-    */
+   **/
     std::unordered_map<std::string, std::shared_ptr<SensorConfig>> sensorConfigs;
 
     /**
     * @details unordered map of actuator configs that relates strings to names
-    */
+   **/
     std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> actuatorConfigs;
 
     /**
     * @details 3-dimensional matrix storing the satellite's moment of inertia
-    */
+   **/
     Eigen::Matrix3f satelliteMomentOfInertia;
 
     /**
     * @details 3-dimensional vector storing the satellite's position
-    */
+   **/
     Eigen::Vector3f satellitePosition;
 
     /**
     * @details 3-dimensional matrix storing the satellite's velocity
-    */
+   **/
     Eigen::Vector3f satelliteVelocity;
 };

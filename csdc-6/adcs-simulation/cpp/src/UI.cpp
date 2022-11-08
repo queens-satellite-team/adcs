@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 #include <any>
-#include <iostream>
+#include <iostream> 
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -34,10 +34,10 @@ void UI::start_ui_loop()
     this->terminal_active = true;
     messenger.prompt_char();
 
-    /*
+    /**
      * For now terminal_active remains true. Future commands may change the flag to false to break
      * from the loop gracefully.
-     */
+    **/
     while (terminal_active)
     {
         // get user input
@@ -129,10 +129,10 @@ void UI::run_simulation(std::vector<std::string> args)
     std::string config_yaml = args.at(1);
     // string exit_conditions_yaml = args.at(2);
 
-    /* Empty simulator */
+    /* Empty simulator**/
     Simulator simulator(&messenger);
 
-    /* Initialize Interface Objects */
+    /* Initialize Interface Objects**/
     std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 
@@ -143,7 +143,7 @@ void UI::run_simulation(std::vector<std::string> args)
         // std::cout <<"Configuration Failed to load"<< std::endl;
     }
 
-    /* Get Simulation config info */
+    /* Get Simulation config info**/
     simulator.init(this->get_sim_config(config));
 
     for (const auto &sensor : config.GetSensorConfigs())
@@ -157,38 +157,20 @@ void UI::run_simulation(std::vector<std::string> args)
         this->create_actuator(actuator.first, &simulator, &actuators);
     }
 
-    /* Start control code */
+    /* Start control code**/
     PointingModeController controller(sensors, actuators);
 
     controller.begin({0}); // Empty desired attitude for now
 
-    /*
-     * We can check for the file path existing here, but it is a race condition. The simulator
-     * should check it when it opens it and will return an exception, we can have a simple check
-     * for an "invalid file path" exception when instantiating the simulator, which is probably a
-     * better way of doing it.
-     */
-
-    // add try catch for above problem?
-
+    /* This code should not be deleted - it will be necessary when the final_state_yaml is implemented.**/
     // string final_state_yaml_path;
-
-    /*
-     * In init, simulator should create a Control code class that has all of the sensors and
-     * actuators. Then, this function should call simulator with a function like:
-     */
-
-    /*
-     * Again when passing the exit_conditions_yaml there's a possibility that it is an invalid
-     * path. Same problem arises with it being a race condition though.
-     */
 
     // if (!final_state_yaml_path.empty())
     // {
     //     /* TODO this could also check if the yaml is a valid path, but race condition again. Still,
     //      * in this case it is probably worth checking because there's no point in saving it as a
     //      * variable if it's invalid to start with.
-    //      */
+    //     **/
     //     this->previous_end_state_yaml = final_state_yaml_path;
     // }
 
@@ -287,7 +269,7 @@ void UI::resume_simulation(std::vector<std::string> args)
         }
     }
 
-    /* Use previous final state yaml as new initial state */
+    /* Use previous final state yaml as new initial state**/
     std::vector<std::string> new_args = {
         "unused",
         this->previous_end_state_yaml,

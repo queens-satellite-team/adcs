@@ -1,18 +1,12 @@
 /**
  * @file    Messenger.cpp
  *
- * @details This file describes the UI implementation. For now this is a simple command line UI
- *          with three commands:
- *              - "start_sim" starts a new simulation run with an initial state and desired output
- *                 configuration files
- *              - "restart_sim" resumes where the previous run left off but, but with a new desired
- *                 output configuration file
- *              - "exit" closes the terminal and ends the session
+ * @details This file implements the Messenger class as defined in Messenger.hpp.
  *
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-05
+ * 2022-11-07
  *
 **/
 

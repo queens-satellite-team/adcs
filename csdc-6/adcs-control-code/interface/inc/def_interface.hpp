@@ -9,20 +9,20 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-10-11
+ * 2022-11-07
  *
 **/
 
 #include <stdint.h>
 #include <string>
 #include <Eigen/Dense>
-// #include <iomanip>
+#include <iomanip>
 
 #pragma once
 
 /******************************************* DEFINITIONS *******************************************/
 
-/* Compiler flags */
+/* Compiler flags**/
 
 /* These flags define what version of the interface to use.
  *
@@ -30,12 +30,12 @@
  *                  control code, all other interfaces must at least follow this convention.
  * SIM_INTERFACE -  interface used by the simulation.
  * STM_INTERFACE -  interface used by the STM32 driver.
- */
+**/
 #define DEF_INTERFACE 0
 #define SIM_INTERFACE 1
 #define STM_INTERFACE 2
 
-/* Flag to indicate which interface version to use */
+/* Flag to indicate which interface version to use**/
 #define INTERFACE SIM_INTERFACE
 
 /********************************************* TYPES *********************************************/
@@ -44,37 +44,37 @@
  * @param milliseconds  number of milliseconds of the timestamp
  * @param seconds       number of seconds of the timestamp. This is rolled-over from milliseconds.
  *
- */
+**/
 class timestamp
 {
     public:
-        /*
+        /**
          * @name timestamp constructor
          *
          * @details sets initial values of millisecond and second fields.
-         */
+        **/
         timestamp(uint32_t milliseconds = 0, uint32_t seconds = 0) : millisecond(milliseconds), second(seconds) {}
 
         explicit timestamp(float real_person_time) : millisecond((float)(real_person_time - ((int)real_person_time)) * 1000.0), second(real_person_time){}; // check this conversion later its a bit hacky
-        /*
+        /**
          * @name milliseconds
          *
          * @details millisecond field accessor
          *
          * @returns millisecond field
-         */
+        **/
         uint32_t milliseconds() {return this->millisecond;}
 
-        /*
+        /**
          * @name seconds
          *
          * @details second field accessor
          *
          * @returns second field
-         */
+        **/
         uint32_t seconds() {return this->second;}
 
-        /*
+        /**
          * @name operator+ overload
          *
          * @details adds two timestamps. Overflow of milliseconds increments seconds. Overflow of
@@ -82,7 +82,7 @@ class timestamp
          *          second overflow.
          *
          * @returns result of addition.
-         */
+        **/
         timestamp operator+(const timestamp& b)
         {
             timestamp result;
@@ -111,14 +111,14 @@ class timestamp
             return result;
         }
 
-        /*
+        /**
          * @name operator- overload
          *
          * @details subtracts two timestamps. Underflow is explicitly allowed, millisecond
          *          underflow decrements the seconds field.
          *
          * @returns result of addition.
-         */
+        **/
         timestamp operator-(const timestamp& b)
         {
             timestamp result;
@@ -149,7 +149,7 @@ class timestamp
 
         explicit operator float() const { return this->millisecond / 1000.0 + (float) this->second; }
 
-        /*
+        /**
          * @name operator+ overload
          *
          * @details adds two timestamps. Overflow of milliseconds increments seconds. Overflow of
@@ -157,12 +157,21 @@ class timestamp
          *          second overflow.
          *
          * @returns result of addition.
-         */
+        **/
         timestamp operator+=(const timestamp& b)
         {
             return *this + b;
         }
 
+        /**
+         * @name operator< overload
+         *
+         * @details Compares two timestamps.
+         *
+         * @returns true if the left side is smaller than the right side. If seconds are equal, it
+         *               checks milliseconds.
+         *          false if the left side is not smaller than the right.
+        **/
         friend bool operator<(const timestamp& l, const timestamp& r)
         {
             bool ret = false;
@@ -177,21 +186,54 @@ class timestamp
             return ret;
         }
 
+        /**
+         * @name operator> overload
+         *
+         * @details compares two timestamps.
+         *
+         * @returns true if the right side is smaller than the left side. If seconds are equal, it
+         *               checks milliseconds.
+         *          false if the right side is not smaller than the left.
+        **/
         friend bool operator>(const timestamp& l, const timestamp& r)
         {
             return r < l;
         }
 
+        /**
+         * @name operator<= overload
+         *
+         * @details Compares two timestamps.
+         *
+         * @returns true if the left side is smaller or equal to the right side. 
+         *          false otherwise.
+        **/
         friend bool operator<=(const timestamp& l, const timestamp& r)
         {
             return !(l > r);
         }
 
+        /**
+         * @name operator>= overload
+         *
+         * @details Compares two timestamps.
+         *
+         * @returns true if the right side is smaller or equal to the left side. 
+         *          false otherwise.
+        **/
         friend bool operator>=(const timestamp& l, const timestamp& r)
         {
             return !(l < r);
         }
 
+        /**
+         * @name operator== overload
+         *
+         * @details Compares two timestamps.
+         *
+         * @returns true if the both sides are equal.
+         *          false otherwise.
+        **/
         friend bool operator==(const timestamp& l, const timestamp& r)
         {
             bool ret = false;
@@ -203,11 +245,27 @@ class timestamp
             return ret;
         }
 
+        /**
+         * @name operator== overload
+         *
+         * @details Compares two timestamps.
+         *
+         * @returns true if the both sides are not equal.
+         *          false otherwise.
+        **/
         friend bool operator!=(const timestamp& l, const timestamp& r)
         {
             return !(l==r);
         }
 
+        /**
+         * @name    pretty_string
+         *
+         * @details converts the timestamp to an easily readable string.
+         *
+         * @returns a string of the format:
+         *          [mm:ss:msms]
+        **/
         std::string pretty_string()
         {
             uint32_t out_sec = (second + millisecond/1000);
@@ -215,42 +273,47 @@ class timestamp
             uint32_t out_min = out_sec / 60;
             out_sec %= 60;
 
-            // stringstream formatter;
-            // formatter << "[" << out_min << ":" << setw(10) << setfill('0') << out_sec << ":";
-            // formatter << setw(10) << setfill('0') << out_mil << "]";
+            std::stringstream formatter;
+            formatter << "[" << out_min << ":" << std::setw(2) << std::setfill('0') << out_sec << ":";
+            formatter << std::setw(4) << std::setfill('0') << out_mil << "]";
 
-            return "TODO";//formatter.str();
+            return formatter.str();
         }
 
-        /*
-         * CAST FROM UINT32_T IN MS TO TIMESTAMP
-         */
-
     private:
+        /* the milliseconds of the timestamp. If overflowed, second is incremented. */
         uint32_t millisecond;
+
+        /* seconds of the timestamp. */
         uint32_t second;
 };
 
-/* Return structure from all sensors.
+/**
+ * @struct  measurement
+ * 
+ * @details Return structure from all sensors.
  *
  * @param vec           array with the values measured. Indices and frames must be maintained in
  *                      the implementation.
  * @param time_taken    time the measurement was taken.
  *
- */
+**/
 typedef struct
 {
     Eigen::Vector3f vec;
     timestamp       time_taken;
 } measurement;
 
-/* Actuator measurement structure. Used to quantify how much an actuator needs to change.
+/**
+ * @struct  actuator_state
+ * 
+ * @details Actuator measurement structure. Used to quantify how much an actuator needs to change.
  *
  * @param required_values   the desired change in values of the actuator. Indices and frames must
  *                          be maintained in the implementation.
  * @param time_requested    time the actuator change was originally requested by the control code.
  *
- */
+**/
 typedef struct {
     float       acceleration;
     float       velocity;
@@ -261,7 +324,7 @@ typedef struct {
 /******************************************* INTERFACES ******************************************/
 
 #if DEF_INTERFACE == INTERFACE
-/*
+/**
  * @class   Interface_Object
  *
  * @details This object is the highest level class in the interface. Each has a function that sends
@@ -269,22 +332,22 @@ typedef struct {
  *
  * @note    THIS IS AN ENTIRELY ABSTRACT CLASS.
  *
- */
+**/
 class ADCS_device {
     public:
-        /*
+        /**
          * @name    time_until_ready
          *
          * @details this function determines how long until the device is ready to be polled.
          *
          * @returns 0 if the device is already in a good state, otherwise the amount of time until
          *          it is ready to be polled again.
-         */
+        **/
         virtual timestamp time_until_ready();
 
 };
 
-/*
+/**
  * @class Sensor
  *
  * @details this class describes a generic sensor. It must have some way to request a measurement,
@@ -294,25 +357,25 @@ class ADCS_device {
  *
  * @note    THIS IS AN ENTIRELY ABSTRACT CLASS.
  *
- */
+**/
 class Sensor : public ADCS_device {
     public:
-        /*
+        /**
          * @name    take_measurement
          *
          * @details this function takes a measurement using the sensor.
          *
          * @returns the required measurement if succesful.
          *
-         */
+        **/
         virtual measurement take_measurement();
 
     private:
-        /* latest measurement value taken */
+        /* latest measurement value taken**/
         measurement current_value;
 };
 
-/*
+/**
  * @class Actuator
  *
  * @details this class defines a generic actuator object. It has functions to set a change in the
@@ -320,73 +383,73 @@ class Sensor : public ADCS_device {
  *
  * @implements ADCS_device
  *
- */
+**/
 class Actuator : public ADCS_device {
     public:
-        /*
+        /**
          * @name            set_output
          *
          * @param new_value the new value to set the actuators to
          *
-         */
+        **/
         virtual void set_current_accelerations(action new_value); // TODO >> this may need a return value
 
 };
 
 /******************************************** CLASSES ********************************************/
 
-/*
+/**
  * @class adcs_timer
  *
  * @details this class defines all timing interactions.
  *
- */
+**/
 class adcs_timer {
     public:
-        /*
+        /**
          * @name get_time
          *
          * @returns the current time
-         */
+        **/
         timestamp   get_time();
 
-        /*
+        /**
          * @name sleep
          *
          * @details sets the control code to sleep for a requested amount of time.
          *
          * @param time the amount of time to sleep
          *
-         */
+        **/
         void sleep(timestamp time);
 };
 
-/*
+/**
  * @class accelerometer
  *
  * @details concrete Sensor implementation for accelerometers
  *
  * @implements ADCS_device, Sensor
- */
+**/
 class accelerometer : public Sensor {};
 
-/*
+/**
  * @class gyroscope
  *
  * @details concrete Sensor implementation for gyroscopes
  *
  * @implements ADCS_device, Sensor
- */
+**/
 class gyroscope : public Sensor {};
 
-/*
+/**
  * @class Reaction_wheel
 
  *
  * @details concrete Sensor implementation for reaction wheels
  *
  * @implements ADCS_device, Actuator
- */
+**/
 class Reaction_wheel
  : public Actuator {};
 #endif

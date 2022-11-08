@@ -1,4 +1,5 @@
-/** @file   Sensor.hpp
+/** 
+ * @file   Sensor.hpp
  *
  * @details This file implements the Sensor class as defined in sim_interface.
  *
@@ -16,14 +17,14 @@ Sensor::Sensor(timestamp polling_time, Simulator* sim, std::vector<Eigen::Vector
 {
     if (num_sensors != positions.size())
     {
-        /* THROW EXCEPTION */
+        /* THROW EXCEPTION**/
     }
 
     for (int i = 0; i < num_sensors; i++)
     {
         if (num_axes != positions.at(i).size())
         {
-            /* THROW EXCEPTION */
+            /* THROW EXCEPTION**/
         }
     }
 
@@ -41,7 +42,7 @@ void Sensor::set_current_vals(std::vector<Eigen::VectorXf> physical_vals, timest
         /* SETUP DOES NOT MEET ASSUMPTIONS - THROW EXCEPTION*/
     }
 
-    /* Default behaviour is to assume that the physical values require no modification. */
+    /* Default behaviour is to assume that the physical values require no modification.**/
     current_vector_value.time_taken = time;
     current_vector_value.vec = physical_vals.at(0);
 

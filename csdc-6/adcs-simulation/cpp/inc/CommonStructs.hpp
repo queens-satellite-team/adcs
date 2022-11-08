@@ -3,10 +3,10 @@
  *
  * @details strongly typed sensors and actuators
  *
- * @authors Lily de Loe
+ * @authors Lily de Loe, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-03
+ * 2022-11-07
  *
 **/
 #pragma once
@@ -48,6 +48,17 @@ typedef struct {
     Eigen::Matrix3f inertia_b;
 } Satellite;
 
+/**
+ * @struct  sim_reaction_wheel
+ * 
+ * @details structure defining the status of a reaction wheel in the simulator.
+ * 
+ * @param omega     the angular velocity of the reaciton wheel (body frame)
+ * @param alpha     the angular acceleration of the reaction wheel (body frame)
+ * @param inertia   the inertia matrix of the reaction wheel.
+ * @param position  the position of the satellite of the reaction wheel
+ * 
+**/
 typedef struct
 {
     Eigen::Vector3f omega;
@@ -56,22 +67,51 @@ typedef struct
     Eigen::Vector3f position;
 } sim_reaction_wheel;
 
+/**
+ * @struct  sim_accelerometer
+ * 
+ * @details structure defining the status of an accelerometer in the simulator.
+ * 
+ * @param measurement latest "measured" value of the accelerometer.
+ * @param position    the position of the satellite of the accelerometer.
+ * 
+**/
 typedef struct
 {
     Eigen::Vector3f measurement;
     Eigen::Vector3f position;
 } sim_accelerometer;
 
+/**
+ * @struct  sim_gyroscope
+ * 
+ * @details structure defining the status of an gyroscope in the simulator.
+ * 
+ * @param measurement latest "measured" value of the gyroscope.
+ * @param position    the position of the satellite of the gyroscope.
+ * 
+**/
 typedef struct
 {
     Eigen::Vector3f measurement;
     Eigen::Vector3f position;
 } sim_gyroscope;
 
+/**
+ * @struct  sim_config
+ * 
+ * @details structure defining the status of the entire satellite system in the simulation.
+ * 
+ * @param satellite         info of the overall satellite
+ * @param accelerometer     accelerometer info in the satellite system
+ * @param gyroscope         gyroscope info in the satellite system
+ * @param reaction_wheels   vector of all reaction wheels in the satellite system
+ * 
+**/
 typedef struct
 {
-    Satellite                   satellite;
-    sim_accelerometer           accelerometer;
-    sim_gyroscope               gyroscope;
+    Satellite                        satellite;
+    sim_accelerometer                accelerometer;
+    sim_gyroscope                    gyroscope;
     std::vector<sim_reaction_wheel>  reaction_wheels;
 } sim_config;

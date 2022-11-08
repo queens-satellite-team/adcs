@@ -3,10 +3,10 @@
  *
  * @details main file to control the adcs simulator
  *
- * @authors Lily de Loe
+ * @authors Lily de Loe, Aidan Sheedy
  *
  * Last Edited
- * 2022-10-24
+ * 2022-11-07
  *
 **/
 
@@ -16,7 +16,6 @@
 
 int main(int argc, char **argv) {
     UI ui;
-
     ui.start_ui_loop();
     return 0;
 }

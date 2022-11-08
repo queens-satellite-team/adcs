@@ -12,7 +12,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-05
+ * 2022-11-07
  *
 **/
 
@@ -85,10 +85,37 @@ class UI
         **/
         void run_simulation(std::vector<std::string> args);
 
+        /**
+         * @name create_sensor
+         *
+         * @param name [string], the name of the sensor to be created
+         * @param sim  [Simulator*], the simulator pointer to be used in the sensor constructor.
+         * @param sensors an unordered map to populate with the sensor.
+         *
+         * @details creates a sensor object and populates it in an unordered map to be used by the
+         *          control code.
+        **/
         void create_sensor(const std::string &name, Simulator *sim, std::unordered_map<std::string, std::shared_ptr<Sensor>> *sensors);
 
+        /**
+         * @name create_actuator
+         *
+         * @param name [string], the name of the actuator to be created
+         * @param sim  [Simulator*], the simulator pointer to be used in the actuator constructor.
+         * @param actuators an unordered map to populate with the actuator.
+         *
+         * @details creates an actuator object and populates it in an unordered map to be used by the
+         *          control code.
+        **/  
         void create_actuator(const std::string &name, Simulator *sim, std::unordered_map<std::string, std::shared_ptr<Actuator>> *actuators);
 
+        /**
+         * @name get_sim_config
+         * 
+         * @param config configuration singleton used to get the simulation initial parameters.
+         * 
+         * @returns the initial configuration fo the satellite 
+        **/
         sim_config get_sim_config(Configuration &config);
 
         /**
@@ -122,24 +149,25 @@ class UI
         **/
         using commandFunc = std::function<void(std::vector<std::string>)>;
 
+        /* Messenger object used to send information to the user. */
         Messenger messenger;
 
-        /* Map linking each command to it's function implementation. Used by "run_command" */
+        /* Map linking each command to it's function implementation. Used by "run_command"**/
         std::unordered_map<std::string, commandFunc> allowed_commands;
 
-        /* Flag used when the terminal has been started. */
+        /* Flag used when the terminal has been started.**/
         bool terminal_active;
 
-        /* Number of expected args for the "start_sim" command */
+        /* Number of expected args for the "start_sim" command**/
         const uint8_t num_run_simulation_args = 3;
 
-        /* Number of expected args for the "resume_sim" command */
+        /* Number of expected args for the "resume_sim" command**/
         const uint8_t num_resume_simulation_args = 2;
 
-        /* Number of expected args for the "exit" command */
+        /* Number of expected args for the "exit" command**/
         const uint8_t num_exit_args = 1;
 
-        /* Path to the YAML file describing the final state of the previous simulation run. */
+        /* Path to the YAML file describing the final state of the previous simulation run.**/
         std::string previous_end_state_yaml;
 };
 

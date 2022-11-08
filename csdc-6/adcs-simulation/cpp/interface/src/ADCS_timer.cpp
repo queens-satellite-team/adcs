@@ -1,4 +1,5 @@
-/** @file   Sensor.hpp
+/** 
+ * @file    ADCS_timer.cpp
  *
  * @details This file implements the ADCS_timer class as defined in sim_interface.
  *
@@ -18,7 +19,7 @@ ADCS_timer::ADCS_timer(Simulator* sim)
 {
     if (NULL == sim)
     {
-        /* THROW EXCEPTION */
+        /* THROW EXCEPTION**/
     }
 
     this->sim = sim;

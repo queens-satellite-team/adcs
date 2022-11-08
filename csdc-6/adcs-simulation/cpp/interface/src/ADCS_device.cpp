@@ -1,12 +1,12 @@
-/** @file 	ADCS_device.hpp
+/** 
+ * @file 	ADCS_device.cpp
  *
- * @details This file defines the interface between the control code and the simulation. It expands
- *          interface.hpp by adding simulation specific functions as required to the interface.
+ * @details This file implements the ADCS_device class as defined in sim_interface.hpp
  *
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-10-11
+ * 2022-11-07
  *
 **/
 
@@ -19,7 +19,7 @@ ADCS_device::ADCS_device(timestamp polling_time, Simulator* sim) : min_polling_i
 {
 	if (NULL == sim)
 	{
-		/* THROW APPROPRIATE EXCEPTION */
+		/* THROW APPROPRIATE EXCEPTION**/
 	}
 
 	this->sim = sim;

@@ -1,12 +1,12 @@
-/** @file   Reaction_wheel
-.hpp
+/** 
+ * @file    Reaction_wheel.cpp
  *
  * @details This file implements the reaction wheel definition as defined in sim_interface.hpp.
  *
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-02
+ * 2022-11-07
  *
 **/
 
@@ -43,12 +43,12 @@ void Reaction_wheel::set_target_state(actuator_state new_target)
     }
     catch(const std::exception& e)
     {
-        /* THROW APPROPRIATE EXCEPTION */
+        /* THROW APPROPRIATE EXCEPTION**/
     }
 
     if (this->time_until_ready() > 0)
     {
-        /* THROW APPROPRIATE EXCEPTION */
+        /* THROW APPROPRIATE EXCEPTION**/
     }
 
     this->target_state = new_target;

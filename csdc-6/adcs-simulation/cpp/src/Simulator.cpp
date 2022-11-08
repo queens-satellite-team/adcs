@@ -1,12 +1,12 @@
 /**
  * @file Simulator.cpp
  *
- * @details class file that would configure and propagate the simulation
+ * @details implements the Simulator class as defined in Simulator.hpp
  *
- * @authors Lily de Loe, Justin Paoli
+ * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-04
+ * 2022-11-07
  *
 **/
 
@@ -34,18 +34,22 @@ Simulator::Simulator(Messenger *messenger)
 
 void Simulator::init(sim_config initial_values)
 {
-    /* TODO may need a check here */
+    /* TODO may need a check here**/
     this->system_vals = initial_values;
 }
 
 timestamp Simulator::update_simulation() {
     timestamp time_passed = this->determine_time_passed();
     this->simulate(time_passed);
+
+    return this->simulation_time;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
     timestamp time_passed = this->determine_time_passed();
     this->simulate(time_passed + duration);
+
+    return this->simulation_time;
 }
 
 timestamp Simulator::determine_time_passed() {

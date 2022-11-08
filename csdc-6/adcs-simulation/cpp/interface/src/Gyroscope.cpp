@@ -1,11 +1,12 @@
-/** @file   Sensor.hpp
+/** 
+ * @file   Gyroscope.cpp
  *
- * @details This file implements the Sensor class as defined in sim_interface.
+ * @details This file implements the Gyroscope class as defined in sim_interface.
  *
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-10-11
+ * 2022-11-07
  *
 **/
 
@@ -17,7 +18,7 @@ measurement Gyroscope::take_measurement()
 {
     if (this->time_until_ready() > 0)
     {
-        /* THROW APPROPRIATE EXCEPTION */
+        /* THROW APPROPRIATE EXCEPTION**/
     }
 
     Eigen::Vector3f measurement;

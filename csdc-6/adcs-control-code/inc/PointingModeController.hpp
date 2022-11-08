@@ -3,10 +3,10 @@
  *
  * @details Header file for the pointing mode controller
  *
- * @authors Justin Paoli
+ * @authors Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-06
+ * 2022-11-07
 **/
 
 #pragma once
@@ -24,7 +24,7 @@ public:
     * @details Constructor for the pointing mode controller class. Initializes the internal references
     * to the satellite sensors and actuators which will be used to request information from the sensors
     * and send commands to the actuators.
-    */
+   **/
     PointingModeController(
         std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors,
         std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators
@@ -36,7 +36,7 @@ public:
     *
     * @details Starts the command loop. Should call the update functions once per cycle to get
     * updated sensor measurements and sent commands to actuators accordingly
-    */
+   **/
     void begin(std::vector<float> desired_attitude);
 
 private:
@@ -44,14 +44,14 @@ private:
     * @property sensors [unordered_map<string, shared_ptr<Sensor>>]
     *
     * @details An unordered map containing references to the satellite sensors.
-    */
+   **/
     std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
 
     /**
     * @property actuators [unordered_map<string, shared_ptr<Actuator>>]
     *
     * @details An unordered map containing references to the satellite actuators.
-    */
+   **/
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 
     /**
@@ -62,6 +62,6 @@ private:
     *
     * TODO: should possibly not be void? Depends on if we want to store the sensor
     * measurements as class properties or have this function return them.
-    */
+   **/
     void take_updated_measurements();
 };

@@ -1,4 +1,5 @@
-/** @file Actuator.hpp
+/** 
+ * @file Actuator.hpp
  *
  * @details This file dimplements the Actuator class as defined in sim_interface.
  *
@@ -34,7 +35,7 @@ void Actuator::set_current_state(actuator_state new_state)
     }
     catch(const std::exception& e)
     {
-        /* THROW APPROPRIATE EXCEPTION */
+        /* THROW APPROPRIATE EXCEPTION**/
     }
 
     this->current_state = new_state;

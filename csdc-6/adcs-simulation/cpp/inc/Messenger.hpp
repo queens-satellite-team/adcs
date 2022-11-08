@@ -1,18 +1,13 @@
 /**
- * @file    UI.hpp
+ * @file    Messenger.hpp
  *
- * @details This file describes the UI implementation. For now this is a simple command line UI
- *          with three commands:
- *              - "start_sim" starts a new simulation run with an initial state and desired output
- *                 configuration files
- *              - "restart_sim" resumes where the previous run left off but, but with a new desired
- *                 output configuration file
- *              - "exit" closes the terminal and ends the session
+ * @details This file describes the functionality of the internal messaging from the simulation
+ *          to the user.
  *
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-05
+ * 2022-11-07
  *
 **/
 
@@ -88,28 +83,33 @@ class Messenger
         **/
         void update_simulation_state(Satellite state, timestamp time);
 
+        /**
+         * @name    prompt_char
+         *
+         * @details Function to tell the messenger to print the prompt cahracter.
+        **/
         void prompt_char();
 
     private:
-        /* Character used to denote user control of the terminal. */
+        /* Character used to denote user control of the terminal.**/
         const std::string prompt_character = ">";
 
 };
 
 /**
- * @exception invalid_ui_args
+ * @exception invalid_message
  *
- * @details exception used to indicate that a UI function has received bad arguments from the user.
+ * @details exception used to indicate that a message to the messenger is not valid.
 **/
 class invalid_message : public std::exception
 {
     public:
-        invalid_message(char* msg) : message(msg) {}
-        char* what()
+        invalid_message(const char* msg) : message(msg) {}
+        const char* what()
         {
             return message;
         }
 
     private:
-        char* message;
+        const char* message;
 };

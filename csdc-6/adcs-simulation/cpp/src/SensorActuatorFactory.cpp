@@ -1,12 +1,12 @@
 /**
- * @file Simulator.cpp
+ * @file    SensorActuatorFactory.cpp
  *
  * @details class file to create the sensor and actuator objects
  *
  * @authors Lily de Loe
  *
  * Last Edited
- * 2022-10-24
+ * 2022-11-07
  *
 **/
 
@@ -54,13 +54,13 @@ std::shared_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &
             actuator_state min;
             min.acceleration = reac->minAngAccel;
             min.velocity = reac->minAngVel;
-            min.position = -100000000000000.0f;
+            min.position = -100000000000000.0f; // These should be set in the YAML
             min.time = timestamp(0.0f);
             actuator_state max;
             max.acceleration = reac->maxAngAccel;
             max.velocity = reac->maxAngVel;
-            max.position = 10000000000.0f;
-            max.time = timestamp(10000000.0f);
+            max.position = 10000000000.0f; // These should be set in the YAML
+            max.time = timestamp(10000000.0f); // These should be set in the YAML
             ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime), sim, reac->position, min, max, reac->momentOfInertia);
             break;
         }

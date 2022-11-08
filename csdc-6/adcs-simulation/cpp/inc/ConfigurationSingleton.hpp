@@ -17,28 +17,39 @@
 
 #include "CommonStructs.hpp"
 #include <yaml-cpp/yaml.h>
+#include <Eigen/Dense>
 
 /**
 * @name SensorConfig
 * @property type [SensorType], the sensor type
 *
-* @details struct outlining the sensor configuration according to the input sensor 
+* @details struct outlining the sensor configuration according to the input sensor
 * config and type
 */
 struct SensorConfig {
-    SensorConfig(SensorType t) : type(t){};
+    SensorConfig(SensorType t, const YAML::Node &node) : type(t){
+        pollingTime = node["PollingTime"].as<double>();
+        int j = 0;
+        for (const auto &n : node["Position"]) {
+            position(j++) = n.as<double>();
+        }
+    };
+    virtual ~SensorConfig() = default;
+    float pollingTime;
     SensorType type;
+    Eigen::Vector3f position;
 };
 
 /**
 * @name ActuatorConfig
 * @property type [ActuatorType], the actuator type
 *
-* @details struct outlining the actuator configuration according to the input actuator 
+* @details struct outlining the actuator configuration according to the input actuator
 * config and type
 */
 struct ActuatorConfig {
     ActuatorConfig(ActuatorType t) : type(t){};
+    virtual ~ActuatorConfig() = default;
     ActuatorType type;
 };
 
@@ -50,11 +61,9 @@ struct ActuatorConfig {
 * @details struct outling the configuration of a gryoscope according to the input YAML
 * parameters
 */
-struct GyroConfig {
+struct GyroConfig : public SensorConfig {
     GyroConfig(const YAML::Node &node);
 
-    float pollingTime;
-    Eigen::Matrix3f position;
 };
 
 /**
@@ -65,29 +74,28 @@ struct GyroConfig {
 * @details struct outling the configuration of an accelerometer according to the input YAML
 * parameters
 */
-struct AccelerometerConfig {
+struct AccelerometerConfig : public SensorConfig {
     AccelerometerConfig(const YAML::Node &node);
-    float pollingTime;
-    Eigen::Matrix3f position;
+
 };
 
 /**
  * @name ReactionWheelConfig
- * @property momentOfIntertia [Eigen::Matrix3f], matrix representing the moment of inertia
+ * @property momentOfInertia [Eigen::Matrix3f], matrix representing the moment of inertia
  * @property maxAngVel [float], maximium angular velocity
  * @property maxAngAccel [float], maximimum angular acceleration
  * @property minAngVel [float], minimium angular velocity
  * @property minAngAccel [float], minimimum angular acceleration
  * @property pollingTime [float], polling time of the reaction wheel
  * @property position [Eigen::Vector3f], unit position vector associated with the reaction wheel
- * 
+ *
  * @details struct outling the configuration of a reaction wheel according to the input YAML
 * parameters
 */
-struct ReactionWheelConfig {
+struct ReactionWheelConfig : public ActuatorConfig {
     ReactionWheelConfig(const YAML::Node &node);
 
-    Eigen::Matrix3f momentOfIntertia;
+    Eigen::Matrix3f momentOfInertia;
     float maxAngVel;
     float maxAngAccel;
     float minAngVel;
@@ -137,7 +145,7 @@ public:
     * @name GetSensorConfig
     * @param name [string], the name of the sensor
     * @return the sensor config
-    * 
+    *
     * @details getter for shared pointer to the sensor config
     */
     inline const std::shared_ptr<SensorConfig> &GetSensorConfig(const std::string &name) {
@@ -148,7 +156,7 @@ public:
     * @name GetActuatorConfig
     * @param name [string], the name of the actuator
     * @return the actuator config
-    * 
+    *
     * @details getter for shared pointer to the actuator config
     */
     inline const std::shared_ptr<ActuatorConfig> &GetActuatorConfig(const std::string &name) {
@@ -158,7 +166,7 @@ public:
     /**
     * @name GetSensorConfigs
     * @return the sensor configs
-    * 
+    *
     * @details getter for the map of sensor configs
     */
     inline const std::unordered_map<std::string, std::shared_ptr<SensorConfig>> &GetSensorConfigs() {
@@ -168,7 +176,7 @@ public:
     /**
     * @name GetActuatorConfigs
     * @return the actuator configs
-    * 
+    *
     * @details getter for the map of actuator configs
     */
     inline const std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> &GetActuatorConfigs() {
@@ -177,18 +185,18 @@ public:
 
     /**
     * @name GetSatelliteMoment
-    * @return the intertia matrix for the satellite
-    * 
+    * @return the Inertia matrix for the satellite
+    *
     * @details getter for shared pointer to the satellite's moment of inertia
     */
     inline const Eigen::Matrix3f &GetSatelliteMoment() {
-        return satelliteMomentOfIntertia;
+        return satelliteMomentOfInertia;
     };
 
     /**
     * @name GetSatellitePosition
     * @return the 3-dimensional vector representing satellite position
-    * 
+    *
     * @details getter for shared pointer to the satellite's position
     */
     inline const Eigen::Vector3f &GetSatellitePosition() {
@@ -198,7 +206,7 @@ public:
     /**
     * @name GetSatelliteVelocity
     * @return the 3-dimensional vector representing satellite velocity
-    * 
+    *
     * @details getter for shared pointer to the satellite's velocity
     */
     inline const Eigen::Vector3f &GetSatelliteVelocity() {
@@ -232,15 +240,15 @@ private:
     /**
     * @details 3-dimensional matrix storing the satellite's moment of inertia
     */
-    Eigen::Matrix3f satelliteMomentOfIntertia;
+    Eigen::Matrix3f satelliteMomentOfInertia;
 
     /**
     * @details 3-dimensional vector storing the satellite's position
     */
-    Eigen::Matrix3f satellitePosition;
+    Eigen::Vector3f satellitePosition;
 
     /**
     * @details 3-dimensional matrix storing the satellite's velocity
     */
-    Eigen::Matrix3f satelliteVelocity;
+    Eigen::Vector3f satelliteVelocity;
 };

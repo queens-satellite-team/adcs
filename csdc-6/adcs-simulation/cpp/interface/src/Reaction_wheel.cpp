@@ -10,13 +10,18 @@
  *
 **/
 
-#include <interface.hpp>
 #include <Eigen/Dense>
+#include <iostream>
 
-Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, vector<float> position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix) : Actuator(polling_time, sim, position, max_vals, min_vals)
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
+
+Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix) : Actuator(polling_time, sim, {position}, max_vals, min_vals)
 {
     if (Eigen::Matrix3f::Zero() == inertia_matrix)
     {
+        std::cout << "YEEEET" << std::endl;
+        throw -1;
         // throw exception
     }
 
@@ -28,4 +33,33 @@ Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, vector<fl
 Eigen::Matrix3f Reaction_wheel::get_inertia_matrix()
 {
     return this->inertia_matrix;
+}
+
+void Reaction_wheel::set_target_state(actuator_state new_target)
+{
+    try
+    {
+        check_valid_state(new_target);
+    }
+    catch(const std::exception& e)
+    {
+        /* THROW APPROPRIATE EXCEPTION */
+    }
+
+    if (this->time_until_ready() > 0)
+    {
+        /* THROW APPROPRIATE EXCEPTION */
+    }
+
+    this->target_state = new_target;
+    timestamp cur_time = this->sim->reaction_wheel_update_desired_state(this->position, this->target_state);
+    this->update_poll_time(cur_time);
+
+    return;
+}
+
+actuator_state Reaction_wheel::get_current_state()
+{
+    this->sim->reaction_wheel_get_current_state(this->position);
+    return this->current_state;
 }

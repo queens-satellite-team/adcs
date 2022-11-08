@@ -12,8 +12,8 @@
 
 #include <Eigen/Dense>
 
-#include <sim_interface.hpp>
-#include <Simulator.hpp>
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
 
 ADCS_device::ADCS_device(timestamp polling_time, Simulator* sim) : min_polling_increment(polling_time)
 {

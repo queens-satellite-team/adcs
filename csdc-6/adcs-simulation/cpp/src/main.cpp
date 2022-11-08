@@ -1,4 +1,4 @@
-/** 
+/**
  * @file main.cpp
  *
  * @details main file to control the adcs simulator
@@ -12,18 +12,11 @@
 
 #include <cstdio>
 
-#include <cstdio>
-#include "Simulator.hpp"
+#include "UI.hpp"
 
 int main(int argc, char **argv) {
-    Simulator simulator("simulator.yaml");
-    //call the control code, which will have the loop inside of it
-    /*
-    while(true){
-      //limit the loop speed
-      //control loop would also be called here
-      simulator.step();
-    }
-    */
+    UI ui;
+
+    ui.start_ui_loop();
     return 0;
 }

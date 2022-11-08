@@ -1,4 +1,4 @@
-/** 
+/**
  * @file Simulator.hpp
  *
  * @details header file for class file that would configure and propagate the simulation
@@ -12,28 +12,12 @@
 
 #pragma once
 
-#include "sim_interface.hpp"
 #include <memory>
 #include <vector>
 
-/**
-* @name Satellite
-* @property theta_b [Eigen::Vector3f], the angular position of the satellite body
-* @property omega_b [Eigen::Vector3f], the angular velocity of the satellite body
-* @property alpha_b [Eigen::Vector3f], the angular acceleration of the satellite body
-* @properft inertia_b [Eigen::Matrix3f], the inertia tensor of the satellite body
-*
-* @details A model of the values controlling the rotational kinematics of the
-* satellite. Used internally by the simulator to keep track of the satellite
-* proper so the sensor values can be calculated. All values are stored as Cartesian
-* coordinates in an arbitrary inertial frame of reference.
-*/
-typedef struct {
-    Eigen::Vector3f theta_b;
-    Eigen::Vector3f omega_b;
-    Eigen::Vector3f alpha_b;
-    Eigen::Matrix3f inertia_b;
-} Satellite;
+#include "def_interface.hpp"
+#include "CommonStructs.hpp"
+#include "Messenger.hpp"
 
 /**
  * @class Simulator
@@ -43,22 +27,22 @@ typedef struct {
  */
 class Simulator {
 public:
-    /** 
+    /**
     * @class Simulator
     * @param configFile [string], the filename of the YAML config file
-    * 
+    *
     * @details constructor for the simulator class. Calls the configuration
     * singleton to instantiate all of the sensors and actuators present in the
     * simulation based on the properties of the provided YAML configuration file.
     */
-    Simulator(const std::string &configFile);
+    Simulator(Messenger *messenger);
 
     /**
-    * @name begin
-    * 
-    * @details Initializes the simulation by triggering the controller loop.
+    * @name init
+    *
+    * @details Initializes the simulation with starting values.
     */
-    void begin();
+    void init(sim_config initial_values);
 
     /**
     * @name update_simulation
@@ -74,7 +58,7 @@ public:
     * @name set_adcs_sleep
     * @param duration [timestamp], the additional time to simulate
     * @returns [timestamp], the simulation time at the end of calculations
-    * 
+    *
     * @details Updates the simulation based on the amount of time the
     * control code spent running plus some additional specified time.
     * Used when the control code is not ready for new sensor data and
@@ -82,27 +66,19 @@ public:
     */
     timestamp set_adcs_sleep(timestamp duration);
 
+    timestamp reaction_wheel_update_desired_state(Eigen::Vector3f wheel_position, actuator_state new_target);
+
+    actuator_state reaction_wheel_get_current_state(Eigen::Vector3f position);
+
+    timestamp gyroscope_take_measurement(Eigen::Vector3f *measurement);
+
+    timestamp accelerometer_take_measurement(Eigen::Vector3f *measurement);
+
 private:
-    /**
-    * @name create_actuator
-    * @param name [string], the name of the actuator to be created
-    *
-    * @details creates an actuator object
-    */  
-    void create_actuator(const std::string &name);
-
-    /**
-    * @name create_sensor
-    * @param name [string], the name of the sensor to be created
-    *
-    * @details creates a sensor object
-    */
-    void create_sensor(const std::string &name);
-
     /**
     * @name simulate
     * @param t [timestamp], the amount of time to be simulated
-    * 
+    *
     * @details Used to perform the main simulation calculations. Iterates
     * over each timestep up until the specified timestamp t's worth
     * of time has been simulated.
@@ -116,20 +92,30 @@ private:
     */
     void timestep();
 
+    // /**
+    // * @name update_adcs_devices
+    // *
+    // * @details Iterates through all the known sensors and actuators and updates
+    // * their values according to the simulation to be used in the control
+    // * code.
+    // */
+    // void update_adcs_devices();
+
     /**
-    * @name update_adcs_devices
+    * @name determine_time_passed
+    * @returns timestamp
     *
-    * @details Iterates through all the known sensors and actuators and updates
-    * their values according to the simulation to be used in the control
-    * code.
+    * @details Used to determine the time the control code spent running in order
+    * to account for the real-life losses due to processing speed. Does not take
+    * into account the processor the control code is running on.
     */
-    void update_adcs_devices();
+    timestamp determine_time_passed();
 
 private:
     /**
     * @property simulation_time [timestamp]
     *
-    * @details The timestamp that has so far been simulated to. Initialized 
+    * @details The timestamp that has so far been simulated to. Initialized
     * to 0 at the beginning of the simulation and incremented with each
     * timestep.
     */
@@ -157,25 +143,9 @@ private:
     * @details An instance of a satellite used to start rotational positions,
     * velocities, and accelerations.
     */
-    std::unique_ptr<Satellite> satellite = std::make_unique<Satellite>(new Satellite);
+    // std::shared_ptr<Satellite> satellite = std::make_shared<Satellite>();
 
-    /**
-    * @name determine_time_passed
-    * @returns timestamp
-    * 
-    * @details Used to determine the time the control code spent running in order
-    * to account for the real-life losses due to processing speed. Does not take
-    * into account the processor the control code is running on.
-    */
-    timestamp determine_time_passed();
+    sim_config system_vals;
 
-    /**
-    * @details unordered map of sensors that relates strings to names
-    */
-    std::unordered_map<std::string, std::unique_ptr<Sensor>> sensors;
-
-    /**
-    * @details unordered map of actuators that relates strings to names
-    */
-    std::unordered_map<std::string, std::unique_ptr<Actuator>> actuators;
+    Messenger *messenger;
 };

@@ -11,19 +11,14 @@
 
 #include <Eigen/Dense>
 
-#include <sim_interface.hpp>
-#include <Simulator.hpp>
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
 
 Actuator::Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals) : ADCS_device(polling_time, sim)
 {
     this->max_state_values = max_vals;
     this->min_state_values = min_vals;
-    this->postition = position;
-}
-
-actuator_state Actuator::get_current_state() 
-{
-    return this->current_state;
+    this->position = position;
 }
 
 actuator_state Actuator::get_target_state()
@@ -47,32 +42,9 @@ void Actuator::set_current_state(actuator_state new_state)
     return;
 }
 
-void Actuator::set_target_state(actuator_state new_target)
+Eigen::Vector3f Actuator::get_position()
 {
-    try
-    {
-        check_valid_state(new_target);
-    }
-    catch(const std::exception& e)
-    {
-        /* THROW APPROPRIATE EXCEPTION */
-    }
-
-    if (this->time_until_ready() > 0)
-    {
-        /* THROW APPROPRIATE EXCEPTION */
-    }
-
-    this->target_state = new_target;
-    timestamp cur_time = this->sim->update_simulation();
-    this->update_poll_time(cur_time);
-
-    return;
-}
-
-Eigen::Vector3f Actuator::get_postition()
-{
-    return this->postition;
+    return this->position;
 }
 
 

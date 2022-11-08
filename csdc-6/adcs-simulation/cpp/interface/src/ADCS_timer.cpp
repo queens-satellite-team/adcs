@@ -11,8 +11,8 @@
 
 #include <Eigen/Dense>
 
-#include <sim_interface.hpp>
-#include <Simulator.hpp>
+#include "sim_interface.hpp"
+#include "Simulator.hpp"
 
 ADCS_timer::ADCS_timer(Simulator* sim)
 {

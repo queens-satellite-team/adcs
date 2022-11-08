@@ -15,10 +15,10 @@
 
 #include <stdint.h>
 #include <string>
-#include <iomanip>
+#include <Eigen/Dense>
+// #include <iomanip>
 
 #pragma once
-using namespace std;
 
 /******************************************* DEFINITIONS *******************************************/
 
@@ -39,18 +39,6 @@ using namespace std;
 #define INTERFACE SIM_INTERFACE
 
 /********************************************* TYPES *********************************************/
-/* Generic return type from the driver interface.
- *
- * @param sensor_return the measurement of the sensor
- * @param time_taken    time the value was returned
- *
- */
-typedef struct driver_return
-{
-    measurement sensor_return;
-    timestamp time_taken;
-};
-
 /* ADCS specific timestamp definition. All time measurements use this structure.
  *
  * @param milliseconds  number of milliseconds of the timestamp
@@ -67,6 +55,7 @@ class timestamp
          */
         timestamp(uint32_t milliseconds = 0, uint32_t seconds = 0) : millisecond(milliseconds), second(seconds) {}
 
+        explicit timestamp(float real_person_time) : millisecond((float)(real_person_time - ((int)real_person_time)) * 1000.0), second(real_person_time){}; // check this conversion later its a bit hacky
         /*
          * @name milliseconds
          *
@@ -177,9 +166,9 @@ class timestamp
         friend bool operator<(const timestamp& l, const timestamp& r)
         {
             bool ret = false;
-
+            
             if ( (l.second      < r.second)      ||
-               ( (l.millisecond < r.millisecond) && 
+               ( (l.millisecond < r.millisecond) &&
                  (l.second      <= r.second)     ))
             {
                 ret = true;
@@ -209,7 +198,7 @@ class timestamp
             if ((l.second      == r.second) &&
                 (l.millisecond == r.millisecond))
             {
-                true;
+                ret = true;
             }
             return ret;
         }
@@ -219,18 +208,18 @@ class timestamp
             return !(l==r);
         }
 
-        string pretty_string()
+        std::string pretty_string()
         {
             uint32_t out_sec = (second + millisecond/1000);
             uint32_t out_mil = millisecond % 1000;
             uint32_t out_min = out_sec / 60;
             out_sec %= 60;
 
-            stringstream formatter;
-            formatter << "[" << out_min << ":" << setw(10) << setfill('0') << out_sec << ":";
-            formatter << setw(10) << setfill('0') << out_mil << "]";
+            // stringstream formatter;
+            // formatter << "[" << out_min << ":" << setw(10) << setfill('0') << out_sec << ":";
+            // formatter << setw(10) << setfill('0') << out_mil << "]";
 
-            return formatter.str();
+            return "TODO";//formatter.str();
         }
 
         /*
@@ -249,11 +238,11 @@ class timestamp
  * @param time_taken    time the measurement was taken.
  *
  */
-typedef struct measurement
+typedef struct
 {
-    vector<float> vec;
+    Eigen::Vector3f vec;
     timestamp       time_taken;
-};
+} measurement;
 
 /* Actuator measurement structure. Used to quantify how much an actuator needs to change.
  *
@@ -262,12 +251,12 @@ typedef struct measurement
  * @param time_requested    time the actuator change was originally requested by the control code.
  *
  */
-typedef struct actuator_state {
+typedef struct {
     float       acceleration;
     float       velocity;
     float       position;
     timestamp   time;
-};
+} actuator_state;
 
 /******************************************* INTERFACES ******************************************/
 

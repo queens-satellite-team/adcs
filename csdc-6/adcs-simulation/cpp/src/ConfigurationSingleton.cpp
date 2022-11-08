@@ -1,4 +1,4 @@
-/** 
+/**
  * @file ConfigurationSingleton.cpp
  *
  * @details singleton class used to configure the user's sensor/actuator inputs
@@ -13,33 +13,15 @@
 #include "ConfigurationSingleton.hpp"
 #include <iostream>
 
-GyroConfig::GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyroscope) {
-    pollingTime = node["PollingTime"].as<double>();
-    int i = 0;
-    int j = 0;
-    for (const auto &n : node["Position"]) {
-        j = 0;
-        for (const auto &a : n) {
-            position(i, j++) = a.as<double>();
-        }
-        ++i;
-    }
+GyroConfig::GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyroscope, node) {
+
 }
 
-AccelerometerConfig::Config(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer) {
-    pollingTime = node["PollingTime"].as<double>();
-    int i = 0;
-    int j = 0;
-    for (const auto &n : node["Position"]) {
-        j = 0;
-        for (const auto &a : n) {
-            position(i, j++) = a.as<double>();
-        }
-        ++i;
-    }   
+AccelerometerConfig::AccelerometerConfig(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer, node) {
+
 }
 
-ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfig(ActuatorType::Actuator) {
+ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfig(ActuatorType::ReactionWheel) {
     int i = 0;
     int j = 0;
     for (const auto &n : node["Moment"]) {
@@ -54,9 +36,9 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     maxAngAccel = node["MaxAngAccel"].as<double>();
     minAngVel = node["MinAngVel"].as<double>();
     minAngAccel = node["MinAngAccel"].as<double>();
-    
+
     pollingTime = node["PollingTime"].as<double>();
-    
+
     i = 0;
     for (const auto &n : node["Position"]) {
         position(i++) = n.as<double>();
@@ -93,7 +75,7 @@ bool Configuration::Load(const std::string &configFile) {
         i = 0;
         for (const auto &n : satellite["Velocity"]) {
             satelliteVelocity(i++) = n.as<double>();
-        }        
+        }
 
     } catch (YAML::Exception &e){
         std::cout << "YAML ERROR ON SATELLITE STATE: " << e.what() <<std::endl;

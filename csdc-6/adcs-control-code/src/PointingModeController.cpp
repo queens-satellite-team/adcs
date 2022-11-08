@@ -1,4 +1,4 @@
-/** 
+/**
  * @file PointingModeController.cpp
  *
  * @details Implementation for the pointing mode controller
@@ -14,14 +14,14 @@
 #include "PointingModeController.hpp"
 
 PointingModeController::PointingModeController(
-    unordered_map<string, unique_ptr<Sensor>> sensors, 
-    unordered_map<string, unique_ptr<Actuator>> actuators
+    std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors,
+    std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators
 ) {
     this->sensors = sensors;
     this->actuators = actuators;
 }
 
-void PointingModeController::begin(vector<float> desired_attitude) {
+void PointingModeController::begin(std::vector<float> desired_attitude) {
     //TODO: convert to while and add exit condition
     for (int i = 0; i < 10; i++) {
         this->take_updated_measurements();

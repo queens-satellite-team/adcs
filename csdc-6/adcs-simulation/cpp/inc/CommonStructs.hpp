@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-08
  *
 **/
 #pragma once
@@ -34,7 +34,7 @@ enum class ActuatorType{
 * @property theta_b [Eigen::Vector3f], the angular position of the satellite body
 * @property omega_b [Eigen::Vector3f], the angular velocity of the satellite body
 * @property alpha_b [Eigen::Vector3f], the angular acceleration of the satellite body
-* @properft inertia_b [Eigen::Matrix3f], the inertia tensor of the satellite body
+* @property inertia_b [Eigen::Matrix3f], the inertia tensor of the satellite body
 *
 * @details A model of the values controlling the rotational kinematics of the
 * satellite. Used internally by the simulator to keep track of the satellite
@@ -63,7 +63,7 @@ typedef struct
 {
     Eigen::Vector3f omega;
     Eigen::Vector3f alpha;
-    Eigen::Matrix3f inertia;
+    float inertia;
     Eigen::Vector3f position;
 } sim_reaction_wheel;
 

@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-08
  *
 **/
 
@@ -27,7 +27,8 @@ Simulator::Simulator(Messenger *messenger)
 
     this->simulation_time = 0;
     // TODO: should be configured in YAML
-    timestamp t(1, 0);
+    auto &config = Configuration::GetInstance();
+    timestamp t(config.GetTimestepInMilliSeconds(),0);
     this->timestep_length = t;
     this->last_called = -1;
 }

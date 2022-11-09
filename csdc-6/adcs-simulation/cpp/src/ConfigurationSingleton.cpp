@@ -6,7 +6,7 @@
  * @authors Lily de Loe
  *
  * Last Edited
- * 2022-11-03
+ * 2022-11-08
  *
 **/
 
@@ -22,26 +22,18 @@ AccelerometerConfig::AccelerometerConfig(const YAML::Node &node) : SensorConfig(
 }
 
 ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfig(ActuatorType::ReactionWheel) {
+    momentOfInertia = node["Moment"].as<float>();
+
+    maxAngVel = node["MaxAngVel"].as<float>();
+    maxAngAccel = node["MaxAngAccel"].as<float>();
+    minAngVel = node["MinAngVel"].as<float>();
+    minAngAccel = node["MinAngAccel"].as<float>();
+
+    pollingTime = node["PollingTime"].as<float>();
+
     int i = 0;
-    int j = 0;
-    for (const auto &n : node["Moment"]) {
-        j = 0;
-        for (const auto &a : n) {
-            momentOfInertia(i, j++) = a.as<double>();
-        }
-        ++i;
-    }
-
-    maxAngVel = node["MaxAngVel"].as<double>();
-    maxAngAccel = node["MaxAngAccel"].as<double>();
-    minAngVel = node["MinAngVel"].as<double>();
-    minAngAccel = node["MinAngAccel"].as<double>();
-
-    pollingTime = node["PollingTime"].as<double>();
-
-    i = 0;
     for (const auto &n : node["Position"]) {
-        position(i++) = n.as<double>();
+        position(i++) = n.as<float>();
     }
 }
 
@@ -62,23 +54,31 @@ bool Configuration::Load(const std::string &configFile) {
         for (const auto &n : satellite["Moment"]) {
             j = 0;
             for (const auto &a : n) {
-                satelliteMomentOfInertia(i, j++) = a.as<double>();
+                satelliteMomentOfInertia(i, j++) = a.as<float>();
             }
             ++i;
         }
 
         i = 0;
         for (const auto &n : satellite["Position"]) {
-            satellitePosition(i++) = n.as<double>();
+            satellitePosition(i++) = n.as<float>();
         }
 
         i = 0;
         for (const auto &n : satellite["Velocity"]) {
-            satelliteVelocity(i++) = n.as<double>();
+            satelliteVelocity(i++) = n.as<float>();
         }
 
     } catch (YAML::Exception &e){
         std::cout << "YAML ERROR ON SATELLITE STATE: " << e.what() <<std::endl;
+    }
+
+    //load input timestep
+    try {
+        YAML::Node time = top["TimeStep"];
+        timestepInMilliSeconds = time.as<float>();
+    } catch (YAML::Exception &e){
+        std::cout << "YAML ERROR ON TIMESTEP: " << e.what() <<std::endl;
     }
 
     //load sensors

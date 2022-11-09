@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-08
  *
 **/
 
@@ -16,13 +16,12 @@
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
-Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix) : Actuator(polling_time, sim, {position}, max_vals, min_vals)
+Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, float inertia_matrix) : Actuator(polling_time, sim, {position}, max_vals, min_vals)
 {
-    if (Eigen::Matrix3f::Zero() == inertia_matrix)
+
+    if(inertia_matrix == 0)
     {
         std::cout << "YEEEET" << std::endl;
-        throw -1;
-        // throw exception
     }
 
     this->inertia_matrix = inertia_matrix;
@@ -30,7 +29,7 @@ Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Ve
     return;
 }
 
-Eigen::Matrix3f Reaction_wheel::get_inertia_matrix()
+float Reaction_wheel::get_inertia_matrix()
 {
     return this->inertia_matrix;
 }

@@ -3,10 +3,10 @@
  * @details This file defines the interface between the control code and the simulation. It expands
  *          interface.hpp by adding simulation specific functions as required to the interface.
  *
- * @authors Aidan Sheedy
+ * @authors Aidan Sheedy, Lily de Loe
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-08
  *
 **/
 #include <vector>
@@ -404,7 +404,7 @@ class Reaction_wheel : public Actuator
          * @details constructor for the Reaction_wheel. All parameters are passed to the Actuator
          *          base class.
         **/
-        Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, Eigen::Matrix3f inertia_matrix);
+        Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, float inertia_matrix);
 
         /**
          * @name    get_inertia_matrix
@@ -414,7 +414,7 @@ class Reaction_wheel : public Actuator
          * @returns the inertia matrix of a reaction wheel
          *
         **/
-        Eigen::Matrix3f get_inertia_matrix();
+        float get_inertia_matrix();
 
         /**
          * @name    set_target_state
@@ -446,7 +446,7 @@ class Reaction_wheel : public Actuator
          * @details inertia matrix for a reaction wheel. It is assumed that all reaction wheels
          *          have the same inertia matrix in their frame of reference.
         **/
-        Eigen::Matrix3f inertia_matrix;
+        float inertia_matrix;
 };
 
 #endif

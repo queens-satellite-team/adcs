@@ -3,10 +3,10 @@
  *
  * @details This file implements the UI class as defined in UI.hpp
  *
- * @authors Aidan Sheedy
+ * @authors Aidan Sheedy, Lily de Loe
  *
  * Last Edited
- * 2022-11-05
+ * 2022-11-08
  *
 **/
 
@@ -127,6 +127,12 @@ void UI::run_simulation(std::vector<std::string> args)
     }
 
     std::string config_yaml = args.at(1);
+
+    Configuration &config = Configuration::GetInstance();
+    if (!config.Load(config_yaml))
+    {
+        std::cout <<"Configuration Failed to load"<< std::endl;
+    }
     // string exit_conditions_yaml = args.at(2);
 
     /* Empty simulator**/
@@ -135,13 +141,6 @@ void UI::run_simulation(std::vector<std::string> args)
     /* Initialize Interface Objects**/
     std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
-
-    Configuration &config = Configuration::GetInstance();
-
-    if (!config.Load(config_yaml))
-    {
-        // std::cout <<"Configuration Failed to load"<< std::endl;
-    }
 
     /* Get Simulation config info**/
     simulator.init(this->get_sim_config(config));

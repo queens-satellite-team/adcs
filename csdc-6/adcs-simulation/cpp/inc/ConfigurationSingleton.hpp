@@ -6,7 +6,7 @@
  * @authors Lily de Loe
  *
  * Last Edited
- * 2022-11-03
+ * 2022-11-08
  *
 **/
 
@@ -28,10 +28,10 @@
 */
 struct SensorConfig {
     SensorConfig(SensorType t, const YAML::Node &node) : type(t){
-        pollingTime = node["PollingTime"].as<double>();
+        pollingTime = node["PollingTime"].as<float>();
         int j = 0;
         for (const auto &n : node["Position"]) {
-            position(j++) = n.as<double>();
+            position(j++) = n.as<float>();
         }
     };
     virtual ~SensorConfig() = default;
@@ -55,8 +55,6 @@ struct ActuatorConfig {
 
 /**
 * @name GryoConfig
-* @property pollingTime [float] the polling time of the gyroscope
-* @property position [Eigen::Matrix3f] the position of the sensor
 *
 * @details struct outling the configuration of a gryoscope according to the input YAML
 * parameters
@@ -68,8 +66,6 @@ struct GyroConfig : public SensorConfig {
 
 /**
 * @name AccelerometerConfig
-* @property pollingTime [float] the polling time of the accelerometer
-* @property position [Eigen::Matrix3f] the position of the sensor
 *
 * @details struct outling the configuration of an accelerometer according to the input YAML
 * parameters
@@ -94,8 +90,8 @@ struct AccelerometerConfig : public SensorConfig {
 */
 struct ReactionWheelConfig : public ActuatorConfig {
     ReactionWheelConfig(const YAML::Node &node);
-
-    Eigen::Matrix3f momentOfInertia;
+    
+    float momentOfInertia;
     float maxAngVel;
     float maxAngAccel;
     float minAngVel;
@@ -213,6 +209,16 @@ public:
         return satelliteVelocity;
     };
 
+    /**
+    * @name GetTimestepInMilliSeconds
+    * @return the timestep, in seconds, as a float
+    * 
+    * @details getter for the update timestep 
+    */
+    inline const float &GetTimestepInMilliSeconds(){
+        return timestepInMilliSeconds;
+    }
+
 
 private:
     /**
@@ -222,33 +228,40 @@ private:
     Configuration(){};
 
 private:
+    
     /**
     * @details YAML node for the top-most heading in the YAML input file
-   **/
+    **/
     YAML::Node top;
 
     /**
     * @details unordered map of sensor configs that relates strings to names
-   **/
+    **/
     std::unordered_map<std::string, std::shared_ptr<SensorConfig>> sensorConfigs;
 
     /**
     * @details unordered map of actuator configs that relates strings to names
-   **/
+    **/
     std::unordered_map<std::string, std::shared_ptr<ActuatorConfig>> actuatorConfigs;
 
     /**
     * @details 3-dimensional matrix storing the satellite's moment of inertia
-   **/
+    **/
     Eigen::Matrix3f satelliteMomentOfInertia;
 
     /**
     * @details 3-dimensional vector storing the satellite's position
-   **/
+    **/
     Eigen::Vector3f satellitePosition;
 
     /**
     * @details 3-dimensional matrix storing the satellite's velocity
-   **/
+    **/
     Eigen::Vector3f satelliteVelocity;
+
+    /**
+     * @details float storing the timestep in milliseconds
+    */
+    float timestepInMilliSeconds;
+
 };

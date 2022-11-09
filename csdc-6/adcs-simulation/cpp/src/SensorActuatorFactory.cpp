@@ -6,7 +6,7 @@
  * @authors Lily de Loe
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-08
  *
 **/
 
@@ -14,6 +14,7 @@
 #include "SensorActuatorFactory.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "Simulator.hpp"
+#include <iostream>
 
 std::shared_ptr<Sensor> SensorActuatorFactory::GetSensor(const std::string &name, Simulator* sim) {
     auto &config = Configuration::GetInstance();
@@ -54,13 +55,13 @@ std::shared_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &
             actuator_state min;
             min.acceleration = reac->minAngAccel;
             min.velocity = reac->minAngVel;
-            min.position = -100000000000000.0f; // These should be set in the YAML
+            min.position = -std::numeric_limits<float>::max();
             min.time = timestamp(0.0f);
             actuator_state max;
             max.acceleration = reac->maxAngAccel;
             max.velocity = reac->maxAngVel;
-            max.position = 10000000000.0f; // These should be set in the YAML
-            max.time = timestamp(10000000.0f); // These should be set in the YAML
+            max.position = std::numeric_limits<float>::max();
+            max.time = timestamp(std::numeric_limits<float>::max());
             ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime), sim, reac->position, min, max, reac->momentOfInertia);
             break;
         }

@@ -415,7 +415,6 @@ class Reaction_wheel : public Actuator
          *
         **/
         float get_inertia_matrix();
-        //Eigen::Matrix3f get_inertia_matrix();
 
         /**
          * @name    set_target_state

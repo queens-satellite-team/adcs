@@ -448,7 +448,6 @@ class Reaction_wheel : public Actuator
          *          have the same inertia matrix in their frame of reference.
         **/
         float inertia_matrix;
-        //Eigen::Matrix3f inertia_matrix;
 };
 
 #endif

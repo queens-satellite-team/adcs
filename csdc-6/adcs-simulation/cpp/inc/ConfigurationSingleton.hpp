@@ -90,8 +90,7 @@ struct AccelerometerConfig : public SensorConfig {
 */
 struct ReactionWheelConfig : public ActuatorConfig {
     ReactionWheelConfig(const YAML::Node &node);
-
-    //Eigen::Matrix3f momentOfInertia;
+    
     float momentOfInertia;
     float maxAngVel;
     float maxAngAccel;

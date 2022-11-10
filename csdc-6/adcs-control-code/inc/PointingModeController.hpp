@@ -27,7 +27,8 @@ public:
    **/
     PointingModeController(
         std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors,
-        std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators
+        std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators,
+        ADCS_timer *timer
     );
 
     /**
@@ -53,6 +54,8 @@ private:
     * @details An unordered map containing references to the satellite actuators.
    **/
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
+
+    ADCS_timer *timer;
 
     /**
     * @name take_updated_measurements

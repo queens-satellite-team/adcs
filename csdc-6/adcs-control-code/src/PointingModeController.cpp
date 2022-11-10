@@ -15,10 +15,12 @@
 
 PointingModeController::PointingModeController(
     std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors,
-    std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators
+    std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators,
+    ADCS_timer *timer
 ) {
     this->sensors = sensors;
     this->actuators = actuators;
+    this->timer = timer;
 }
 
 void PointingModeController::begin(std::vector<float> desired_attitude) {

@@ -164,7 +164,8 @@ void UI::run_simulation(std::vector<std::string> args)
     }
 
     /* Start control code**/
-    PointingModeController controller(sensors, actuators);
+    ADCS_timer timer(&simulator);
+    PointingModeController controller(sensors, actuators, &timer);
 
     controller.begin({0}); // Empty desired attitude for now
 

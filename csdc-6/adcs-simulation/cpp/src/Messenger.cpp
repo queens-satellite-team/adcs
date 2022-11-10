@@ -49,15 +49,42 @@ void Messenger::send_error(std::string msg)
     if (msg.empty())
     {
         // This may need to be a different exception.
-        throw invalid_message("Warning to send to UI is empty.");
+        throw invalid_message("Error to send to UI is empty.");
     }
 
     // This can be formatted nicely later.
     std::cerr << text_colour.red << "ERROR: " << msg << text_colour.reset << std::endl;
+
     return;
 }
 
-void Messenger::start_new_sim(int num_reaction_wheels)
+void Messenger::start_new_sim(uint32_t num_reaction_wheels)
+{
+    write_cout_header(num_reaction_wheels);
+    write_csv_header(num_reaction_wheels);
+
+    return;
+}
+
+void Messenger::write_cout_header(uint32_t num_reaction_wheels)
+{
+    std::cout << text_colour.magenta << "Time" << "\t\t";
+    std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat Ox, Sat Oy, Sat Oz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
+    std::cout << "Accel x, Accel y, Accel z;\t" << "Gyro x, Gyro y, Gyro z;\t\t";
+    for (uint32_t i = 0; i < num_reaction_wheels; i++)
+    {
+        std::cout << "RW " << i+1 << " O, RW " << i+1 << " a;";
+        if (i < num_reaction_wheels - 1)
+        {
+            std::cout << "\t\t";
+        }
+    }
+    std::cout << text_colour.reset << std::endl;
+
+    return;
+}
+
+void Messenger::write_csv_header(uint32_t num_reaction_wheels)
 {
     /* Determine output file name */
     std::string csv_path = this->default_csv_path;
@@ -69,57 +96,43 @@ void Messenger::start_new_sim(int num_reaction_wheels)
         std::filesystem::create_directory(csv_path);
     }
 
-    csv_path += this->default_csv_name;
-
     /* search for file if it exists, increment if it does */
     while(std::filesystem::exists(csv_path + suffix + this->csv_ext))
     {
         if (UINT32_MAX > suffix_num)
         {
-            // throw exception
+            this->output_file_path_string = "-1";
+            send_error("Unable to create output CSV, too many files exist.");
         }
         suffix_num++;
         suffix = std::to_string(suffix_num);
     }
 
-    this->output_file_path_string = csv_path + suffix + this->csv_ext;
-
-    /* Write cout header */
-    std::cout << text_colour.magenta << "Time" << "\t\t";
-    std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat Ox, Sat Oy, Sat Oz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
-    std::cout << "Accel x, Accel y, Accel z;\t" << "Gyro x, Gyro y, Gyro z;\t\t";
-    for (int i = 0; i < num_reaction_wheels; i++)
+    if ("-1" != this->output_file_path_string)
     {
-        std::cout << "RW " << i+1 << " O, RW " << i+1 << " a;";
-        if (i < num_reaction_wheels - 1)
+        this->output_file_path_string = csv_path + suffix + this->csv_ext;
+        std::ofstream output_file;
+        output_file.open(output_file_path_string);
+        if (output_file.is_open())
         {
-            std::cout << "\t\t";
+            output_file << "Time,Satelite theta x,Satelite theta y,Satelite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
+            output_file << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,Gyro x,Gyro y,Gyro z,";
+            for (uint32_t i = 0; i < num_reaction_wheels; i++)
+            {
+                output_file << "Reaction wheel " << i << " Omega,Reaction wheel " << i << " alpha,";
+            }
+            output_file << std::endl;
+            output_file.close();
+        }
+        else
+        {
+            send_error("Unable to open file " + output_file_path_string);
         }
     }
-    std::cout << text_colour.reset << std::endl;
 
-    /* Write CSV header */
-    std::ofstream output_file;
-    output_file.open(output_file_path_string);
-
-    if (output_file.is_open())
-    {
-        output_file << "Time,Satelite theta x,Satelite theta y,Satelite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
-        output_file << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,Gyro x,Gyro y,Gyro z,";
-        for (int i = 0; i < num_reaction_wheels; i++)
-        {
-            output_file << "Reaction wheel " << i << " Omega,Reaction wheel " << i << " alpha,";
-        }
-        output_file << std::endl;
-
-        // Close file?
-        output_file.close();
-    }
-    else
-    {
-        send_error("Unable to open file " + output_file_path_string);
-    }
+    return;
 }
+
 
 void Messenger::update_simulation_state(sim_config state, timestamp time)
 {
@@ -159,48 +172,52 @@ void Messenger::update_simulation_state(sim_config state, timestamp time)
 
 void Messenger::append_csv_output(sim_config state, timestamp time)
 {
-    // Open file (assuming it's still valid)
-    std::ofstream output_file;
-
-    try
+    /* don't bother trying to append if the file was never started. */
+    if ("-1" != this->output_file_path_string)
     {
-        output_file.open(output_file_path_string, std::fstream::out | std::fstream::app);
-    }
-    catch(const std::ios_base::failure& e)
-    {
-        send_error(e.what());
-    }
+        std::ofstream output_file;
 
-    if (output_file.is_open())
-    {
-        output_file << (float)time << ",";
-        output_file << state.satellite.theta_b.x() << "," << state.satellite.theta_b.y() << "," << state.satellite.theta_b.z() << ",";
-        output_file << state.satellite.omega_b.x() << "," << state.satellite.omega_b.y() << "," << state.satellite.omega_b.z() << ",";
-        output_file << state.satellite.alpha_b.x() << "," << state.satellite.alpha_b.y() << "," << state.satellite.alpha_b.z() << ",";
-
-        output_file << state.accelerometer.measurement.x() << "," << state.accelerometer.measurement.y() << "," << state.accelerometer.measurement.z() << ",";
-        output_file << state.gyroscope.measurement.x()     << "," << state.gyroscope.measurement.y()     << "," << state.gyroscope.measurement.z()     << ",";
-
-        for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
+        try
         {
-            float abs_omega = sqrt( state.reaction_wheels.at(i).omega.x()*state.reaction_wheels.at(i).omega.x() + 
-                                    state.reaction_wheels.at(i).omega.y()*state.reaction_wheels.at(i).omega.y() + 
-                                    state.reaction_wheels.at(i).omega.z()*state.reaction_wheels.at(i).omega.z() );
-            float abs_alpha = sqrt( state.reaction_wheels.at(i).alpha.x()*state.reaction_wheels.at(i).alpha.x() + 
-                                    state.reaction_wheels.at(i).alpha.y()*state.reaction_wheels.at(i).alpha.y() + 
-                                    state.reaction_wheels.at(i).alpha.z()*state.reaction_wheels.at(i).alpha.z() );
-
-            output_file << abs_omega << "," << abs_alpha << ",";
+            output_file.open(output_file_path_string, std::fstream::out | std::fstream::app);
         }
-        output_file << std::endl;
+        catch(const std::ios_base::failure& e)
+        {
+            send_error(e.what());
+        }
 
-        // Close file
-        output_file.close();
+        if (output_file.is_open())
+        {
+            output_file << (float)time << ",";
+            output_file << state.satellite.theta_b.x() << "," << state.satellite.theta_b.y() << "," << state.satellite.theta_b.z() << ",";
+            output_file << state.satellite.omega_b.x() << "," << state.satellite.omega_b.y() << "," << state.satellite.omega_b.z() << ",";
+            output_file << state.satellite.alpha_b.x() << "," << state.satellite.alpha_b.y() << "," << state.satellite.alpha_b.z() << ",";
+
+            output_file << state.accelerometer.measurement.x() << "," << state.accelerometer.measurement.y() << "," << state.accelerometer.measurement.z() << ",";
+            output_file << state.gyroscope.measurement.x()     << "," << state.gyroscope.measurement.y()     << "," << state.gyroscope.measurement.z()     << ",";
+
+            for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
+            {
+                float abs_omega = sqrt( state.reaction_wheels.at(i).omega.x()*state.reaction_wheels.at(i).omega.x() + 
+                                        state.reaction_wheels.at(i).omega.y()*state.reaction_wheels.at(i).omega.y() + 
+                                        state.reaction_wheels.at(i).omega.z()*state.reaction_wheels.at(i).omega.z() );
+                float abs_alpha = sqrt( state.reaction_wheels.at(i).alpha.x()*state.reaction_wheels.at(i).alpha.x() + 
+                                        state.reaction_wheels.at(i).alpha.y()*state.reaction_wheels.at(i).alpha.y() + 
+                                        state.reaction_wheels.at(i).alpha.z()*state.reaction_wheels.at(i).alpha.z() );
+
+                output_file << abs_omega << "," << abs_alpha << ",";
+            }
+            output_file << std::endl;
+
+            // Close file
+            output_file.close();
+        }
+        else
+        {
+            send_error("Unable to open file " + output_file_path_string);
+        }
     }
-    else
-    {
-        send_error("Unable to open file " + output_file_path_string);
-    }
+ 
     return;
 }
 

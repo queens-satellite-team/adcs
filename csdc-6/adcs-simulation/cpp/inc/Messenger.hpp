@@ -112,7 +112,7 @@ class Messenger
          * 
          * @param num_reaction_wheels number of reaction wheels in the run, used for the header.
         **/
-        void start_new_sim(int num_reaction_wheels);
+        void start_new_sim(uint32_t num_reaction_wheels);
 
         /**
          * @name    clean_csv_files
@@ -128,6 +128,10 @@ class Messenger
          * @details appends a simulation state to the end of the csv output file.
         **/
         void append_csv_output(sim_config state, timestamp time);
+
+        void write_cout_header(uint32_t num_reaction_wheels);
+
+        void write_csv_header(uint32_t num_reaction_wheels);
 
     private:
         /* Character used to denote user control of the terminal.**/

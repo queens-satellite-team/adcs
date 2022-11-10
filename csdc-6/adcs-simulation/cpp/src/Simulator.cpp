@@ -80,7 +80,7 @@ void Simulator::simulate(timestamp t) {
 
 void Simulator::timestep() {
     Eigen::Vector3f total_rw_torques = Eigen::Vector3f::Zero();
-    for (sim_reaction_wheel wheel : system_vals.reaction_wheels) {
+    for (sim_reaction_wheel &wheel : system_vals.reaction_wheels) {
         total_rw_torques -= wheel.inertia * wheel.alpha;
         total_rw_torques -= system_vals.satellite.omega_b.cross(wheel.inertia * wheel.omega);
 

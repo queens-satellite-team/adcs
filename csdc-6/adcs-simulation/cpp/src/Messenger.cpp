@@ -112,7 +112,6 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
     if ("-1" != this->output_file_path_string)
     {
         this->output_file_path_string = csv_path + suffix + this->csv_ext;
-        send_error(this->output_file_path_string);
         std::ofstream output_file;
         output_file.open(output_file_path_string);
         if (output_file.is_open())

@@ -32,5 +32,5 @@ fi
 
 if [[ "$1" != "clean" ]]
 then
-    cmake .
+    cmake . -Wno-dev
 fi

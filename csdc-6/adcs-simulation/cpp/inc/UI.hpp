@@ -141,6 +141,9 @@ class UI
         **/
         void quit(std::vector<std::string> args);
 
+        void clean_out(std::vector<std::string> args);
+
+    private:
         /**
          * @typedef UI::*commandFunc
          *
@@ -166,6 +169,9 @@ class UI
 
         /* Number of expected args for the "exit" command**/
         const uint8_t num_exit_args = 1;
+
+        /* Number of expected args for the "exit" command**/
+        const uint8_t num_clean_out_args = 1;
 
         /* Path to the YAML file describing the final state of the previous simulation run.**/
         std::string previous_end_state_yaml;

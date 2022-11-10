@@ -1,8 +1,9 @@
 /adcs-simulation/python/interface/build
 .vscode
-*/build
-*/CMakeFiles
-*/CMakeCache.txt
-*/Makefile
-*/bin
-.cmake
+build/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+bin/
+output/
+cmake_install.cmake

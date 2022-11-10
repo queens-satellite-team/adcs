@@ -370,9 +370,21 @@ class Sensor : public ADCS_device {
         **/
         virtual measurement take_measurement();
 
+        /**
+         * @name    get_positions
+         *
+         * @details positions vector accessor.
+         *
+         * @returns positions of each physical sensor.
+        **/
+        std::vector<Eigen::Vector3f> get_positions();
+
     private:
         /* latest measurement value taken**/
         measurement current_value;
+
+        /* Positions of each satellite within the satellite body. Dimensions are num_sensors x 3**/
+        std::vector<Eigen::Vector3f> positions;
 };
 
 /**
@@ -387,13 +399,34 @@ class Sensor : public ADCS_device {
 class Actuator : public ADCS_device {
     public:
         /**
-         * @name            set_output
+         * @name    set_target_state
          *
-         * @param new_value the new value to set the actuators to
+         * @details sets the target state the actuator is requesting from the simulation.
+         *          Interpretation of the target is actuator-dependedent. Updates the simulation
+         *          when called.
+         *
+         * @param   target_state the new state the control code would like to be in.
          *
         **/
-        virtual void set_current_accelerations(action new_value); // TODO >> this may need a return value
+        virtual void set_target_state(actuator_state target_state);
 
+        /**
+         * @name    get_target_state
+         *
+         * @details accessor for the target state of the actuator.
+         *
+         * @returns the current target state of the actuator.
+        **/
+        actuator_state get_target_state();
+
+        /**
+         * @name    get_position
+         *
+         * @details accessor for the position of the actuator.
+         *
+         * @returns the position within the satellite of the actuator.
+        **/
+        Eigen::Vector3f get_position();
 };
 
 /******************************************** CLASSES ********************************************/
@@ -431,7 +464,19 @@ class adcs_timer {
  *
  * @implements ADCS_device, Sensor
 **/
-class accelerometer : public Sensor {};
+class accelerometer : public Sensor 
+{
+    public:
+        /**
+         * @name    take_measurement
+         *
+         * @details this function takes a measurement using the sensor. The simulation is also told
+         *          to update.
+         *
+         * @returns the required measurement if succesful.
+        **/
+        measurement take_measurement();
+};
 
 /**
  * @class gyroscope
@@ -440,7 +485,19 @@ class accelerometer : public Sensor {};
  *
  * @implements ADCS_device, Sensor
 **/
-class gyroscope : public Sensor {};
+class gyroscope : public Sensor
+{
+    public:
+        /**
+         * @name    take_measurement
+         *
+         * @details this function takes a measurement using the sensor. The simulation is also told
+         *          to update.
+         *
+         * @returns the required measurement if succesful.
+        **/
+        measurement take_measurement();
+};
 
 /**
  * @class Reaction_wheel
@@ -450,6 +507,39 @@ class gyroscope : public Sensor {};
  *
  * @implements ADCS_device, Actuator
 **/
-class Reaction_wheel
- : public Actuator {};
+class Reaction_wheel : public Actuator
+ {
+    public:
+        /**
+         * @name    get_inertia_matrix
+         *
+         * @details inertia matrix accessor
+         *
+         * @returns the inertia matrix of a reaction wheel
+         *
+        **/
+        float get_inertia_matrix();
+
+        /**
+         * @name    set_target_state
+         *
+         * @details sets the target state the actuator is requesting from the simulation.
+         *          Interpretation of the target is actuator-dependedent. Updates the simulation
+         *          when called.
+         *
+         * @param   target_state the new state the control code would like to be in.
+         *
+        **/
+        void set_target_state(actuator_state target_state);
+
+        /**
+         * @name    get_current_state
+         *
+         * @details accessor for the current state of the actuator. This includes current
+         *          accelerations, velocities, and positions (if applicable).
+         *
+         * @returns the current state of the actuator
+        **/
+        actuator_state get_current_state();
+ };
 #endif

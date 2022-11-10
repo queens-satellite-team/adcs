@@ -250,7 +250,7 @@ sim_config UI::get_sim_config(Configuration &config)
                 const ReactionWheelConfig* reaction_config = dynamic_cast<const ReactionWheelConfig*>(actuator_config.get());
                 sim_reaction_wheel initial_reac_values;
                 initial_reac_values.alpha = Eigen::Vector3f::Ones();
-                initial_reac_values.omega = Eigen::Vector3f::Zero(); // TODO: this should actually be an initial value?
+                initial_reac_values.omega = reaction_config->velocity;
                 initial_reac_values.inertia  = reaction_config->momentOfInertia;
                 initial_reac_values.position = reaction_config->position;
                 initial_values.reaction_wheels.push_back(initial_reac_values);

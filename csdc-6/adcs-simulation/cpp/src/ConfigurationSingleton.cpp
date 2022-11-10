@@ -35,6 +35,11 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     for (const auto &n : node["Position"]) {
         position(i++) = n.as<float>();
     }
+
+    i = 0;
+    for (const auto &n : node["Velocity"]) {
+        velocity(i++) = n.as<float>();
+    }
 }
 
 bool Configuration::Load(const std::string &configFile) {

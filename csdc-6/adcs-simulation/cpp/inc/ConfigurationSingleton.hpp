@@ -84,6 +84,7 @@ struct AccelerometerConfig : public SensorConfig {
  * @property minAngAccel [float], minimimum angular acceleration
  * @property pollingTime [float], polling time of the reaction wheel
  * @property position [Eigen::Vector3f], unit position vector associated with the reaction wheel
+ * @property velocity [Eigen::Vector3f], initial velocity of the reaction wheel
  *
  * @details struct outling the configuration of a reaction wheel according to the input YAML
 * parameters
@@ -98,6 +99,7 @@ struct ReactionWheelConfig : public ActuatorConfig {
     float minAngAccel;
     float pollingTime;
     Eigen::Vector3f position;
+    Eigen::Vector3f velocity;
 
 };
 

@@ -28,6 +28,7 @@ Satellite:
 #     MinAngAccel: [float]
 #     PollingTime: [float]
 #     Position: [3-dimensional vector]
+#     Velcoity: [3-dimensional vector]
 Actuators:
   ReactionWheel1:
     type: ReactionWheel
@@ -38,6 +39,7 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [1.73205080757,1.73205080757,-1.73205080757]
+    Velocity: [0,0,0]
   ReactionWheel2:
     type: ReactionWheel
     Moment: 0.00000925
@@ -47,6 +49,7 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [1.73205080757,-1.73205080757,-1.73205080757]
+    Velocity: [0,0,0]
   ReactionWheel3:
     type: ReactionWheel
     Moment: 0.00000925
@@ -56,6 +59,7 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [-1.73205080757,-1.73205080757,-1.73205080757]
+    Velocity: [0,0,0]
   ReactionWheel4:
     type: ReactionWheel
     Moment: 0.00000925
@@ -65,6 +69,8 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [-1.73205080757,1.73205080757,-1.73205080757]
+    Velocity: [0,0,0]
+
 # Sensors:
 #   Name: [name of sensor]
 #     type: [sensor type], Gyroscope, Accelerometer

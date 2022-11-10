@@ -87,7 +87,7 @@ void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 void Messenger::write_csv_header(uint32_t num_reaction_wheels)
 {
     /* Determine output file name */
-    std::string csv_path = this->default_csv_path;
+    std::string csv_path = this->default_csv_path; //+ this->default_csv_name;
     std::string suffix = "";
     uint32_t suffix_num = 0;
 

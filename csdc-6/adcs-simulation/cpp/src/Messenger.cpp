@@ -69,7 +69,7 @@ void Messenger::start_new_sim(uint32_t num_reaction_wheels)
 void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 {
     std::cout << text_colour.magenta << "Time" << "\t\t";
-    std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat Ox, Sat Oy, Sat Oz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
+    std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat wx, Sat wy, Sat wz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
     std::cout << "Accel x, Accel y, Accel z;\t" << "Gyro x, Gyro y, Gyro z;\t\t";
     for (uint32_t i = 0; i < num_reaction_wheels; i++)
     {
@@ -87,7 +87,7 @@ void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 void Messenger::write_csv_header(uint32_t num_reaction_wheels)
 {
     /* Determine output file name */
-    std::string csv_path = this->default_csv_path; //+ this->default_csv_name;
+    std::string csv_path = this->default_csv_path;
     std::string suffix = "";
     uint32_t suffix_num = 0;
 
@@ -95,11 +95,12 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
     {
         std::filesystem::create_directory(csv_path);
     }
+    csv_path += this->default_csv_name;
 
     /* search for file if it exists, increment if it does */
     while(std::filesystem::exists(csv_path + suffix + this->csv_ext))
     {
-        if (UINT32_MAX > suffix_num)
+        if (UINT32_MAX <= suffix_num)
         {
             this->output_file_path_string = "-1";
             send_error("Unable to create output CSV, too many files exist.");
@@ -115,7 +116,7 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
         output_file.open(output_file_path_string);
         if (output_file.is_open())
         {
-            output_file << "Time,Satelite theta x,Satelite theta y,Satelite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
+            output_file << "Time,Satellite theta x,Satellite theta y,Satellite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
             output_file << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,Gyro x,Gyro y,Gyro z,";
             for (uint32_t i = 0; i < num_reaction_wheels; i++)
             {

@@ -32,10 +32,11 @@
 **/
 static const struct
 {
-    std::string reset  = "\033[0m";
-    std::string red    = "\033[31m";
-    std::string green  = "\033[32m";
-    std::string yellow = "\033[33m";
+    std::string reset   = "\033[0m";
+    std::string red     = "\033[31m";
+    std::string green   = "\033[32m";
+    std::string yellow  = "\033[33m";
+    std::string magenta = "\033[35m";
 } text_colour;
 
 /**
@@ -68,6 +69,16 @@ class Messenger
         void send_warning(std::string msg);
 
         /**
+         * @name    send_error
+         *
+         * @details Function used by all internal processes and commands to send errors to the
+         *          UI. Uniformily formats the messages for consistency and clarity.
+         *
+         * @param msg error to display to the user.
+        **/
+        void send_error(std::string msg);
+
+        /**
          * @name    update_simulation_state
          *
          * @details Function used by the simulation to udpate the user on the state of the system
@@ -81,18 +92,62 @@ class Messenger
          *              acceleration.
          * @param time  time of the update.
         **/
-        void update_simulation_state(Satellite state, timestamp time);
+        void update_simulation_state(sim_config state, timestamp time);
 
         /**
          * @name    prompt_char
          *
          * @details Function to tell the messenger to print the prompt cahracter.
         **/
-        void prompt_char();
+        inline void prompt_char()
+        {
+            std::cout << text_colour.reset << prompt_character;
+        }
+
+        /**
+         * @name    start_new_sim
+         *
+         * @details prints a header with columns for each simulation property, and starts a csv
+         *          file with the same header information.
+         * 
+         * @param num_reaction_wheels number of reaction wheels in the run, used for the header.
+        **/
+        void start_new_sim(uint32_t num_reaction_wheels);
+
+        /**
+         * @name    clean_csv_files
+         *
+         * @details clears the output directory of all files.
+        **/
+        void clean_csv_files();
+
+    private:
+        /**
+         * @name    append_csv_output
+         *
+         * @details appends a simulation state to the end of the csv output file.
+        **/
+        void append_csv_output(sim_config state, timestamp time);
+
+        void write_cout_header(uint32_t num_reaction_wheels);
+
+        void write_csv_header(uint32_t num_reaction_wheels);
 
     private:
         /* Character used to denote user control of the terminal.**/
         const std::string prompt_character = ">";
+
+        /* Default csv file path */
+        const std::string default_csv_path = "./output/";
+
+        /* default name of the output file */
+        const std::string default_csv_name = "sim_out";
+
+        /* extension of csv files */
+        const std::string csv_ext = ".csv";
+
+        /* full string of the output path */
+        std::string output_file_path_string = "";
 
 };
 

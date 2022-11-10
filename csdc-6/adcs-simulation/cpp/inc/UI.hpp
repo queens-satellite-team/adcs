@@ -142,6 +142,17 @@ class UI
         void quit(std::vector<std::string> args);
 
         /**
+         * @name    clean_out
+         *
+         * @details Cleans all output csv files
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *              args[0] command "clean_out"
+        **/
+        void clean_out(std::vector<std::string> args);
+
+    private:
+        /**
          * @typedef UI::*commandFunc
          *
          * @details function pointer for internal commands. Used to map strings of commands to
@@ -166,6 +177,9 @@ class UI
 
         /* Number of expected args for the "exit" command**/
         const uint8_t num_exit_args = 1;
+
+        /* Number of expected args for the "exit" command**/
+        const uint8_t num_clean_out_args = 1;
 
         /* Path to the YAML file describing the final state of the previous simulation run.**/
         std::string previous_end_state_yaml;

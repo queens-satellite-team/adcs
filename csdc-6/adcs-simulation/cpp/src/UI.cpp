@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 #include <any>
-#include <iostream> 
+#include <iostream>
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -21,12 +21,19 @@
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
 
-
 UI::UI()
 {
-    allowed_commands["start_sim"] = std::bind(&UI::run_simulation, this, std::placeholders::_1);
-    allowed_commands["resume_sim"] = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
-    allowed_commands["exit"] = std::bind(&UI::quit, this, std::placeholders::_1);
+    /* Full command names*/
+    allowed_commands["start_sim"]   = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
+    allowed_commands["resume_sim"]  = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
+    allowed_commands["exit"]        = std::bind(&UI::quit,              this, std::placeholders::_1);
+    allowed_commands["clean_out"]   = std::bind(&UI::clean_out,         this, std::placeholders::_1);
+
+    /* Aliases */
+    allowed_commands["ss"] = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
+    allowed_commands["rs"] = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
+    allowed_commands["q"]  = std::bind(&UI::quit,              this, std::placeholders::_1);
+    allowed_commands["co"] = std::bind(&UI::clean_out,         this, std::placeholders::_1);
 }
 
 void UI::start_ui_loop()
@@ -286,4 +293,15 @@ void UI::quit(std::vector<std::string> args)
 
     messenger.send_message("exiting.");
     exit(0);
+}
+
+void UI::clean_out(std::vector<std::string> args)
+{
+    if (num_exit_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    messenger.clean_csv_files();
+    return;
 }

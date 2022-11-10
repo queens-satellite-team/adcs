@@ -37,6 +37,9 @@ void Simulator::init(sim_config initial_values)
 {
     /* TODO may need a check here**/
     this->system_vals = initial_values;
+
+    messenger->send_message("Starting simulation.");
+    messenger->start_new_sim(initial_values.reaction_wheels.size());
 }
 
 timestamp Simulator::update_simulation() {
@@ -72,7 +75,7 @@ void Simulator::simulate(timestamp t) {
         this->timestep();
     }
     
-    this->messenger->update_simulation_state(this->system_vals.satellite, this->simulation_time);
+    this->messenger->update_simulation_state(this->system_vals, this->simulation_time);
 }
 
 void Simulator::timestep() {

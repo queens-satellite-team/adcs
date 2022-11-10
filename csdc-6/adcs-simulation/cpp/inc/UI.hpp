@@ -141,6 +141,14 @@ class UI
         **/
         void quit(std::vector<std::string> args);
 
+        /**
+         * @name    clean_out
+         *
+         * @details Cleans all output csv files
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *              args[0] command "clean_out"
+        **/
         void clean_out(std::vector<std::string> args);
 
     private:

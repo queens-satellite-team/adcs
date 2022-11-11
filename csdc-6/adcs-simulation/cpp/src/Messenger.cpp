@@ -149,15 +149,8 @@ void Messenger::update_simulation_state(sim_config state, timestamp time)
     std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
 
     for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
-    {
-        float abs_omega = sqrt( state.reaction_wheels.at(i).omega.x()*state.reaction_wheels.at(i).omega.x() + 
-                                state.reaction_wheels.at(i).omega.y()*state.reaction_wheels.at(i).omega.y() + 
-                                state.reaction_wheels.at(i).omega.z()*state.reaction_wheels.at(i).omega.z() );
-        float abs_alpha = sqrt( state.reaction_wheels.at(i).alpha.x()*state.reaction_wheels.at(i).alpha.x() + 
-                                state.reaction_wheels.at(i).alpha.y()*state.reaction_wheels.at(i).alpha.y() + 
-                                state.reaction_wheels.at(i).alpha.z()*state.reaction_wheels.at(i).alpha.z() );
-        
-        std::cout << "\t" << abs_omega << ", " << abs_alpha << ";";
+    {   
+        std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
 
         if (i < state.reaction_wheels.size() - 1)
         {
@@ -199,14 +192,7 @@ void Messenger::append_csv_output(sim_config state, timestamp time)
 
             for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
             {
-                float abs_omega = sqrt( state.reaction_wheels.at(i).omega.x()*state.reaction_wheels.at(i).omega.x() + 
-                                        state.reaction_wheels.at(i).omega.y()*state.reaction_wheels.at(i).omega.y() + 
-                                        state.reaction_wheels.at(i).omega.z()*state.reaction_wheels.at(i).omega.z() );
-                float abs_alpha = sqrt( state.reaction_wheels.at(i).alpha.x()*state.reaction_wheels.at(i).alpha.x() + 
-                                        state.reaction_wheels.at(i).alpha.y()*state.reaction_wheels.at(i).alpha.y() + 
-                                        state.reaction_wheels.at(i).alpha.z()*state.reaction_wheels.at(i).alpha.z() );
-
-                output_file << abs_omega << "," << abs_alpha << ",";
+                output_file << state.reaction_wheels.at(i).omega << "," << state.reaction_wheels.at(i).alpha << ",";
             }
             output_file << std::endl;
 

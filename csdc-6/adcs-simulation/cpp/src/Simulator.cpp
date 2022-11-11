@@ -81,8 +81,8 @@ void Simulator::simulate(timestamp t) {
 void Simulator::timestep() {
     Eigen::Vector3f total_rw_torques = Eigen::Vector3f::Zero();
     for (sim_reaction_wheel &wheel : system_vals.reaction_wheels) {
-        total_rw_torques -= wheel.inertia * wheel.alpha;
-        total_rw_torques -= system_vals.satellite.omega_b.cross(wheel.inertia * wheel.omega);
+        total_rw_torques -= wheel.inertia * wheel.alpha * wheel.axis_of_rotation;
+        total_rw_torques -= system_vals.satellite.omega_b.cross(wheel.inertia * wheel.omega * wheel.axis_of_rotation);
 
         // Update reaction wheel velocity
         wheel.omega += wheel.alpha * (float) this->timestep_length;
@@ -111,7 +111,7 @@ timestamp Simulator::reaction_wheel_update_desired_state(Eigen::Vector3f wheel_p
         if (wheel.position.isApprox(wheel_position)) {
             // Update the target state (For now just change the acceleration to match,
             // when it reaches it's target position just change accel to 0)
-            wheel.alpha = new_target.acceleration * wheel.position;
+            wheel.alpha = new_target.acceleration;
         }
     }
 
@@ -127,9 +127,9 @@ actuator_state Simulator::reaction_wheel_get_current_state(Eigen::Vector3f posit
     for (sim_reaction_wheel wheel : system_vals.reaction_wheels) {
         if (wheel.position.isApprox(position)) {
             // Do some math to convert body-frame values to reaction_wheel_frame
-            ret.position     = wheel.position.norm(); // this isn't used anyway
-            ret.acceleration = wheel.alpha.norm();
-            ret.velocity     = wheel.omega.norm();
+            // ret.position     = wheel.position; // this isn't used anyway
+            ret.acceleration = wheel.alpha;
+            ret.velocity     = wheel.omega;
             ret.time         = this->simulation_time;
         }
     }

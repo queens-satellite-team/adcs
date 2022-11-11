@@ -16,7 +16,7 @@
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
-Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, float inertia_matrix) : Actuator(polling_time, sim, {position}, max_vals, min_vals)
+Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, actuator_state initial_vals, Eigen::Vector3f axis_of_rotation, float inertia_matrix) : Actuator(polling_time, sim, {position}, max_vals, min_vals, initial_vals, axis_of_rotation)
 {
 
     if(inertia_matrix == 0)

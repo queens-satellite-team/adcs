@@ -61,9 +61,10 @@ typedef struct {
 **/
 typedef struct
 {
-    Eigen::Vector3f omega;
-    Eigen::Vector3f alpha;
+    float omega;
+    float alpha;
     float inertia;
+    Eigen::Vector3f axis_of_rotation;
     Eigen::Vector3f position;
 } sim_reaction_wheel;
 

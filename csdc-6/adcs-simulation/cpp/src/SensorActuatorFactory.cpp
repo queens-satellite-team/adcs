@@ -62,7 +62,12 @@ std::shared_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &
             max.velocity = reac->maxAngVel;
             max.position = std::numeric_limits<float>::max();
             max.time = timestamp(std::numeric_limits<float>::max());
-            ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime), sim, reac->position, min, max, reac->momentOfInertia);
+            actuator_state initial_vals;
+            initial_vals.acceleration = reac->acceleration;
+            initial_vals.position = 0; //this is unused
+            initial_vals.time = 0; //this is unused
+            initial_vals.velocity = reac->velocity;
+            ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime), sim, reac->position, min, max, initial_vals, reac->axisOfRotation, reac->momentOfInertia);
             break;
         }
     }

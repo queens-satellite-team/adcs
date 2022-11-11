@@ -10,13 +10,13 @@
 # Satellite:
 #   Moment: [3-dimensional matrix]
 #   Position: [3-dimensional vector]
-#   Velcoity: [3-dimensional vector]
+#   Velocity: [3-dimensional vector]
 Satellite:
-  Moment: [[0.02035470141,0.00004983389,0.00021768132],
-           [0.00004983389,0.01993812272,-0.00007588037],
-           [0.00021768132,-0.00007588037,0.0053506098]]
-  Position: [1,1,1]
-  Velocity: [10,10,10]
+  Moment: [[0.16666666666,0,0],
+           [0,0.16666666666,0],
+           [0,0,0.16666666666]]
+  Position: [0,0,0]
+  Velocity: [0,0,0]
 
 # Actuators:
 #   Name: [name of actuator]
@@ -28,48 +28,22 @@ Satellite:
 #     MinAngAccel: [float]
 #     PollingTime: [float]
 #     Position: [3-dimensional vector]
-#     Velcoity: [3-dimensional vector]
+#     Velcoity: [float]
+#     Axis of Rot: [3-dimensional vector]
+#     Acceleration: [float]
 Actuators:
   ReactionWheel1:
     type: ReactionWheel
-    Moment: 0.00000925
-    MaxAngVel: 88
-    MaxAngAccel: 8
+    Moment: 1
+    MaxAngVel: 1000
+    MaxAngAccel: 1000
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
-    Position: [1.73205080757,1.73205080757,-1.73205080757]
-    Velocity: [0,0,0]
-  ReactionWheel2:
-    type: ReactionWheel
-    Moment: 0.00000925
-    MaxAngVel: 88
-    MaxAngAccel: 8
-    MinAngVel: 0
-    MinAngAccel: 0
-    PollingTime: 10
-    Position: [1.73205080757,-1.73205080757,-1.73205080757]
-    Velocity: [0,0,0]
-  ReactionWheel3:
-    type: ReactionWheel
-    Moment: 0.00000925
-    MaxAngVel: 88
-    MaxAngAccel: 8
-    MinAngVel: 0
-    MinAngAccel: 0
-    PollingTime: 10
-    Position: [-1.73205080757,-1.73205080757,-1.73205080757]
-    Velocity: [0,0,0]
-  ReactionWheel4:
-    type: ReactionWheel
-    Moment: 0.00000925
-    MaxAngVel: 88
-    MaxAngAccel: 8
-    MinAngVel: 0
-    MinAngAccel: 0
-    PollingTime: 10
-    Position: [-1.73205080757,1.73205080757,-1.73205080757]
-    Velocity: [0,0,0]
+    Position: [0,0,0]
+    Velocity: 1
+    AxisOfRotation: [0,0,1]
+    Acceleration: 1
 
 # Sensors:
 #   Name: [name of sensor]
@@ -80,11 +54,11 @@ Sensors:
   Gyro1:
     type: Gyroscope
     PollingTime: 10
-    Position: [1,1,1]
+    Position: [0,0,0]
   Accel1:
     type: Accelerometer
     PollingTime: 10
-    Position: [1,1,1]
+    Position: [0,0,0]
 
-# Timestep: [float]
+# Timestep: [float], in ms
 TimeStep: 1

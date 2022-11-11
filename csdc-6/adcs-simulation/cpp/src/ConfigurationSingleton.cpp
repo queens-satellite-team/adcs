@@ -37,9 +37,11 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     }
 
     i = 0;
-    for (const auto &n : node["Velocity"]) {
-        velocity(i++) = n.as<float>();
+    for (const auto &n : node["AxisOfRotation"]) {
+        axisOfRotation(i++) = n.as<float>();
     }
+    velocity = node["Velocity"].as<float>();
+    acceleration = node["Acceleration"].as<float>();
 }
 
 bool Configuration::Load(const std::string &configFile) {

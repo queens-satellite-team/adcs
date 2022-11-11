@@ -186,7 +186,7 @@ class Actuator : public ADCS_device
          *
          * @details constructor for actuators. Initial values for current and target states are 0.
         **/
-        Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals);
+        Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, actuator_state initial_vals, Eigen::Vector3f axis_of_rotation);
 
         /**
          * @name Actuator destructor
@@ -275,6 +275,8 @@ class Actuator : public ADCS_device
 
         /* Current acceleration values for each actuator*/
         actuator_state current_state;
+
+        Eigen::Vector3f axis_of_rotation;
     private:
         /* The maximum value for each state property of the actuator.**/
         actuator_state max_state_values;
@@ -404,7 +406,7 @@ class Reaction_wheel : public Actuator
          * @details constructor for the Reaction_wheel. All parameters are passed to the Actuator
          *          base class.
         **/
-        Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, float inertia_matrix);
+        Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, actuator_state initial_vals, Eigen::Vector3f axis_of_rotation, float inertia_matrix);
 
         /**
          * @name    get_inertia_matrix

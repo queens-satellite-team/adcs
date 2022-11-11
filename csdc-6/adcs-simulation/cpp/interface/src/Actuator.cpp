@@ -15,11 +15,13 @@
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
-Actuator::Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals) : ADCS_device(polling_time, sim)
+Actuator::Actuator(timestamp polling_time, Simulator* sim, Eigen::Vector3f position, actuator_state max_vals, actuator_state min_vals, actuator_state initial_vals, Eigen::Vector3f axis_of_rotation) : ADCS_device(polling_time, sim)
 {
     this->max_state_values = max_vals;
     this->min_state_values = min_vals;
     this->position = position;
+    this->current_state = initial_vals;
+    this->axis_of_rotation = axis_of_rotation;
 }
 
 actuator_state Actuator::get_target_state()

@@ -79,30 +79,26 @@ void Simulator::simulate(timestamp t) {
 }
 
 void Simulator::timestep() {
-    Eigen::Vector3f total_rw_torques = Eigen::Vector3f::Zero();
     Eigen::Matrix3f inertia_b_inverse = system_vals.satellite.inertia_b.inverse();
-    Eigen::Vector3f alpha_sum = Eigen::Vector3f::Zero();
-    float rw_jerk = 0; //change this to the value for jerk from the reaction wheel datasheet
-    
-    for (sim_reaction_wheel &wheel : system_vals.reaction_wheels) {
-        // Uncomment for non-fixed torques
-        //total_rw_torques = wheel.inertia * wheel.alpha * wheel.axis_of_rotation;
+    Eigen::Vector3f sum_rw = Eigen::Vector3f::Zero();
 
-        // Uncomment for fixed torque, use the unit position vector for the axis of rotation
-        total_rw_torques = wheel.axis_of_rotation; 
+    for (sim_reaction_wheel &wheel : system_vals.reaction_wheels) {
         
         // This assumes that w_rw and I_rw are both scalars, and can thus be multiplied by the axis of rotation to achieve the right matrix dimensions
         // change this if either w_rw or I_rw become a matrix!
-        alpha_sum += (-inertia_b_inverse *system_vals.satellite.omega_b).cross(system_vals.satellite.inertia_b * system_vals.satellite.omega_b) 
-        - (inertia_b_inverse *system_vals.satellite.omega_b).cross(wheel.axis_of_rotation*wheel.omega*wheel.inertia) 
-        - (inertia_b_inverse *total_rw_torques);
+        sum_rw += (wheel.inertia * wheel.alpha * wheel.axis_of_rotation) 
+            + system_vals.satellite.omega_b.cross(wheel.axis_of_rotation*wheel.omega*wheel.inertia);
 
-        // Update reaction wheel velocity and acceleration
+
+
+        // Update reaction wheel velocity 
         wheel.omega += wheel.alpha * (float) this->timestep_length;
-        wheel.alpha +=  rw_jerk * (float) this->timestep_length;
+        //we need to consider alpha but this will be done by the controller
+        //wheel.alpha +=  rw_jerk * (float) this->timestep_length;
     }
     
-    system_vals.satellite.alpha_b = alpha_sum;
+    system_vals.satellite.alpha_b = (-inertia_b_inverse *system_vals.satellite.omega_b).cross(system_vals.satellite.inertia_b * system_vals.satellite.omega_b)
+        - inertia_b_inverse*sum_rw;
 
     system_vals.satellite.omega_b += system_vals.satellite.alpha_b * (float) timestep_length;
     system_vals.satellite.theta_b += system_vals.satellite.omega_b * (float) timestep_length;

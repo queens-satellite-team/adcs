@@ -43,7 +43,7 @@ Actuators:
     Position: [0,0,0]
     Velocity: 2.5
     AxisOfRotation: [0,0,1]
-    Acceleration: 1
+    Acceleration: 0.5
 
 # Sensors:
 #   Name: [name of sensor]

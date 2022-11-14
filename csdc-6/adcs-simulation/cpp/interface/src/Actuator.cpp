@@ -50,6 +50,10 @@ Eigen::Vector3f Actuator::get_position()
     return this->position;
 }
 
+Eigen::Vector3f Actuator::get_axis_of_rotation()
+{
+    return this->axis_of_rotation;
+}
 
 void Actuator::check_valid_state(actuator_state state)
 {

@@ -245,6 +245,15 @@ class Actuator : public ADCS_device
         **/
         Eigen::Vector3f get_position();
 
+        /**
+         * @name    get_axis_of_rotation
+         *
+         * @details accessor for the axis of rotation of the actuator.
+         *
+         * @returns the axis of rotation of the actuator.
+        **/
+        Eigen::Vector3f get_axis_of_rotation();
+
     protected:
         /**
          * @name    set_current_state

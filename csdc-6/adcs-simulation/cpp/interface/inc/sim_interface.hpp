@@ -118,6 +118,8 @@ class Sensor : public ADCS_device {
         virtual ~Sensor(){}
 
         /**
+         * @note commenting out for now but this may need to be removed entirely. Keeping until a decision is made.
+         * 
          * @name    take_measurement
          *
          * @details this function takes a measurement using the sensor. The simulation is also told
@@ -125,11 +127,11 @@ class Sensor : public ADCS_device {
          *
          * @returns the required measurement if succesful.
         **/
-        virtual measurement take_measurement() // MAY need to create a default implementation
-        {
-            measurement empty;
-            return empty;
-        } 
+        // virtual measurement take_measurement() // MAY need to create a default implementation
+        // {
+        //     measurement empty;
+        //     return empty;
+        // } 
 
         /**
          * @name    set_current_vals
@@ -387,7 +389,7 @@ class Gyroscope : public Sensor {
          *
          * @returns the required measurement if succesful.
         **/
-        measurement take_measurement();
+        gyro_state take_measurement();
 };
 
 /**

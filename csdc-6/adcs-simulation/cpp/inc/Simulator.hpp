@@ -106,7 +106,7 @@ public:
      * 
      * @returns the current time at the moment the measurement was taken.
     **/
-    timestamp gyroscope_take_measurement(Eigen::Vector3f *measurement);
+    gyro_state gyroscope_take_measurement();
 
     /**
      * @name accelerometer_take_measurement

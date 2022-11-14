@@ -1,0 +1,64 @@
+# file: simulator.yaml
+#
+# details: input file that outlines the satellite configuration. the simulator
+# configuration adheres to the following format:
+#
+# author: Lily de Loe
+#
+# last edited: 2022-11-04
+
+# Satellite:
+#   Moment: [3-dimensional matrix]
+#   Position: [3-dimensional vector]
+#   Velocity: [3-dimensional vector]
+Satellite:
+  Moment: [[0.16666666666,0,0],
+           [0,0.16666666666,0],
+           [0,0,0.16666666666]]
+  Position: [0,0,0]
+  Velocity: [0,0,0]
+
+# Actuators:
+#   Name: [name of actuator]
+#     type: [actuator type], ReactionWheel
+#     Moment: [float]
+#     MaxAngVel: [float]
+#     MaxAngAccel: [float]
+#     MinAngVel: [float]
+#     MinAngAccel: [float]
+#     PollingTime: [float]
+#     Position: [3-dimensional vector]
+#     Velcoity: [float]
+#     Axis of Rot: [3-dimensional vector]
+#     Acceleration: [float]
+Actuators:
+  ReactionWheel1:
+    type: ReactionWheel
+    Moment: 1
+    MaxAngVel: 1000
+    MaxAngAccel: 1000
+    MinAngVel: 0
+    MinAngAccel: 0
+    PollingTime: 10
+    Position: [0,0,0]
+    Velocity: 1
+    AxisOfRotation: [0,0,1]
+    Acceleration: 1
+
+# Sensors:
+#   Name: [name of sensor]
+#     type: [sensor type], Gyroscope, Accelerometer
+#     PollingTime: [float]
+#     Position: [3-dimensional matrix]
+Sensors:
+  Gyro1:
+    type: Gyroscope
+    PollingTime: 10
+    Position: [0,0,0]
+  Accel1:
+    type: Accelerometer
+    PollingTime: 10
+    Position: [0,0,0]
+
+# Timestep: [float], in ms
+TimeStep: 1

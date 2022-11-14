@@ -87,7 +87,7 @@ void Simulator::timestep() {
         // This assumes that w_rw and I_rw are both scalars, and can thus be multiplied by the axis of rotation to achieve the right matrix dimensions
         // change this if either w_rw or I_rw become a matrix!
         sum_rw += (wheel.inertia * wheel.alpha * wheel.axis_of_rotation) 
-            + system_vals.satellite.omega_b.cross(wheel.axis_of_rotation*wheel.omega*wheel.inertia);
+            + system_vals.satellite.omega_b.cross(wheel.axis_of_rotation * wheel.omega * wheel.inertia);
 
 
 
@@ -97,8 +97,8 @@ void Simulator::timestep() {
         //wheel.alpha +=  rw_jerk * (float) this->timestep_length;
     }
     
-    system_vals.satellite.alpha_b = (-inertia_b_inverse *system_vals.satellite.omega_b).cross(system_vals.satellite.inertia_b * system_vals.satellite.omega_b)
-        - inertia_b_inverse*sum_rw;
+    system_vals.satellite.alpha_b = (-inertia_b_inverse * system_vals.satellite.omega_b).cross(system_vals.satellite.inertia_b * system_vals.satellite.omega_b)
+        - inertia_b_inverse * sum_rw;
 
     system_vals.satellite.omega_b += system_vals.satellite.alpha_b * (float) timestep_length;
     system_vals.satellite.theta_b += system_vals.satellite.omega_b * (float) timestep_length;

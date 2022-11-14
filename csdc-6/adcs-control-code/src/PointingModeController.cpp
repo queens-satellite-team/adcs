@@ -28,14 +28,15 @@ void PointingModeController::begin(std::vector<float> desired_attitude) {
                                     updated later anyway so for now this is fine. */
     //TODO: convert to while and add exit condition
     for (int i = 0; i < 1; i++) {
-        this->take_updated_measurements();
+        this->timer->get_time();
+        // this->take_updated_measurements();
         //std::chrono::seconds duration(1);
         //std::this_thread::sleep_for(duration);
     }
 }
 
 void PointingModeController::take_updated_measurements() {
-    for (const auto &s : sensors) {
-        s.second->take_measurement();
-    }
+    // for (const auto &s : sensors) {
+    //     s.second->take_measurement();
+    // }
 }

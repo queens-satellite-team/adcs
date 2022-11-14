@@ -94,7 +94,9 @@ typedef struct
 **/
 typedef struct
 {
-    Eigen::Vector3f measurement;
+    Eigen::Vector3f theta;
+    Eigen::Vector3f omega;
+    Eigen::Vector3f alpha;
     Eigen::Vector3f position;
 } sim_gyroscope;
 

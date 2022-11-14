@@ -105,7 +105,10 @@ void Simulator::timestep() {
 
     // Update new internal sensor and actuator values
     system_vals.accelerometer.measurement = system_vals.satellite.alpha_b.cross(system_vals.accelerometer.position);
-    system_vals.gyroscope.measurement = system_vals.satellite.alpha_b;
+    
+    system_vals.gyroscope.alpha = system_vals.satellite.alpha_b;
+    system_vals.gyroscope.omega = system_vals.satellite.omega_b;
+    system_vals.gyroscope.theta = system_vals.satellite.theta_b;
 
     // This no longer works
     // Print current values to UI
@@ -146,12 +149,17 @@ actuator_state Simulator::reaction_wheel_get_current_state(Eigen::Vector3f posit
     return ret;
 }
 
-timestamp Simulator::gyroscope_take_measurement(Eigen::Vector3f *measurement)
+gyro_state Simulator::gyroscope_take_measurement()
 {
     this->update_simulation();
-    *measurement = this->system_vals.gyroscope.measurement;
+    gyro_state ret;
 
-    return this->simulation_time;
+    ret.acceleration = this->system_vals.gyroscope.alpha;
+    ret.velocity     = this->system_vals.gyroscope.omega;
+    ret.position     = this->system_vals.gyroscope.theta;
+    ret.time_taken   = this->simulation_time;
+
+    return ret;
 }
 
 timestamp Simulator::accelerometer_take_measurement(Eigen::Vector3f *measurement)

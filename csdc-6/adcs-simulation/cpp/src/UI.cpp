@@ -237,7 +237,9 @@ sim_config UI::get_sim_config(Configuration &config)
                 break;
             case SensorType::Gyroscope:
                 initial_values.gyroscope.position = sensor_config->position;
-                initial_values.gyroscope.measurement = Eigen::Vector3f::Zero();
+                initial_values.gyroscope.alpha = Eigen::Vector3f::Zero();
+                initial_values.gyroscope.omega = Eigen::Vector3f::Zero();
+                initial_values.gyroscope.theta = Eigen::Vector3f::Zero();
                 break;
         }
     }

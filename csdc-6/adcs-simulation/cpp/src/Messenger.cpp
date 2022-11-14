@@ -70,7 +70,7 @@ void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 {
     std::cout << text_colour.magenta << "Time" << "\t\t";
     std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat wx, Sat wy, Sat wz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
-    std::cout << "Accel x, Accel y, Accel z;\t" << "Gyro x, Gyro y, Gyro z;\t\t";
+    std::cout << "Accel x, Accel y, Accel z;\t";// << "Gyro x, Gyro y, Gyro z;\t\t";
     for (uint32_t i = 0; i < num_reaction_wheels; i++)
     {
         std::cout << "RW " << i+1 << " O, RW " << i+1 << " a;";
@@ -117,7 +117,7 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
         if (output_file.is_open())
         {
             output_file << "Time,Satellite theta x,Satellite theta y,Satellite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
-            output_file << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,Gyro x,Gyro y,Gyro z,";
+            output_file << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,";//Gyro x,Gyro y,Gyro z,";
             for (uint32_t i = 0; i < num_reaction_wheels; i++)
             {
                 output_file << "Reaction wheel " << i << " Omega,Reaction wheel " << i << " alpha,";
@@ -141,12 +141,12 @@ void Messenger::update_simulation_state(sim_config state, timestamp time)
 
     // for now just text dump - next step is graphs for each.
     std::cout << text_colour.reset << time.pretty_string() << "\t" << std::setprecision(4) << std::fixed;
-    std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t\t";
+    std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t";
     std::cout << state.satellite.omega_b.x() << ", " << state.satellite.omega_b.y() << ", " << state.satellite.omega_b.z() << ";\t";
     std::cout << state.satellite.alpha_b.x() << ", " << state.satellite.alpha_b.y() << ", " << state.satellite.alpha_b.z() << ";\t";
 
     std::cout << state.accelerometer.measurement.x() << ", " << state.accelerometer.measurement.y() << ", " << state.accelerometer.measurement.z() << ";\t";
-    std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
+    // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
 
     for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
     {   
@@ -188,7 +188,7 @@ void Messenger::append_csv_output(sim_config state, timestamp time)
             output_file << state.satellite.alpha_b.x() << "," << state.satellite.alpha_b.y() << "," << state.satellite.alpha_b.z() << ",";
 
             output_file << state.accelerometer.measurement.x() << "," << state.accelerometer.measurement.y() << "," << state.accelerometer.measurement.z() << ",";
-            output_file << state.gyroscope.measurement.x()     << "," << state.gyroscope.measurement.y()     << "," << state.gyroscope.measurement.z()     << ",";
+            // output_file << state.gyroscope.measurement.x()     << "," << state.gyroscope.measurement.y()     << "," << state.gyroscope.measurement.z()     << ",";
 
             for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
             {

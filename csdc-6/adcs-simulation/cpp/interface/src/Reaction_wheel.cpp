@@ -62,3 +62,4 @@ actuator_state Reaction_wheel::get_current_state()
     this->sim->reaction_wheel_get_current_state(this->position);
     return this->current_state;
 }
+

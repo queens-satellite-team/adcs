@@ -43,15 +43,17 @@ void Simulator::init(sim_config initial_values)
 }
 
 timestamp Simulator::update_simulation() {
-    timestamp time_passed = this->determine_time_passed();
-    this->simulate(time_passed);
+    //timestamp time_passed = this->determine_time_passed();
+    timestamp t(10, 0);
+    this->simulate(t);
 
     return this->simulation_time;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
-    timestamp time_passed = this->determine_time_passed();
-    this->simulate(time_passed + duration);
+    //timestamp time_passed = this->determine_time_passed();
+    timestamp t(10, 0);
+    this->simulate(t + duration);
 
     return this->simulation_time;
 }
@@ -119,7 +121,7 @@ timestamp Simulator::reaction_wheel_update_desired_state(Eigen::Vector3f wheel_p
 {
     // figure out what reaction wheel it is from the position vector
 
-    for (sim_reaction_wheel wheel : system_vals.reaction_wheels) {
+    for (sim_reaction_wheel &wheel : system_vals.reaction_wheels) {
         if (wheel.position.isApprox(wheel_position)) {
             // Update the target state (For now just change the acceleration to match,
             // when it reaches it's target position just change accel to 0)
@@ -127,7 +129,7 @@ timestamp Simulator::reaction_wheel_update_desired_state(Eigen::Vector3f wheel_p
         }
     }
 
-    this->update_simulation();
+    //this->update_simulation();
     return this->simulation_time;
 }
 

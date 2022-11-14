@@ -167,7 +167,7 @@ void UI::run_simulation(std::vector<std::string> args)
     ADCS_timer timer(&simulator);
     PointingModeController controller(sensors, actuators, &timer);
 
-    controller.begin({0}); // Empty desired attitude for now
+    controller.begin({ 0.5, 0.5, 0.5});
 
     /* This code should not be deleted - it will be necessary when the final_state_yaml is implemented.**/
     // string final_state_yaml_path;

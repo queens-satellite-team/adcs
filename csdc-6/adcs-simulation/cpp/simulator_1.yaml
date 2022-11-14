@@ -15,8 +15,8 @@ Satellite:
   Moment: [[0.02035470141,0.00004983389,0.00021768132],
            [0.00004983389,0.01993812272,-0.00007588037],
            [0.00021768132,-0.00007588037,0.0053506098]]
-  Position: [1,1,1]
-  Velocity: [10,10,10]
+  Position: [0, 0, 0]
+  Velocity: [0, 0, 0]
 
 # Actuators:
 #   Name: [name of actuator]
@@ -39,8 +39,9 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [1.73205080757,1.73205080757,-1.73205080757]
-    AxisOfRotation: []
-    Velocity: [1,1,1]
+    AxisOfRotation: [0.577350269, 0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
   ReactionWheel2:
     type: ReactionWheel
     Moment: 0.00000925
@@ -50,7 +51,9 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [1.73205080757,-1.73205080757,-1.73205080757]
-    Velocity: [1,1,1]
+    AxisOfRotation: [0.577350269, -0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
   ReactionWheel3:
     type: ReactionWheel
     Moment: 0.00000925
@@ -60,7 +63,9 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [-1.73205080757,-1.73205080757,-1.73205080757]
-    Velocity: [1,1,1]
+    AxisOfRotation: [-0.577350269, -0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
   ReactionWheel4:
     type: ReactionWheel
     Moment: 0.00000925
@@ -70,7 +75,9 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [-1.73205080757,1.73205080757,-1.73205080757]
-    Velocity: [1,1,1]
+    AxisOfRotation: [-0.577350269, 0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
 
 # Sensors:
 #   Name: [name of sensor]

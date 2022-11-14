@@ -139,25 +139,25 @@ void Messenger::update_simulation_state(sim_config state, timestamp time)
 {
     // Do we need any checks on state?
 
-    // for now just text dump - next step is graphs for each.
-    std::cout << text_colour.reset << time.pretty_string() << "\t" << std::setprecision(4) << std::fixed;
-    std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t";
-    std::cout << state.satellite.omega_b.x() << ", " << state.satellite.omega_b.y() << ", " << state.satellite.omega_b.z() << ";\t";
-    std::cout << state.satellite.alpha_b.x() << ", " << state.satellite.alpha_b.y() << ", " << state.satellite.alpha_b.z() << ";\t";
+    // // for now just text dump - next step is graphs for each.
+    // std::cout << text_colour.reset << time.pretty_string() << "\t" << std::setprecision(4) << std::fixed;
+    // std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t";
+    // std::cout << state.satellite.omega_b.x() << ", " << state.satellite.omega_b.y() << ", " << state.satellite.omega_b.z() << ";\t";
+    // std::cout << state.satellite.alpha_b.x() << ", " << state.satellite.alpha_b.y() << ", " << state.satellite.alpha_b.z() << ";\t";
 
-    std::cout << state.accelerometer.measurement.x() << ", " << state.accelerometer.measurement.y() << ", " << state.accelerometer.measurement.z() << ";\t";
-    // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
+    // std::cout << state.accelerometer.measurement.x() << ", " << state.accelerometer.measurement.y() << ", " << state.accelerometer.measurement.z() << ";\t";
+    // // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
 
-    for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
-    {   
-        std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
+    // for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
+    // {   
+    //     std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
 
-        if (i < state.reaction_wheels.size() - 1)
-        {
-            std::cout << "\t";
-        }
-    }
-    std::cout << std::endl;
+    //     if (i < state.reaction_wheels.size() - 1)
+    //     {
+    //         std::cout << "\t";
+    //     }
+    // }
+    // std::cout << std::endl;
 
     this->append_csv_output(state, time);
 

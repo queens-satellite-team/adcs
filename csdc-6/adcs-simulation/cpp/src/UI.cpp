@@ -221,7 +221,7 @@ sim_config UI::get_sim_config(Configuration &config)
 {
     sim_config initial_values;
     Satellite temp;
-    initial_values.satellite.alpha_b = Eigen::Vector3f::Zero();
+    initial_values.satellite.alpha_b   = Eigen::Vector3f::Zero();
     initial_values.satellite.omega_b   = config.GetSatelliteVelocity();
     initial_values.satellite.theta_b   = config.GetSatellitePosition();
     initial_values.satellite.inertia_b = config.GetSatelliteMoment();

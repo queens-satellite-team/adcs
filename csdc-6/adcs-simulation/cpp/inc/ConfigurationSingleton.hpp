@@ -3,10 +3,10 @@
  *
  * @details hpp file for singleton class used to configure the user's sensor/actuator inputs
  *
- * @authors Lily de Loe
+ * @authors Lily de Loe, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-08
+ * 2022-11-15
  *
 **/
 
@@ -123,6 +123,15 @@ public:
     bool Load(const std::string &fileName);
 
     /**
+    * @name load_exit_file
+    * 
+    * @param fileName [string], the input YAML file's name
+    * 
+    * @details loads the exit YAML file
+   **/
+    bool load_exit_file(const std::string &fileName);
+
+    /**
     * @details copy constructor is explicitly deleted to prevent C++ from auto-generating one
    **/
     Configuration(const Configuration &) = delete;
@@ -217,14 +226,65 @@ public:
 
     /**
     * @name GetTimestepInMilliSeconds
-    * @return the timestep, in seconds, as a float
+    * @return the timestep, in seconds, as an int
     * 
     * @details getter for the update timestep 
     */
-    inline const float &GetTimestepInMilliSeconds(){
+    inline const int &GetTimestepInMilliSeconds(){
         return timestepInMilliSeconds;
     }
 
+    /**
+    * @name    getTimeout
+    * 
+    * @returns the timeout, in seconds, as a float
+    * 
+    * @details getter for the timeout
+    */
+    inline const int &getTimeout()
+    {
+        return timeoutInMilliseconds;
+    }
+
+    /**
+    * @name    getDesiredSatellitePosition
+    * 
+    * @returns the desired satellite position for the controller
+    */
+    inline const Eigen::Vector3f &getDesiredSatellitePosition()
+    {
+        return desiredSatellitePosition;
+    }
+
+    /**
+    * @name    getAllowedJitter
+    * 
+    * @returns the allowed jitter for the controller, in degrees/second
+    */
+    inline const float &getAllowedJitter()
+    {
+        return allowed_jitter;
+    }
+
+    /**
+    * @name    getRequiredAccuracy
+    * 
+    * @returns the required accuracy of the controller, in degrees
+    */
+    inline const float &getRequiredAccuracy()
+    {
+        return required_accuracy;
+    }
+
+    /**
+    * @name    getHoldTime
+    * 
+    * @returns the amount of time the controller needs to hold the target, in ms
+    */
+    inline const int &getHoldTime()
+    {
+        return required_hold_time;
+    }
 
 private:
     /**
@@ -268,6 +328,23 @@ private:
     /**
      * @details float storing the timestep in milliseconds
     */
-    float timestepInMilliSeconds;
+    int timestepInMilliSeconds;
+
+    /**
+     * @details float storing the timeout in milliseconds
+    */
+    int timeoutInMilliseconds;
+
+    /* the desired satellite position for the controller */
+    Eigen::Vector3f desiredSatellitePosition;
+
+    /* the allowed jitter for the controller, in degrees/second */
+    float allowed_jitter;
+
+    /* the required accuracy of the controller, in degrees */
+    float required_accuracy;
+
+    /* the amount of time the controller needs to hold the target, in ms */
+    int required_hold_time;
 
 };

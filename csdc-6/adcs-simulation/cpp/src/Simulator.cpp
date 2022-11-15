@@ -33,12 +33,13 @@ Simulator::Simulator(Messenger *messenger)
     this->last_called = -1;
 }
 
-void Simulator::init(sim_config initial_values)
+void Simulator::init(sim_config initial_values, timestamp timeout)
 {
     /* TODO may need a check here**/
     this->system_vals = initial_values;
+    this->timeout = timeout;
 
-    messenger->send_message("Starting simulation.");
+    messenger->send_message("Starting simulation, timeout: " + this->timeout.pretty_string());
     messenger->start_new_sim(initial_values.reaction_wheels.size());
 }
 
@@ -75,9 +76,14 @@ void Simulator::simulate(timestamp t) {
     while (this->simulation_time <= end) {
         this->simulation_time = this->simulation_time + this->timestep_length;        
         this->timestep();
+        this->messenger->update_simulation_state(this->system_vals, this->simulation_time);
+        
+        /* end simulation if the timeout is reached. */
+        if (this->timeout < this-> simulation_time)
+        {
+            throw simulation_timeout("Timeout reached.");
+        }
     }
-    
-    this->messenger->update_simulation_state(this->system_vals, this->simulation_time);
 }
 
 void Simulator::timestep() {
@@ -112,9 +118,7 @@ void Simulator::timestep() {
     system_vals.gyroscope.omega = system_vals.satellite.omega_b;
     system_vals.gyroscope.theta = system_vals.satellite.theta_b;
 
-    // This no longer works
-    // Print current values to UI
-    //this->messenger->update_simulation_state(this->system_vals.satellite, this->simulation_time);
+    return;
 }
 
 timestamp Simulator::reaction_wheel_update_desired_state(Eigen::Vector3f wheel_position, actuator_state new_target)

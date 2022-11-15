@@ -18,6 +18,7 @@ add_executable(simulator
     src/ConfigurationSingleton.cpp
     src/UI.cpp
     src/Messenger.cpp
+    src/DummyController.cpp
     interface/src/Actuator.cpp
     interface/src/ADCS_device.cpp
     interface/src/ADCS_timer.cpp

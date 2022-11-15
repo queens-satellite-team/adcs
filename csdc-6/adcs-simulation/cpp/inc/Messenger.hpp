@@ -121,6 +121,38 @@ class Messenger
         **/
         void clean_csv_files();
 
+        /**
+         * @name    silence_sim_prints
+         *
+         * @details silences all terminal prints during the simulation run
+        **/
+        void silence_sim_prints();
+
+        /**
+         * @name    reset_defaults
+         *
+         * @details resets all settings to default values
+        **/
+        void reset_defaults();
+
+        /**
+         * @name    set_csv_print_rate
+         *
+         * @details sets the print rate to the csv file in terms of simulation time.
+         * 
+         * @param   csv_rate [uint32_t] the timestep in ms that the csv will be updated
+        **/
+        void set_csv_print_rate(uint32_t csv_rate);
+
+        /**
+         * @name    set_terminal_print_rate
+         *
+         * @details sets the print rate to the terminal in terms of simulation time.
+         *
+         * @param   csv_rate [uint32_t] the timestep in ms that the terminal will be updated
+        **/
+        void set_terminal_print_rate(uint32_t terminal_rate);
+
     private:
         /**
          * @name    append_csv_output
@@ -146,8 +178,38 @@ class Messenger
         /* extension of csv files */
         const std::string csv_ext = ".csv";
 
+        /* default state of the terminal prints */
+        const bool default_silent_sim_prints = false;
+
+        /* default print rate to the csv file in ms */
+        const uint32_t default_csv_print_rate = 1;
+
+        /* default print rate to the terminal in ms */
+        const uint32_t default_terminal_print_rate = 10;
+
         /* full string of the output path */
         std::string output_file_path_string = "";
+
+        /* state of the terminal prints */
+        bool silent_sim_prints = false;
+
+        /* print rate to the csv file in ms */
+        uint32_t csv_print_rate = 1;
+
+        /* print rate to the terminal in ms */
+        uint32_t terminal_print_rate = 10;
+
+        /**
+         * number of attempts to write to csv. Each count corresponds to 1 ms, and gets reset when
+         * it reaches csv_print_rate
+        **/
+        uint32_t csv_write_count = 0;
+
+        /**
+         * number of attempts to write to the terminal. Each count corresponds to 1 ms, and gets
+         * reset when it reaches csv_print_rate
+        **/
+        uint32_t terminal_write_count = 0;
 
 };
 

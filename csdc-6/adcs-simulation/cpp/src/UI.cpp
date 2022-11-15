@@ -20,6 +20,7 @@
 #include "PointingModeController.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
+#include "DummyController.hpp"
 
 UI::UI()
 {
@@ -110,7 +111,7 @@ void UI::run_command(std::vector<std::string> args)
             }
             catch(const std::exception& e)
             {
-                std::cerr << e.what() << std::endl;
+                messenger.send_error(e.what());
             }
         }
     }
@@ -120,66 +121,201 @@ void UI::run_command(std::vector<std::string> args)
 
 void UI::run_simulation(std::vector<std::string> args)
 {
-    if (num_run_simulation_args != args.size())
+    this->parse_run_sim_args(args);
+
+    Configuration &config = Configuration::GetInstance();
+
+    if (!config.Load(this->config_yaml_path))
+    {
+        messenger.send_error("Configuration failed to load");
+    }
+    else
+    {
+        /* Empty simulator */
+        Simulator simulator(&messenger);
+
+        /* Initialize Interface Objects */
+        std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
+        std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
+
+        /* Get Simulation config info */
+        timestamp timeout(config.getTimeout(),0);
+        simulator.init(this->get_sim_config(config), timeout);
+
+        /* Timer used for control code */
+        ADCS_timer timer(&simulator);
+
+        /**
+         * If 2 yaml paths are provided, initialize controller with second yaml. Otherwise,
+         * initialize the dummy controller to run until the time runs out. 
+        **/
+        if ("" == this->exit_conditions_yaml_path)
+        {
+            this->messenger.send_message("No exit yaml supplied for controller. Will run sim with no controller until timeout.");
+
+            DummyController controller(&timer);
+
+            try
+            {
+                controller.begin();
+                messenger.send_message("Simulation timed out before the simulation finished.");
+            }
+            catch (simulation_timeout &e)
+            {
+                messenger.send_message(e.what());
+
+            }
+        }
+        else
+        {
+            for (const auto &sensor : config.GetSensorConfigs())
+            {
+                //first is string, second is data (from map)
+                this->create_sensor(sensor.first, &simulator, &sensors);
+            }
+
+            for (const auto &actuator : config.GetActuatorConfigs()) {
+                //first is string, second is data (from map)
+                this->create_actuator(actuator.first, &simulator, &actuators);
+            }
+
+            // string exit_conditions_yaml = args.at(2);
+            if (!config.load_exit_file(this->exit_conditions_yaml_path))
+            {
+                messenger.send_error("Exit conditions failed to load");
+            }
+            else
+            {
+                Eigen::Vector3f final_sat_position  = config.getDesiredSatellitePosition();
+#if 0
+                // to be implemented later
+                float allowed_jitter                = config.getAllowedJitter();
+                float required_accuracy             = config.getRequiredAccuracy();
+                int required_hold_time              = config.getHoldTime();
+#endif
+
+                /* Start control code */
+                PointingModeController controller(sensors, actuators, &timer);
+
+                try
+                {
+                    controller.begin(final_sat_position);
+                }
+                catch (simulation_timeout &e)
+                {
+                    messenger.send_message(e.what());
+                }
+            }
+        }
+
+        /* Cleanup After simulation */
+        messenger.reset_defaults();
+
+        /**
+         * @todo create final_state_yaml 
+        **/ 
+
+        /* This code should not be deleted - it will be necessary when the final_state_yaml is implemented. */
+        // string final_state_yaml_path;
+
+        // if (!final_state_yaml_path.empty())
+        // {
+        //     /* TODO this could also check if the yaml is a valid path, but race condition again. Still,
+        //      * in this case it is probably worth checking because there's no point in saving it as a
+        //      * variable if it's invalid to start with.
+        //     **/
+        //     this->previous_end_state_yaml = final_state_yaml_path;
+        // }
+    }
+    return;
+}
+
+void UI::parse_run_sim_args(std::vector<std::string> args)
+{
+    if ( (max_run_simulation_args < args.size()) ||
+         (min_run_simulation_args > args.size()) )
     {
         throw invalid_ui_args("Invalid number of arguments.");
     }
 
-    for (std::string arg : args)
+    /* Parse arguments. First reverse the vector so that it can be used as a stack. First arg is
+     * the command, so pop immediately.
+     */
+    std::reverse(args.begin(), args.end());
+    args.pop_back();
+
+    this->config_yaml_path = "";
+    this->exit_conditions_yaml_path = "";
+
+    /* Parse arguments */
+    if ('-' == args.back().at(0))
     {
-        if (arg.empty())
+        throw invalid_ui_args("First argument must be a YAML path.");
+    }
+    else
+    {
+        this->config_yaml_path = args.back();
+        args.pop_back();
+    }
+
+    if(0 < args.size())
+    {
+        if('-' != args.back().at(0))
         {
-            throw invalid_ui_args("Argument string empty!");
+            this->exit_conditions_yaml_path = args.back();
+            args.pop_back();
+        }
+
+        while (0 != args.size())
+        {
+            if ( ("--silent" == args.back()) ||
+                ("-s"       == args.back()) )
+            {
+                messenger.silence_sim_prints();
+                args.pop_back();
+            }
+            else if ( ("--csv_rate" == args.back()) ||
+                    ("-c"         == args.back()) )
+            {
+                args.pop_back();
+                if (0 < args.size())
+                {
+                    try
+                    {
+                        uint32_t csv_rate = std::stoi(args.back());
+                        messenger.set_csv_print_rate(csv_rate);
+                    }
+                    catch (std::invalid_argument &e)
+                    {
+                        throw invalid_ui_args("Invalid csv print rate.");
+                    }
+                    args.pop_back();
+                }
+            }
+            else if ( ("--print_rate" == args.back()) ||
+                    ("-p"           == args.back()) )
+            {
+                args.pop_back();
+                if (0 < args.size())
+                {
+                    try
+                    {
+                        uint32_t csv_rate = std::stoi(args.back());
+                        messenger.set_terminal_print_rate(csv_rate);
+                    }
+                    catch (std::invalid_argument &e)
+                    {
+                        throw invalid_ui_args("Invalid csv print rate.");
+                    }
+                    args.pop_back();
+                }
+            }
+            else
+            {
+                throw invalid_ui_args(std::string("bad parameter: " + args.back()).c_str());
+            }
         }
     }
-
-    std::string config_yaml = args.at(1);
-
-    Configuration &config = Configuration::GetInstance();
-    if (!config.Load(config_yaml))
-    {
-        std::cout <<"Configuration Failed to load"<< std::endl;
-    }
-    // string exit_conditions_yaml = args.at(2);
-
-    /* Empty simulator**/
-    Simulator simulator(&messenger);
-
-    /* Initialize Interface Objects**/
-    std::unordered_map<std::string, std::shared_ptr<Sensor>> sensors;
-    std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
-
-    /* Get Simulation config info**/
-    simulator.init(this->get_sim_config(config));
-
-    for (const auto &sensor : config.GetSensorConfigs())
-    {
-        //first is string, second is data (from map)
-        this->create_sensor(sensor.first, &simulator, &sensors);
-    }
-
-    for (const auto &actuator : config.GetActuatorConfigs()) {
-        //first is string, second is data (from map)
-        this->create_actuator(actuator.first, &simulator, &actuators);
-    }
-
-    /* Start control code**/
-    ADCS_timer timer(&simulator);
-    PointingModeController controller(sensors, actuators, &timer);
-
-    controller.begin({ 0.5, 0.5, 0.5});
-
-    /* This code should not be deleted - it will be necessary when the final_state_yaml is implemented.**/
-    // string final_state_yaml_path;
-
-    // if (!final_state_yaml_path.empty())
-    // {
-    //     /* TODO this could also check if the yaml is a valid path, but race condition again. Still,
-    //      * in this case it is probably worth checking because there's no point in saving it as a
-    //      * variable if it's invalid to start with.
-    //     **/
-    //     this->previous_end_state_yaml = final_state_yaml_path;
-    // }
 
     return;
 }
@@ -266,6 +402,9 @@ sim_config UI::get_sim_config(Configuration &config)
 
 void UI::resume_simulation(std::vector<std::string> args)
 {
+    messenger.send_error("Command not implemented.");
+    (void)args; // silences compiler warning about unused parameter
+#if 0
     if (num_resume_simulation_args != args.size())
     {
         throw invalid_ui_args("Invalid number of arguments.");
@@ -286,6 +425,7 @@ void UI::resume_simulation(std::vector<std::string> args)
         args.at(1)
     };
     this->run_simulation(new_args);
+#endif
 }
 
 void UI::quit(std::vector<std::string> args)

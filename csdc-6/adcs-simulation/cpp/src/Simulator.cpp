@@ -43,15 +43,17 @@ void Simulator::init(sim_config initial_values)
 }
 
 timestamp Simulator::update_simulation() {
-    timestamp time_passed = this->determine_time_passed();
-    this->simulate(time_passed);
+    //timestamp time_passed = this->determine_time_passed();
+    timestamp t(10, 0);
+    this->simulate(t);
 
     return this->simulation_time;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
-    timestamp time_passed = this->determine_time_passed();
-    this->simulate(time_passed + duration);
+    //timestamp time_passed = this->determine_time_passed();
+    timestamp t(10, 0);
+    this->simulate(t + duration);
 
     return this->simulation_time;
 }
@@ -105,7 +107,10 @@ void Simulator::timestep() {
 
     // Update new internal sensor and actuator values
     system_vals.accelerometer.measurement = system_vals.satellite.alpha_b.cross(system_vals.accelerometer.position);
-    system_vals.gyroscope.measurement = system_vals.satellite.alpha_b;
+    
+    system_vals.gyroscope.alpha = system_vals.satellite.alpha_b;
+    system_vals.gyroscope.omega = system_vals.satellite.omega_b;
+    system_vals.gyroscope.theta = system_vals.satellite.theta_b;
 
     // This no longer works
     // Print current values to UI
@@ -116,7 +121,7 @@ timestamp Simulator::reaction_wheel_update_desired_state(Eigen::Vector3f wheel_p
 {
     // figure out what reaction wheel it is from the position vector
 
-    for (sim_reaction_wheel wheel : system_vals.reaction_wheels) {
+    for (sim_reaction_wheel &wheel : system_vals.reaction_wheels) {
         if (wheel.position.isApprox(wheel_position)) {
             // Update the target state (For now just change the acceleration to match,
             // when it reaches it's target position just change accel to 0)
@@ -124,7 +129,7 @@ timestamp Simulator::reaction_wheel_update_desired_state(Eigen::Vector3f wheel_p
         }
     }
 
-    this->update_simulation();
+    //this->update_simulation();
     return this->simulation_time;
 }
 
@@ -146,12 +151,17 @@ actuator_state Simulator::reaction_wheel_get_current_state(Eigen::Vector3f posit
     return ret;
 }
 
-timestamp Simulator::gyroscope_take_measurement(Eigen::Vector3f *measurement)
+gyro_state Simulator::gyroscope_take_measurement()
 {
     this->update_simulation();
-    *measurement = this->system_vals.gyroscope.measurement;
+    gyro_state ret;
 
-    return this->simulation_time;
+    ret.acceleration = this->system_vals.gyroscope.alpha;
+    ret.velocity     = this->system_vals.gyroscope.omega;
+    ret.position     = this->system_vals.gyroscope.theta;
+    ret.time_taken   = this->simulation_time;
+
+    return ret;
 }
 
 timestamp Simulator::accelerometer_take_measurement(Eigen::Vector3f *measurement)

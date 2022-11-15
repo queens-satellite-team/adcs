@@ -6,7 +6,7 @@
  * @authors Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-13
 **/
 
 #pragma once
@@ -38,7 +38,7 @@ public:
     * @details Starts the command loop. Should call the update functions once per cycle to get
     * updated sensor measurements and sent commands to actuators accordingly
    **/
-    void begin(std::vector<float> desired_attitude);
+    void begin(Eigen::Vector3f desired_attitude);
 
 private:
     /**
@@ -55,16 +55,27 @@ private:
    **/
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 
+    Eigen::Vector3f prev_error;
+
+    Eigen::Vector3f prev_integral;
+
     ADCS_timer *timer;
 
     /**
     * @name take_updated_measurements
+    * @returns [measurement]
     *
-    * @details Iterates through all of the sensors, taking updated measurements from
-    * any that are ready.
-    *
-    * TODO: should possibly not be void? Depends on if we want to store the sensor
-    * measurements as class properties or have this function return them.
+    * @details For now just checks the gyroscope to get an updated current attitude
+    * of the satellite.
    **/
-    void take_updated_measurements();
+    measurement take_updated_measurements();
+
+    /**
+    * @name update
+    *
+    * @details One cycle of the PID controller iteration. Recalculates the desired torque
+    * based on the current attitude of the satellite and updates the accelerations of the 
+    * reaction wheels.
+   **/
+    void update(Eigen::Vector3f current_attitude, Eigen::Vector3f desired_attitude, timestamp delta_t);
 };

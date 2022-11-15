@@ -304,6 +304,14 @@ typedef struct
     timestamp       time_taken;
 } measurement;
 
+typedef struct
+{
+    Eigen::Vector3f position;
+    Eigen::Vector3f velocity;
+    Eigen::Vector3f acceleration;
+    timestamp       time_taken;
+} gyro_state;
+
 /**
  * @struct  actuator_state
  * 

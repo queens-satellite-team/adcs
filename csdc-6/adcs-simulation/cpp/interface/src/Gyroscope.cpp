@@ -14,21 +14,19 @@
 
 #include "sim_interface.hpp"
 
-measurement Gyroscope::take_measurement()
+gyro_state Gyroscope::take_measurement()
 {
     if (this->time_until_ready() > 0)
     {
         /* THROW APPROPRIATE EXCEPTION**/
     }
 
-    Eigen::Vector3f measurement;
-    measurement = Eigen::Vector3f::Zero();
+    gyro_state measurement = this->sim->gyroscope_take_measurement();
+    this->update_poll_time(measurement.time_taken);
 
-    timestamp current_time = this->sim->gyroscope_take_measurement(&measurement);
-    this->update_poll_time(current_time);
+    /* commenting out for now, but may not need either of these lines. Leaving as comments until confirmed. */
+    // this->current_vector_value.time_taken = current_time;
+    // this->current_vector_value.vec = measurement;
 
-    this->current_vector_value.time_taken = current_time;
-    this->current_vector_value.vec = measurement;
-
-    return this->current_vector_value;
+    return measurement;
 }

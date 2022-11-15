@@ -167,7 +167,7 @@ void UI::run_simulation(std::vector<std::string> args)
     ADCS_timer timer(&simulator);
     PointingModeController controller(sensors, actuators, &timer);
 
-    controller.begin({0}); // Empty desired attitude for now
+    controller.begin({ 0.5, 0.5, 0.5});
 
     /* This code should not be deleted - it will be necessary when the final_state_yaml is implemented.**/
     // string final_state_yaml_path;
@@ -237,7 +237,9 @@ sim_config UI::get_sim_config(Configuration &config)
                 break;
             case SensorType::Gyroscope:
                 initial_values.gyroscope.position = sensor_config->position;
-                initial_values.gyroscope.measurement = Eigen::Vector3f::Zero();
+                initial_values.gyroscope.alpha = Eigen::Vector3f::Zero();
+                initial_values.gyroscope.omega = Eigen::Vector3f::Zero();
+                initial_values.gyroscope.theta = Eigen::Vector3f::Zero();
                 break;
         }
     }

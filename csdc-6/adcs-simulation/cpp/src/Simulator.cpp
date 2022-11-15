@@ -79,7 +79,7 @@ void Simulator::simulate(timestamp t) {
         this->messenger->update_simulation_state(this->system_vals, this->simulation_time);
         
         /* end simulation if the timeout is reached. */
-        if (this->timeout < this-> simulation_time)
+        if (this->timeout < this->simulation_time)
         {
             throw simulation_timeout("Timeout reached.");
         }

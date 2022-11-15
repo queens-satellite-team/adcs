@@ -12,11 +12,11 @@
 #   Position: [3-dimensional vector]
 #   Velocity: [3-dimensional vector]
 Satellite:
-  Moment: [[0.41666666666,0,0],
-           [0,0.41666666666,0],
+  Moment: [[0.16666666666,0,0],
+           [0,0.16666666666,0],
            [0,0,0.16666666666]]
   Position: [0,0,0]
-  Velocity: [2,1,3]
+  Velocity: [0,0,0]
 
 # Actuators:
 #   Name: [name of actuator]
@@ -60,5 +60,8 @@ Sensors:
     PollingTime: 10
     Position: [0,0,0]
 
-# Timestep: [float], in ms
+# Timestep: [int], in ms
 TimeStep: 1
+
+# Timeout: [int], in ms
+Timeout: 10

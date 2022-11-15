@@ -88,6 +88,14 @@ bool Configuration::Load(const std::string &configFile) {
         std::cout << "YAML ERROR ON TIMESTEP: " << e.what() <<std::endl;
     }
 
+    //load timeout
+    try {
+        YAML::Node timeout = top["Timeout"];
+        timeoutInMilliseconds = timeout.as<int>();
+    } catch (YAML::Exception &e){
+        std::cout << "YAML ERROR ON TIMEOUT: " << e.what() <<std::endl;
+    }
+
     //load sensors
     try {
         YAML::Node sensors = top["Sensors"];
@@ -118,6 +126,79 @@ bool Configuration::Load(const std::string &configFile) {
         }
     } catch (YAML::Exception &e) {
         std::cout << "YAML ERROR ON ACTUATORS: " << e.what() << std::endl;
+    }
+
+    return true;
+}
+
+bool Configuration::load_exit_file(const std::string &fileName)
+{
+    /* load the yaml config file */
+    try 
+    {
+        top = YAML::LoadFile(fileName);
+    } 
+    catch (YAML::Exception &e)
+    {
+        std::cout << "YAML File Load failure for file: " << fileName << " : " << e.what() << std::endl;
+        return false;
+    }
+
+    /* get the final satellite configuration */
+    try
+    {
+        YAML::Node satellite = top["Satellite"];
+ 
+        /* loop through each axis of desired position */
+        try 
+        {
+            int i = 0;
+            for (const YAML::Node element : satellite["DesiredPosition"])
+            {
+                desiredSatellitePosition(i++) = element.as<float>();
+            }
+        }
+        catch (YAML::Exception &e)
+        {
+            std::cout << "YAML ERROR ON DesiredPosition: " << e.what() <<std::endl;
+        }
+
+        /* get the allowed jitter */
+        try 
+        {
+            YAML::Node jitter = satellite["AllowedJitter"];
+            this->allowed_jitter = jitter.as<float>();
+        }
+        catch (YAML::Exception &e)
+        {
+            std::cout << "YAML ERROR ON AllowedJitter: " << e.what() <<std::endl;
+        }
+
+        /* get the allowed required accuracy */
+        try 
+        {
+            YAML::Node accuracy = satellite["RequiredAccuracy"];
+            this->required_accuracy = accuracy.as<float>();
+        }
+        catch (YAML::Exception &e)
+        {
+            std::cout << "YAML ERROR ON RequiredAccuracy: " << e.what() <<std::endl;
+        }
+    }
+    catch (YAML::Exception &e)
+    {
+        std::cout << "YAML ERROR ON exit Satellite: " << e.what() <<std::endl;
+    }
+
+    /* get the amount of time the controller must hold the position for */
+    try
+    {
+        YAML::Node hold_time = top["HoldTime"];
+        this->required_hold_time = hold_time.as<int>();
+    }
+    catch (YAML::Exception &e)
+    {
+        std::cout << "YAML ERROR ON HoldTime: " << e.what() <<std::endl;
     }
 
     return true;

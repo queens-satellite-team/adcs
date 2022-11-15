@@ -42,7 +42,7 @@ public:
     *
     * @details Initializes the simulation with starting values.
    **/
-    void init(sim_config initial_values);
+    void init(sim_config initial_values, timestamp timeout);
 
     /**
     * @name update_simulation
@@ -186,4 +186,29 @@ private:
      * @details pointer to a messenger object to rely messages and status updates to the user.
     **/  
     Messenger *messenger;
+
+    /**
+     * @property timeout [timestamp]
+     * 
+     * @details  maximum amount of time the simulator is allowed to run.
+    **/
+    timestamp timeout;
+};
+
+/**
+ * @exception simulation_timeout
+ *
+ * @details exception used to indicate that a UI function has received bad arguments from the user.
+**/
+class simulation_timeout : public std::exception
+{
+    public:
+        simulation_timeout(const char* msg) : message(msg) {}
+        const char* what()
+        {
+            return message;
+        }
+
+    private:
+        const char* message;
 };

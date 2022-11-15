@@ -16,7 +16,7 @@ Satellite:
            [0,0.41666666666,0],
            [0,0,0.16666666666]]
   Position: [0,0,0]
-  Velocity: [2,1,3]
+  Velocity: [2,1,0]
 
 # Actuators:
 #   Name: [name of actuator]
@@ -34,16 +34,16 @@ Satellite:
 Actuators:
   ReactionWheel1:
     type: ReactionWheel
-    Moment: 2
+    Moment: 1
     MaxAngVel: 1000
     MaxAngAccel: 1000
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
     Position: [0,0,0]
-    Velocity: 2.5
+    Velocity: 1
     AxisOfRotation: [0,0,1]
-    Acceleration: 0.5
+    Acceleration: 1
 
 # Sensors:
 #   Name: [name of sensor]
@@ -60,5 +60,8 @@ Sensors:
     PollingTime: 10
     Position: [0,0,0]
 
-# Timestep: [float], in ms
+# Timestep: [int], in ms
 TimeStep: 1
+
+# Timeout: [int], in ms
+Timeout: 10

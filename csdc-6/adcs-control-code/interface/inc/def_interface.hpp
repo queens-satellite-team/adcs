@@ -57,7 +57,7 @@ class timestamp_nullptr : public std::exception
         const char* message;
 };
 
-/* ADCS specific timestamp definition. All time measurements use this structure.
+/** ADCS specific timestamp definition. All time measurements use this structure.
  *
  * @param milliseconds  number of milliseconds of the timestamp
  * @param seconds       number of seconds of the timestamp. This is rolled-over from milliseconds.

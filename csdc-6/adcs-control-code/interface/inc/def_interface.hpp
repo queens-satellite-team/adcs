@@ -39,6 +39,24 @@
 #define INTERFACE SIM_INTERFACE
 
 /********************************************* TYPES *********************************************/
+/**
+ * @exception invalid_ui_args
+ *
+ * @details exception used to indicate that a UI function has received bad arguments from the user.
+**/
+class timestamp_nullptr : public std::exception
+{
+    public:
+        timestamp_nullptr(const char* msg) : message(msg) {}
+        const char* what()
+        {
+            return message;
+        }
+
+    private:
+        const char* message;
+};
+
 /* ADCS specific timestamp definition. All time measurements use this structure.
  *
  * @param milliseconds  number of milliseconds of the timestamp
@@ -53,7 +71,10 @@ class timestamp
          *
          * @details sets initial values of millisecond and second fields.
         **/
-        timestamp(uint32_t milliseconds = 0, uint32_t seconds = 0) : millisecond(milliseconds), second(seconds) {}
+        timestamp(uint32_t milliseconds = 0, uint32_t seconds = 0) : millisecond(milliseconds), second(seconds)
+        {
+            rebalance_timestamp(&this->millisecond, &this->second);
+        }
 
         explicit timestamp(float real_person_time) : millisecond((float)(real_person_time - ((int)real_person_time)) * 1000.0), second(real_person_time){}; // check this conversion later its a bit hacky
         /**
@@ -87,27 +108,27 @@ class timestamp
         {
             timestamp result;
 
-            if (b.second > UINT32_MAX - this->second)
+            uint32_t l_millisecond = this->millisecond;
+            uint32_t r_millisecond = b.millisecond;
+            uint32_t l_second = this->second;
+            uint32_t r_second = b.second;
+
+            if (r_second > UINT32_MAX - l_second)
             {
                 // explicitly allow overflow of the seconds field
-                result.second = (b.second > this->second) ? (b.second - this->second) : (this->second - b.second);
+                result.second = (r_second > l_second) ? (r_second - l_second) : (l_second - r_second);
             }
             else
             {
-                result.second = b.second + this->second;
+                result.second = r_second + l_second;
             }
 
-            if (b.millisecond > UINT32_MAX - this->millisecond)
-            {
-                // overflow milliseconds and increment seconds by 1. Again, allow seconds to overflow.
-                result.millisecond = (b.millisecond > this->millisecond) ? (b.millisecond - this->millisecond) : (this->millisecond - b.millisecond);
-                result.second = (UINT32_MAX == result.second) ? 0 : result.second + 1;
-            }
-            else
-            {
-                result.millisecond = this->millisecond + b.millisecond;
-            }
+            uint32_t added_mil = 0;
+            uint32_t added_sec = 0;
+            add_milliseconds(l_millisecond, r_millisecond, &added_mil, &added_sec);
 
+            result.millisecond = added_mil;
+            result.second += added_sec;
             return result;
         }
 
@@ -144,6 +165,7 @@ class timestamp
                 result.millisecond = this->millisecond - b.millisecond;
             }
 
+            rebalance_timestamp(&result.millisecond, &result.second);
             return result;
         }
 
@@ -281,6 +303,97 @@ class timestamp
         }
 
     private:
+        /**
+         * @name    rebalance_timestamp
+         *
+         * @details given milliseconds and seconds fields, restructures the time so that the
+         *          maximum amount of time is in milliseconds as possible.
+         *
+         * @param p_milliseconds the milliseconds field to rebalance.
+         * @param p_seconds      the seconds field to rebalance.
+        **/
+        void rebalance_timestamp(uint32_t *p_milliseconds, uint32_t * p_seconds)
+        {
+            if ((nullptr == p_milliseconds) ||
+                (nullptr == p_seconds) )
+            {
+                throw timestamp_nullptr("Pointer in \"rebalance_timestamp\" is null.");
+            }
+
+            uint32_t in_seconds      = *p_seconds;
+            uint32_t in_milliseconds = *p_milliseconds;
+
+            uint32_t out_seconds = 0;
+            uint32_t out_milliseconds = 0;
+
+            uint32_t seconds_to_milliseconds = 0;
+            uint32_t add_out_mil = 0;
+            uint32_t add_out_sec = 0;
+
+            // timestamps always use milliseconds first - if seconds is populated, try and move it to ms.
+            if ((UINT32_MAX / 1000) > in_seconds)
+            {
+                seconds_to_milliseconds = in_seconds * 1000;
+                add_milliseconds(seconds_to_milliseconds, in_milliseconds, &add_out_mil, &add_out_sec); 
+            }
+            else
+            {
+                uint32_t saturation_milliseconds = UINT32_MAX - 1000;
+                out_seconds = in_seconds - saturation_milliseconds / 1000;
+                add_milliseconds(saturation_milliseconds, in_milliseconds, &add_out_mil, &add_out_sec);
+            }
+
+            out_seconds += add_out_sec;
+            out_milliseconds = add_out_mil;
+
+            *p_seconds = out_seconds;
+            *p_milliseconds = out_milliseconds;
+        }
+
+        /**
+         * @name    add_milliseconds
+         *
+         * @details adds two millisecond fields such that overflow populates a seconds field. The
+         *          algorithm is such that milliseconds are always favoured, and seconds are only
+         *          populated once milliseconds are full. Upon overflow, the milliseconds field
+         *          will loose 1000 milliseconds and be converted to seconds.
+         *
+         * @param p_milliseconds the milliseconds field to rebalance.
+         * @param p_seconds      the seconds field to rebalance.
+        **/
+        void add_milliseconds(uint32_t a, uint32_t b, uint32_t *p_out_mil, uint32_t *p_out_sec)
+        {
+            if ((nullptr == p_out_mil) ||
+                (nullptr == p_out_sec) )
+            {
+                throw timestamp_nullptr("Pointer in \"add_milliseconds\" is null.");
+            }
+
+            uint32_t out_sec = 0;
+            uint32_t out_mil = 0;
+            uint32_t r_millisecond = b;
+            uint32_t l_millisecond = a;
+            // This might not have to be a while loop, but it works for now.
+            while (r_millisecond > UINT32_MAX - l_millisecond)
+            {
+                out_sec++;
+                if (r_millisecond > l_millisecond)
+                {
+                    r_millisecond -= 1000;
+                }
+                else
+                {
+                    l_millisecond -= 1000;
+                }
+            }
+
+            out_mil = r_millisecond + l_millisecond;
+
+            *p_out_mil = out_mil;
+            *p_out_sec = out_sec;
+            return;
+        }
+
         /* the milliseconds of the timestamp. If overflowed, second is incremented. */
         uint32_t millisecond;
 

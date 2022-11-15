@@ -26,9 +26,6 @@
 #include "ConfigurationSingleton.hpp"
 #include "Messenger.hpp"
 
-// this is considered to be very bad practice :(
-// using namespace std;
-
 /**
  * @class   UI
  *
@@ -84,6 +81,25 @@ class UI
          *              args[2] path to the "stop conditions" YAML file
         **/
         void run_simulation(std::vector<std::string> args);
+
+        /**
+         * @name    parse_run_sim_args
+         *
+         * @details given a set of args for the simulation, parses them and applies them. Allowed
+         *          args are as follows:
+         *              input_yaml_path - path to the input yaml (required)
+         *              exit_yaml_path  - path to the output yaml (optional)
+         *              --silent        - mutes the terminal during the simulation (optional)
+         *              -- csv_rate r   - sets the csv print rate to r (ms) (optional)
+         *              -- print_rate r - sets the terminal print rate to r (ms) (optional)
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *              args[0]  command "clean_out"
+         *              args[1]  input_yaml_path
+         *              args[2]  exit_yaml_path (optional)
+         *              args[2+] optional flags
+        **/
+        void parse_run_sim_args(std::vector<std::string> args);
 
         /**
          * @name create_sensor
@@ -163,26 +179,35 @@ class UI
         /* Messenger object used to send information to the user. */
         Messenger messenger;
 
-        /* Map linking each command to it's function implementation. Used by "run_command"**/
+        /* Map linking each command to it's function implementation. Used by "run_command" */
         std::unordered_map<std::string, commandFunc> allowed_commands;
 
-        /* Flag used when the terminal has been started.**/
+        /* Flag used when the terminal has been started. */
         bool terminal_active;
 
-        /* Number of expected args for the "start_sim" command**/
-        const uint8_t num_run_simulation_args = 3;
+        /* Max number of args for the "start_sim" command */
+        const uint8_t max_run_simulation_args = 8;
 
-        /* Number of expected args for the "resume_sim" command**/
+        /* Min number of args for the "start_sim" command */
+        const uint8_t min_run_simulation_args = 2;
+
+        /* Number of expected args for the "resume_sim" command */
         const uint8_t num_resume_simulation_args = 2;
 
-        /* Number of expected args for the "exit" command**/
+        /* Number of expected args for the "exit" command */
         const uint8_t num_exit_args = 1;
 
-        /* Number of expected args for the "exit" command**/
+        /* Number of expected args for the "exit" command */
         const uint8_t num_clean_out_args = 1;
 
-        /* Path to the YAML file describing the final state of the previous simulation run.**/
+        /* Path to the YAML file describing the final state of the previous simulation run. */
         std::string previous_end_state_yaml;
+
+        /* Path to the YAML file describing the initial state of the simulation. */
+        std::string config_yaml_path = "";
+
+        /* Path to the YAML file describing the exit state of the controller. */
+        std::string exit_conditions_yaml_path = "";
 };
 
 /**

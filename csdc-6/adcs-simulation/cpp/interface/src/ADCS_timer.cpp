@@ -17,9 +17,10 @@
 
 ADCS_timer::ADCS_timer(Simulator* sim)
 {
-    if (NULL == sim)
+    if (nullptr == sim)
     {
         /* THROW EXCEPTION**/
+        throw std::invalid_argument("SIM in ADCS_timer IS INVALID BAD BOYS");
     }
 
     this->sim = sim;

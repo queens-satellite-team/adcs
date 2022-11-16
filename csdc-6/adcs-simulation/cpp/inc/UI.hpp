@@ -176,9 +176,29 @@ class UI
          *          specify tests to run
          *
          * @param args the user input arguments. Arguments are as follows:
-         *              args[0] command "resume_sim"
+         *             args[0] command "run_unit_tests"
         **/
         void run_unit_tests(std::vector<std::string> args);
+
+        /**
+         * @name    run_no_controller_unit_tests
+         *
+         * @details runs all the non-controller unit tests.
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *             args[0] command "unit_test"
+        **/
+        void run_no_controller_unit_tests(std::vector<std::string> args);
+
+        /**
+         * @name    run_controller_unit_tests
+         *
+         * @details runs all the controller-based unit tests.
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *             args[0] command "unit_test"
+        **/
+        void run_controller_unit_tests(std::vector<std::string> args);
 
     private:
         /**
@@ -217,7 +237,10 @@ class UI
         const uint8_t num_run_unit_tests_args = 1;
 
         /* Path where yamls describing unit tests are expected */
-        const std::string expected_unit_test_dir = "unit_tests/no_controller/";
+        const std::string expected_no_controller_unit_test_dir = "unit_tests/no_controller/";
+
+        /* Path where yamls describing unit tests are expected */
+        const std::string expected_controller_unit_test_dir = "unit_tests/controller/";
 
         /* Path where yamls describing unit tests are expected */
         const std::string expected_results_dir = "unit_tests/no_controller/expected_results/";
@@ -231,8 +254,20 @@ class UI
         /* unit test name prefix (without the number) */
         const std::string unit_test_name = "unit_test_";
 
-        /* number of unit tests to run */
-        const uint8_t num_unit_tests = 6;
+        /* unit test name prefix for the sim config (without the number) */
+        const std::string ut_controller_config_name = "test_config_";
+
+        /* unit test name prefix for the sim exit yaml (without the number) */
+        const std::string ut_controller_exit_name = "test_exit_";
+
+        /* unit test name prefix for the sim exit yaml (without the number) */
+        const std::string controller_test_output_name = "unit_test_out_";
+
+        /* number of unit tests to run without the controller */
+        const uint8_t num_no_controller_unit_tests = 6;
+
+        /* number of unit tests to run with the controller */
+        const uint8_t num_controller_unit_tests = 3;
 
         /* Path to the YAML file describing the final state of the previous simulation run. */
         std::string previous_end_state_yaml;

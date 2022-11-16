@@ -167,6 +167,19 @@ class UI
         **/
         void clean_out(std::vector<std::string> args);
 
+        /**
+         * @name    run_unit_tests
+         *
+         * @details Input command to run all the unit or specified unit tests.
+         * 
+         * @note    for now this only runs all unit tests - future functionality may be added to
+         *          specify tests to run
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *              args[0] command "resume_sim"
+        **/
+        void run_unit_tests(std::vector<std::string> args);
+
     private:
         /**
          * @typedef UI::*commandFunc
@@ -199,6 +212,27 @@ class UI
 
         /* Number of expected args for the "exit" command */
         const uint8_t num_clean_out_args = 1;
+
+        /* Number of expected args for the "exit" command */
+        const uint8_t num_run_unit_tests_args = 1;
+
+        /* Path where yamls describing unit tests are expected */
+        const std::string expected_unit_test_dir = "unit_tests/no_controller/";
+
+        /* Path where yamls describing unit tests are expected */
+        const std::string expected_results_dir = "unit_tests/no_controller/expected_results/";
+
+        /* YAML file extension string */
+        const std::string yaml_extension = ".yaml";
+
+        /* CSV file extension string */
+        const std::string csv_extension = ".csv";
+
+        /* unit test name prefix (without the number) */
+        const std::string unit_test_name = "unit_test_";
+
+        /* number of unit tests to run */
+        const uint8_t num_unit_tests = 6;
 
         /* Path to the YAML file describing the final state of the previous simulation run. */
         std::string previous_end_state_yaml;

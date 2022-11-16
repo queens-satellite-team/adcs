@@ -41,7 +41,7 @@ Actuators:
     MinAngAccel: 0
     PollingTime: 10
     Position: [0,0,0]
-    Velocity: 1
+    Velocity: 0
     AxisOfRotation: [0,0,1]
     Acceleration: 1
 

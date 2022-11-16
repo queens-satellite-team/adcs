@@ -55,8 +55,9 @@ class Messenger
          *          UI. Uniformily formats the messages for consistency and clarity.
          *
          * @param msg message to display to the user.
+         * @param colour the colour used for the text. Should be from the text_colour struct.
         **/
-        void send_message(std::string msg);
+        void send_message(std::string msg, std::string colour = text_colour.reset);
 
         /**
          * @name    send_warning
@@ -152,6 +153,16 @@ class Messenger
          * @param   csv_rate [uint32_t] the timestep in ms that the terminal will be updated
         **/
         void set_terminal_print_rate(uint32_t terminal_rate);
+
+        /**
+         * @name    get_default_csv_output_file
+         *
+         * @returns the total file path to the default csv output
+        **/
+        inline std::string get_default_csv_output_file()
+        {
+            return (default_csv_path + default_csv_name + csv_ext);
+        }
 
     private:
         /**

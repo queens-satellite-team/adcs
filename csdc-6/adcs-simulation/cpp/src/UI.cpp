@@ -14,6 +14,8 @@
 #include <vector>
 #include <any>
 #include <iostream>
+#include <sstream>
+#include <fstream>
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -29,12 +31,14 @@ UI::UI()
     allowed_commands["resume_sim"]  = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
     allowed_commands["exit"]        = std::bind(&UI::quit,              this, std::placeholders::_1);
     allowed_commands["clean_out"]   = std::bind(&UI::clean_out,         this, std::placeholders::_1);
+    allowed_commands["unit_test"]   = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
 
     /* Aliases */
     allowed_commands["ss"] = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
     allowed_commands["rs"] = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
     allowed_commands["q"]  = std::bind(&UI::quit,              this, std::placeholders::_1);
     allowed_commands["co"] = std::bind(&UI::clean_out,         this, std::placeholders::_1);
+    allowed_commands["ut"] = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
 }
 
 void UI::start_ui_loop()
@@ -448,4 +452,127 @@ void UI::clean_out(std::vector<std::string> args)
 
     messenger.clean_csv_files();
     return;
+}
+
+void UI::run_unit_tests(std::vector<std::string> args)
+{
+    if (num_run_unit_tests_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    /* Generate arguments to pass to the simulation (yaml path is left empty) */
+    std::vector<std::string> sim_args = 
+    {
+        "start_sim",
+        "",
+        "-s"
+    };
+
+    std::vector<std::string> co_args = {"clean_out"};
+
+    messenger.send_message("Starting unit tests");
+
+    for (uint8_t test_num = 1; test_num <= num_unit_tests; test_num++)
+    {
+        /* Clean all outputs before running */
+        this->clean_out(co_args);
+
+        /* Run Simulation */
+        std::string yaml_path = expected_unit_test_dir + unit_test_name + std::to_string(test_num) + yaml_extension;
+        sim_args.at(1) = yaml_path;
+
+        messenger.send_message("Unit Test " + std::to_string(test_num) + ":");
+        this->run_simulation(sim_args);
+
+        /* Parse the results file for accelerations */
+        std::ifstream out_file(messenger.get_default_csv_output_file());
+        if (!out_file.is_open())
+        {
+            throw invalid_ui_args("Unable to open output path.");
+        }
+
+        /* Find which columns contain the accelerations*/
+        std::string line;
+        std::string column_name;
+
+        std::getline(out_file, line);
+        std::stringstream ss(line);
+
+        bool alpha_column_found = false;
+        int alpha_column_num = 0;
+
+        while( std::getline(ss, column_name, ',') &&
+               (!alpha_column_found) )
+        {
+            if (std::string::npos != column_name.find("alpha x"))
+            {
+                alpha_column_found = true;
+                alpha_column_num--;
+            }
+            alpha_column_num++;
+        }
+
+        if (!alpha_column_found)
+        {
+            throw invalid_ui_args("Unable to find satellite acceleration column in output file.");
+        }
+
+        /* Extract the first column */
+        Eigen::Vector3f first_timestep_alphas;
+
+        std::getline(out_file, line);
+        ss = std::stringstream(line);
+        std::string contents;
+
+        int column;
+        for (column = 0; (column < alpha_column_num)  && std::getline(ss, contents, ','); column++) {}
+
+        if (column != (alpha_column_num ))
+        {
+            throw invalid_ui_args("Data corrupted.");
+        }
+
+        for (int j = 0; (j < 3)  && std::getline(ss, contents, ','); j++)
+        {
+            first_timestep_alphas[j] = std::stof(contents);
+        }
+
+        out_file.close();
+
+        /* Find expected results */
+        std::ifstream expected_result_file(expected_results_dir + unit_test_name + std::to_string(test_num) + csv_extension);
+
+        /* Ignore header line */
+        std::getline(expected_result_file, line);
+        std::getline(expected_result_file, line);
+        ss = std::stringstream(line);
+
+        Eigen::Vector3f expected_alphas;
+
+        for (int j = 0; (j < 3)  && std::getline(ss, contents, ','); j++)
+        {
+            expected_alphas[j] = std::stof(contents);
+        }
+
+        expected_result_file.close();
+
+        Eigen::Vector3f diff = expected_alphas - first_timestep_alphas;
+        Eigen::Vector3f tollerance = {0.01,0,0};
+
+        if (diff.isMuchSmallerThan(tollerance))
+        {
+            messenger.send_message("PASS\n", text_colour.green);
+        }
+        else
+        {
+            messenger.send_message("FAIL", text_colour.red);
+            std::stringstream msg;
+            msg << "Expected: [" << expected_alphas.x() << "," << expected_alphas.y() << "," << expected_alphas.z() << "] ";
+            msg << "Actual: [" << first_timestep_alphas.x() << "," << first_timestep_alphas.y() << "," << first_timestep_alphas.z() << "] ";
+            msg << std::endl;
+
+            messenger.send_message(msg.str(), text_colour.yellow);
+        }
+    }
 }

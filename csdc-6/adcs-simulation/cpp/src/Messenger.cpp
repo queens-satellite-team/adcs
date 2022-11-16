@@ -18,7 +18,7 @@
 
 #include "Messenger.hpp"
 
-void Messenger::send_message(std::string msg)
+void Messenger::send_message(std::string msg, std::string colour)
 {
     if (msg.empty())
     {
@@ -27,7 +27,7 @@ void Messenger::send_message(std::string msg)
     }
 
     // This can be formatted nicely later.
-    std::cout << text_colour.green << msg << text_colour.reset << std::endl;
+    std::cout << colour << msg << text_colour.reset << std::endl;
     return;
 }
 
@@ -68,18 +68,21 @@ void Messenger::start_new_sim(uint32_t num_reaction_wheels)
 
 void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 {
-    std::cout << text_colour.magenta << "Time" << "\t\t";
-    std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat wx, Sat wy, Sat wz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
-    std::cout << "Accel x, Accel y, Accel z;\t";// << "Gyro x, Gyro y, Gyro z;\t\t";
-    for (uint32_t i = 0; i < num_reaction_wheels; i++)
+    if(!silent_sim_prints)
     {
-        std::cout << "RW " << i+1 << " O, RW " << i+1 << " a;";
-        if (i < num_reaction_wheels - 1)
+        std::cout << text_colour.magenta << "Time" << "\t\t";
+        std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat wx, Sat wy, Sat wz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
+        std::cout << "Accel x, Accel y, Accel z;\t";// << "Gyro x, Gyro y, Gyro z;\t\t";
+        for (uint32_t i = 0; i < num_reaction_wheels; i++)
         {
-            std::cout << "\t\t";
+            std::cout << "RW " << i+1 << " O, RW " << i+1 << " a;";
+            if (i < num_reaction_wheels - 1)
+            {
+                std::cout << "\t\t";
+            }
         }
+        std::cout << text_colour.reset << std::endl;
     }
-    std::cout << text_colour.reset << std::endl;
 
     return;
 }

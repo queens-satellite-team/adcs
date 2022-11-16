@@ -10,7 +10,7 @@
 #   DesiredPosition:     [3-dimensional vector<float>]
 #   MaxAbsoluteVelocity: [float]
 Satellite:
-  DesiredPosition: [0, 0, 0]
+  DesiredPosition: [0.5, 0.5, 0.5]
   AllowedJitter: 0.1
   RequiredAccuracy: 0.5
 

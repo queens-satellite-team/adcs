@@ -37,6 +37,7 @@ static const struct
     std::string green   = "\033[32m";
     std::string yellow  = "\033[33m";
     std::string magenta = "\033[35m";
+    std::string cyan    = "\033[36m";
 } text_colour;
 
 /**
@@ -174,6 +175,16 @@ class Messenger
             return (default_csv_path + default_csv_name + csv_ext);
         }
 
+        /**
+         * @name    get_default_csv_output_path
+         *
+         * @returns the path to the default csv output
+        **/
+        inline std::string get_default_csv_output_path()
+        {
+            return default_csv_path;
+        }
+
     private:
         /**
          * @name    append_csv_output
@@ -191,7 +202,7 @@ class Messenger
         const std::string prompt_character = ">";
 
         /* Default csv file path */
-        const std::string default_csv_path = "./output/";
+        const std::string default_csv_path = "output/";
 
         /* default name of the output file */
         const std::string default_csv_name = "sim_out";

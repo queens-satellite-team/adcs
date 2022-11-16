@@ -20,6 +20,7 @@
 #include "Python.h"
 #include <sstream>
 #include <fstream>
+#include <filesystem>
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -135,7 +136,7 @@ void UI::run_simulation(std::vector<std::string> args)
 
     if (!config.Load(this->config_yaml_path))
     {
-        messenger.send_error("Configuration failed to load");
+        throw invalid_ui_args("Configuration failed to load");
     }
     else
     {
@@ -511,6 +512,20 @@ void UI::run_unit_tests(std::vector<std::string> args)
         throw invalid_ui_args("Invalid number of arguments.");
     }
 
+    messenger.send_message("Starting unit tests", text_colour.magenta);
+
+    this->run_no_controller_unit_tests(args);
+    this->run_controller_unit_tests(args);
+
+}
+
+void UI::run_no_controller_unit_tests(std::vector<std::string> args)
+{
+    if (num_run_unit_tests_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
     /* Generate arguments to pass to the simulation (yaml path is left empty) */
     std::vector<std::string> sim_args = 
     {
@@ -521,18 +536,18 @@ void UI::run_unit_tests(std::vector<std::string> args)
 
     std::vector<std::string> co_args = {"clean_out"};
 
-    messenger.send_message("Starting unit tests");
+    messenger.send_message("Controllerless tests", text_colour.cyan);
 
-    for (uint8_t test_num = 1; test_num <= num_unit_tests; test_num++)
+    for (uint8_t test_num = 1; test_num <= num_no_controller_unit_tests; test_num++)
     {
         /* Clean all outputs before running */
         this->clean_out(co_args);
 
         /* Run Simulation */
-        std::string yaml_path = expected_unit_test_dir + unit_test_name + std::to_string(test_num) + yaml_extension;
+        std::string yaml_path = expected_no_controller_unit_test_dir + unit_test_name + std::to_string(test_num) + yaml_extension;
         sim_args.at(1) = yaml_path;
 
-        messenger.send_message("Unit Test " + std::to_string(test_num) + ":");
+        messenger.send_message("Unit Test " + std::to_string(test_num) + ":", text_colour.cyan);
         this->run_simulation(sim_args);
 
         /* Parse the results file for accelerations */
@@ -625,4 +640,56 @@ void UI::run_unit_tests(std::vector<std::string> args)
             messenger.send_message(msg.str(), text_colour.yellow);
         }
     }
+}
+
+void UI::run_controller_unit_tests(std::vector<std::string> args)
+{
+    if (num_run_unit_tests_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    messenger.send_message("Controller based tests", text_colour.cyan);
+
+    /* Clean all outputs before running */
+    std::vector<std::string> co_args = {"clean_out"};
+    this->clean_out(co_args);
+
+    /**
+     * Generate arguments to pass to the simulation (yaml paths left empty) 
+     * csv file is written every 100 milliseconds (sim time)
+     * terminal is written every 100 seconds (sim time)
+    **/
+    std::vector<std::string> sim_args = 
+    {
+        "start_sim",
+        "",
+        "",
+        "-c",
+        "100",
+        "-p",
+        "100000"
+    };
+
+    for (uint8_t test_num = 1; test_num <= num_controller_unit_tests; test_num++)
+    {
+        /* setup arguments */
+        std::string config_yaml_path = expected_controller_unit_test_dir + ut_controller_config_name + std::to_string(test_num) + yaml_extension;
+        std::string exit_yaml_path   = expected_controller_unit_test_dir + ut_controller_exit_name   + std::to_string(test_num) + yaml_extension;
+
+        sim_args.at(1) = config_yaml_path;
+        sim_args.at(2) = exit_yaml_path;
+
+        messenger.send_message("\nUnit Test " + std::to_string(test_num) + ":", text_colour.cyan);
+        this->run_simulation(sim_args);
+
+        std::string new_name = (messenger.get_default_csv_output_path() + controller_test_output_name + std::to_string(test_num) + csv_extension);
+
+        std::filesystem::path output_path     = std::filesystem::current_path() / messenger.get_default_csv_output_file();
+        std::filesystem::path new_output_path = std::filesystem::current_path() / new_name;
+
+        std::filesystem::rename(output_path, new_output_path);
+    }
+
+    return;
 }

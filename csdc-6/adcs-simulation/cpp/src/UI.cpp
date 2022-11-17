@@ -211,7 +211,8 @@ void UI::run_simulation(std::vector<std::string> args)
 
                 try
                 {
-                    controller.begin(final_sat_position);
+                    timestamp ramp_time(0, 30);
+                    controller.begin(final_sat_position, ramp_time);
                 }
                 catch (simulation_timeout &e)
                 {

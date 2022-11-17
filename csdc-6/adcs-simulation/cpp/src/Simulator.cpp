@@ -45,7 +45,7 @@ void Simulator::init(sim_config initial_values, timestamp timeout)
 
 timestamp Simulator::update_simulation() {
     //timestamp time_passed = this->determine_time_passed();
-    timestamp t(10, 0);
+    timestamp t(1, 0);
     this->simulate(t);
 
     return this->simulation_time;
@@ -53,7 +53,7 @@ timestamp Simulator::update_simulation() {
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
     //timestamp time_passed = this->determine_time_passed();
-    timestamp t(10, 0);
+    timestamp t(1, 0);
     this->simulate(t + duration);
 
     return this->simulation_time;

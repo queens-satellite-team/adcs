@@ -14,6 +14,10 @@
 #include <vector>
 #include <any>
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <filesystem>
+#include <chrono>
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -29,12 +33,16 @@ UI::UI()
     allowed_commands["resume_sim"]  = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
     allowed_commands["exit"]        = std::bind(&UI::quit,              this, std::placeholders::_1);
     allowed_commands["clean_out"]   = std::bind(&UI::clean_out,         this, std::placeholders::_1);
+    allowed_commands["unit_test"]   = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
+    allowed_commands["perf_test"]   = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
 
     /* Aliases */
     allowed_commands["ss"] = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
     allowed_commands["rs"] = std::bind(&UI::resume_simulation, this, std::placeholders::_1);
     allowed_commands["q"]  = std::bind(&UI::quit,              this, std::placeholders::_1);
     allowed_commands["co"] = std::bind(&UI::clean_out,         this, std::placeholders::_1);
+    allowed_commands["ut"] = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
+    allowed_commands["pt"] = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
 }
 
 void UI::start_ui_loop()
@@ -127,7 +135,7 @@ void UI::run_simulation(std::vector<std::string> args)
 
     if (!config.Load(this->config_yaml_path))
     {
-        messenger.send_error("Configuration failed to load");
+        throw invalid_ui_args("Configuration failed to load");
     }
     else
     {
@@ -447,5 +455,270 @@ void UI::clean_out(std::vector<std::string> args)
     }
 
     messenger.clean_csv_files();
+    return;
+}
+
+void UI::run_unit_tests(std::vector<std::string> args)
+{
+    if (num_run_unit_tests_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    messenger.send_message("Starting unit tests", text_colour.magenta);
+
+    this->run_no_controller_unit_tests(args);
+    this->run_controller_unit_tests(args);
+
+}
+
+void UI::run_no_controller_unit_tests(std::vector<std::string> args)
+{
+    if (num_run_unit_tests_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    /* Generate arguments to pass to the simulation (yaml path is left empty) */
+    std::vector<std::string> sim_args = 
+    {
+        "start_sim",
+        "",
+        "-s"
+    };
+
+    std::vector<std::string> co_args = {"clean_out"};
+
+    messenger.send_message("Controllerless tests", text_colour.cyan);
+
+    for (uint8_t test_num = 1; test_num <= num_no_controller_unit_tests; test_num++)
+    {
+        /* Clean all outputs before running */
+        this->clean_out(co_args);
+
+        /* Run Simulation */
+        std::string yaml_path = expected_no_controller_unit_test_dir + unit_test_name + std::to_string(test_num) + yaml_extension;
+        sim_args.at(1) = yaml_path;
+
+        messenger.send_message("Unit Test " + std::to_string(test_num) + ":", text_colour.cyan);
+        this->run_simulation(sim_args);
+
+        /* Parse the results file for accelerations */
+        std::ifstream out_file(messenger.get_default_csv_output_file());
+        if (!out_file.is_open())
+        {
+            throw invalid_ui_args("Unable to open output path.");
+        }
+
+        /* Find which columns contain the accelerations*/
+        std::string line;
+        std::string column_name;
+
+        std::getline(out_file, line);
+        std::stringstream ss(line);
+
+        bool alpha_column_found = false;
+        int alpha_column_num = 0;
+
+        while( std::getline(ss, column_name, ',') &&
+               (!alpha_column_found) )
+        {
+            if (std::string::npos != column_name.find("alpha x"))
+            {
+                alpha_column_found = true;
+                alpha_column_num--;
+            }
+            alpha_column_num++;
+        }
+
+        if (!alpha_column_found)
+        {
+            throw invalid_ui_args("Unable to find satellite acceleration column in output file.");
+        }
+
+        /* Extract the first column */
+        Eigen::Vector3f first_timestep_alphas;
+
+        std::getline(out_file, line);
+        ss = std::stringstream(line);
+        std::string contents;
+
+        int column;
+        for (column = 0; (column < alpha_column_num)  && std::getline(ss, contents, ','); column++) {}
+
+        if (column != (alpha_column_num ))
+        {
+            throw invalid_ui_args("Data corrupted.");
+        }
+
+        for (int j = 0; (j < 3)  && std::getline(ss, contents, ','); j++)
+        {
+            first_timestep_alphas[j] = std::stof(contents);
+        }
+
+        out_file.close();
+
+        /* Find expected results */
+        std::ifstream expected_result_file(expected_results_dir + unit_test_name + std::to_string(test_num) + csv_extension);
+
+        /* Ignore header line */
+        std::getline(expected_result_file, line);
+        std::getline(expected_result_file, line);
+        ss = std::stringstream(line);
+
+        Eigen::Vector3f expected_alphas;
+
+        for (int j = 0; (j < 3)  && std::getline(ss, contents, ','); j++)
+        {
+            expected_alphas[j] = std::stof(contents);
+        }
+
+        expected_result_file.close();
+
+        Eigen::Vector3f diff = expected_alphas - first_timestep_alphas;
+        Eigen::Vector3f tollerance = {0.01,0,0};
+
+        if (diff.isMuchSmallerThan(tollerance))
+        {
+            messenger.send_message("PASS\n", text_colour.green);
+        }
+        else
+        {
+            messenger.send_message("FAIL", text_colour.red);
+            std::stringstream msg;
+            msg << "Expected: [" << expected_alphas.x() << "," << expected_alphas.y() << "," << expected_alphas.z() << "] ";
+            msg << "Actual: [" << first_timestep_alphas.x() << "," << first_timestep_alphas.y() << "," << first_timestep_alphas.z() << "] ";
+            msg << std::endl;
+
+            messenger.send_message(msg.str(), text_colour.yellow);
+        }
+    }
+}
+
+void UI::run_controller_unit_tests(std::vector<std::string> args)
+{
+    if (num_run_unit_tests_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    messenger.send_message("Controller based tests", text_colour.cyan);
+
+    /* Clean all outputs before running */
+    std::vector<std::string> co_args = {"clean_out"};
+    this->clean_out(co_args);
+
+    /**
+     * Generate arguments to pass to the simulation (yaml paths left empty) 
+     * csv file is written every 100 milliseconds (sim time)
+     * terminal is written every 100 seconds (sim time)
+    **/
+    std::vector<std::string> sim_args = 
+    {
+        "start_sim",
+        "",
+        "",
+        "-c",
+        "100",
+        "-p",
+        "100000"
+    };
+
+    for (uint8_t test_num = 1; test_num <= num_controller_unit_tests; test_num++)
+    {
+        /* setup arguments */
+        std::string config_yaml_path = expected_controller_unit_test_dir + ut_controller_config_name + std::to_string(test_num) + yaml_extension;
+        std::string exit_yaml_path   = expected_controller_unit_test_dir + ut_controller_exit_name   + std::to_string(test_num) + yaml_extension;
+
+        sim_args.at(1) = config_yaml_path;
+        sim_args.at(2) = exit_yaml_path;
+
+        messenger.send_message("\nUnit Test " + std::to_string(test_num) + ":", text_colour.cyan);
+        this->run_simulation(sim_args);
+
+        std::string new_name = (messenger.get_default_csv_output_path() + controller_test_output_name + std::to_string(test_num) + csv_extension);
+
+        std::filesystem::path output_path     = std::filesystem::current_path() / messenger.get_default_csv_output_file();
+        std::filesystem::path new_output_path = std::filesystem::current_path() / new_name;
+
+        std::filesystem::rename(output_path, new_output_path);
+    }
+
+    return;
+}
+
+void UI::run_perf_tests(std::vector<std::string> args)
+{
+    if (num_perf_test_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    messenger.send_message("Running Performance tests", text_colour.cyan);
+
+    /* Clean all outputs before running */
+    std::vector<std::string> co_args = {"clean_out"};
+    this->clean_out(co_args);
+
+    /**
+     * Generate arguments to pass to the simulation. Arguments are as follows:
+     * 
+     * args[0] - command to start sim
+     * args[1] - path to config yaml file
+     * args[2] - path to exit yaml file
+     * args[3] - silent operation, no prints to terminal during operation
+     * args[4] - request specific print regularity to the csv
+     * args[5] - print regularity of 1 ms (sim time) - this is changed by some tests.
+    **/
+    std::vector<std::string> test_args = 
+    {
+        "start_sim",
+        "",
+        "",
+        "-s",
+        "-c",
+        "1000"
+    };
+
+    for (uint8_t test_num = 1; test_num <= 3; test_num++)//num_performance_tests; test_num++)
+    {
+        messenger.send_message("\nPerf Test " + std::to_string(test_num) + ":", text_colour.cyan);
+        messenger.send_message(perf_test_descriptions.at(test_num-1), text_colour.cyan);
+        messenger.send_message("Test will loop 10 times.", text_colour.cyan);
+
+        uint32_t duration = 0;
+
+        for (uint8_t iteration = 0; iteration < 10; iteration++)
+        {
+            // messenger.silence_csv();
+            uint32_t time_start = 0;
+            uint32_t time_end = 0;
+
+            /* Tests greater than three share a yaml file */
+            uint8_t yaml_number = (3 <= test_num) ? 3 : test_num;
+
+            if (4 == test_num)
+            {
+                test_args.back() = "1000";
+            }
+            else if (5 == test_num)
+            {
+                test_args.back() = "1";
+                messenger.silence_csv();
+            }
+
+            test_args.at(1) = perf_test_config_yaml_path + std::to_string(yaml_number) + yaml_extension;
+            test_args.at(2) = perf_test_exit_yaml_path   + std::to_string(yaml_number) + yaml_extension;
+
+            time_start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            this->run_simulation(test_args);
+            time_end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+            duration += time_end - time_start;
+        }
+        duration /= 10;
+        messenger.send_message("Average duration (ms): " + std::to_string(duration) + "\n", text_colour.yellow);
+    }
+
     return;
 }

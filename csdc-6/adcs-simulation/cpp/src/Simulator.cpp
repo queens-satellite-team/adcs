@@ -81,6 +81,7 @@ void Simulator::simulate(timestamp t) {
         /* end simulation if the timeout is reached. */
         if (this->timeout < this->simulation_time)
         {
+            this->messenger->close_open_csv();
             throw simulation_timeout("Timeout reached.");
         }
     }

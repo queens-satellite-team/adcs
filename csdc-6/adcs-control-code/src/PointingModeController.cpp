@@ -21,17 +21,25 @@ PointingModeController::PointingModeController(
     this->timer = timer;
 }
 
-void PointingModeController::begin(Eigen::Vector3f desired_attitude) {
-    //TODO: convert to while and add exit condition
+void PointingModeController::begin(Eigen::Vector3f desired_attitude, timestamp ramp_time) {
     measurement initial_vals = this->take_updated_measurements();
-    timestamp prev_time = initial_vals.time_taken;
-    prev_error = desired_attitude - initial_vals.vec;
+    Eigen::Vector3f initial_attitude = initial_vals.vec;
+    timestamp start = initial_vals.time_taken;
+    timestamp prev_time = start;
+
+    prev_error = Eigen::Vector3f::Zero();
+    prev_derivative = Eigen::Vector3f::Zero();
     prev_integral = Eigen::Vector3f::Zero();
-    for (int i = 0; i < 5000; i++) {
+
+    while(true) {
         measurement m = this->take_updated_measurements();
         timestamp delta_t = m.time_taken - prev_time;
+        timestamp since_start = m.time_taken - start;
         prev_time = m.time_taken;
-        this->update(m.vec, desired_attitude, delta_t);
+
+        float ramp_factor = since_start < ramp_time ? ((float) since_start / (float) ramp_time) : 1;
+        Eigen::Vector3f ramped_desired_attitude = ramp_factor * (desired_attitude - initial_attitude) + initial_attitude;
+        this->update(m.vec, ramped_desired_attitude, delta_t);
     }
 }
 
@@ -39,16 +47,18 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
     Eigen::Vector3f kp(0.0002, 0.0002, 0.0002);
     Eigen::Vector3f kd(0.005544, 0.005775, 0.0052472);
     Eigen::Vector3f ki(0.00001, 0.0000096, 0.00001057);
+    float N = 1;
 
     Eigen::Vector3f cur_error = desired_attitude - current_attitude;
-    Eigen::Vector3f cur_derivative = (cur_error - prev_error) / (float) delta_t;
+    Eigen::Vector3f cur_derivative = (N * kd.cwiseProduct(cur_error - prev_error) + prev_derivative) / (1 + N * (float) delta_t);
     Eigen::Vector3f cur_integral = prev_integral + cur_error * (float) delta_t;
 
     prev_error = cur_error;
+    prev_derivative = cur_derivative;
     prev_integral = cur_integral;
 
-    Eigen::Vector3f desired_torque = -1 * (kp.cwiseProduct(cur_error) + kd.cwiseProduct(cur_derivative) + ki.cwiseProduct(cur_integral));
-
+    Eigen::Vector3f desired_torque = -1 * (kp.cwiseProduct(cur_error) + cur_derivative + ki.cwiseProduct(cur_integral));
+    
     int num_rws = actuators.size();
     int i = 0;
     Eigen::Matrix3Xf A;

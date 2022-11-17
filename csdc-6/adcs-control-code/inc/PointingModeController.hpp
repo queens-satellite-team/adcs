@@ -34,11 +34,12 @@ public:
     /**
     * @name begin
     * @param desired_attitue [vector<float>], the desired angle to point at
+    * @param ramp_time [timestamp], the time over which to ramp to the new desired attitude
     *
     * @details Starts the command loop. Should call the update functions once per cycle to get
     * updated sensor measurements and sent commands to actuators accordingly
    **/
-    void begin(Eigen::Vector3f desired_attitude);
+    void begin(Eigen::Vector3f desired_attitude, timestamp ramp_time);
 
 private:
     /**
@@ -55,9 +56,36 @@ private:
    **/
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 
+    /**
+    * @property prev_error [Eigen::Vector3f]
+    *
+    * @details The error term, stored to persist between controller timesteps
+   **/
     Eigen::Vector3f prev_error;
 
+    /**
+    * @property prev_derivative [Eigen::Vector3f]
+    *
+    * @details The derivative term, stored to persist between controller timesteps
+   **/
+    Eigen::Vector3f prev_derivative;
+
+    /**
+    * @property prev_integral [Eigen::Vector3f]
+    *
+    * @details The integral term, stored to persist between controller timesteps
+   **/
     Eigen::Vector3f prev_integral;
+
+    /**
+    * @property A_gen_inv [Eigen::Matrix3Xf]
+    *
+    * @details The matrix A stores the rotational axes of each reaction wheel, one
+    * wheel per column. A_gen_inv is the generalised inverse of the matrix A, which
+    * is used to split the desired torques, as calculated by the controller, into
+    * individual scalar torques that should be applied by each reaction wheel.
+   **/
+    Eigen::Matrix3Xf A_gen_inv;
 
     ADCS_timer *timer;
 

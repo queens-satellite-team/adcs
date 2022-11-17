@@ -15,6 +15,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "CommonStructs.hpp"
 #include "def_interface.hpp"
@@ -185,6 +186,22 @@ class Messenger
             return default_csv_path;
         }
 
+        /**
+         * @name    set_terminal_print_rate
+         *
+         * @details sets the print rate to the terminal in terms of simulation time.
+         *
+         * @param   csv_rate [uint32_t] the timestep in ms that the terminal will be updated
+        **/
+        void silence_csv();
+
+        /**
+         * @name    close_open_csv
+         *
+         * @details closes the CSV file if open.
+        **/
+        void close_open_csv();
+
     private:
         /**
          * @name    append_csv_output
@@ -213,6 +230,9 @@ class Messenger
         /* default state of the terminal prints */
         const bool default_silent_sim_prints = false;
 
+        /* default state of the csv prints */
+        const bool default_silent_csv_prints = false;
+
         /* default print rate to the csv file in ms */
         const uint32_t default_csv_print_rate = 1;
 
@@ -224,6 +244,9 @@ class Messenger
 
         /* state of the terminal prints */
         bool silent_sim_prints = false;
+
+        /* state of the terminal prints */
+        bool silent_csv_prints = false;
 
         /* print rate to the csv file in ms */
         uint32_t csv_print_rate = 1;
@@ -242,6 +265,9 @@ class Messenger
          * reset when it reaches csv_print_rate
         **/
         uint32_t terminal_write_count = 0;
+
+        /* CSV file to write logs to */
+        std::ofstream open_output_file;
 
 };
 

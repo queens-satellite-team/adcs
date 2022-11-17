@@ -17,6 +17,7 @@
 #include <sstream>
 #include <fstream>
 #include <filesystem>
+#include <chrono>
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -33,6 +34,7 @@ UI::UI()
     allowed_commands["exit"]        = std::bind(&UI::quit,              this, std::placeholders::_1);
     allowed_commands["clean_out"]   = std::bind(&UI::clean_out,         this, std::placeholders::_1);
     allowed_commands["unit_test"]   = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
+    allowed_commands["perf_test"]   = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
 
     /* Aliases */
     allowed_commands["ss"] = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
@@ -40,6 +42,7 @@ UI::UI()
     allowed_commands["q"]  = std::bind(&UI::quit,              this, std::placeholders::_1);
     allowed_commands["co"] = std::bind(&UI::clean_out,         this, std::placeholders::_1);
     allowed_commands["ut"] = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
+    allowed_commands["pt"] = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
 }
 
 void UI::start_ui_loop()
@@ -639,6 +642,82 @@ void UI::run_controller_unit_tests(std::vector<std::string> args)
         std::filesystem::path new_output_path = std::filesystem::current_path() / new_name;
 
         std::filesystem::rename(output_path, new_output_path);
+    }
+
+    return;
+}
+
+void UI::run_perf_tests(std::vector<std::string> args)
+{
+    if (num_perf_test_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    messenger.send_message("Running Performance tests", text_colour.cyan);
+
+    /* Clean all outputs before running */
+    std::vector<std::string> co_args = {"clean_out"};
+    this->clean_out(co_args);
+
+    /**
+     * Generate arguments to pass to the simulation. Arguments are as follows:
+     * 
+     * args[0] - command to start sim
+     * args[1] - path to config yaml file
+     * args[2] - path to exit yaml file
+     * args[3] - silent operation, no prints to terminal during operation
+     * args[4] - request specific print regularity to the csv
+     * args[5] - print regularity of 1 ms (sim time) - this is changed by some tests.
+    **/
+    std::vector<std::string> test_args = 
+    {
+        "start_sim",
+        "",
+        "",
+        "-s",
+        "-c",
+        "1000"
+    };
+
+    for (uint8_t test_num = 1; test_num <= 3; test_num++)//num_performance_tests; test_num++)
+    {
+        messenger.send_message("\nPerf Test " + std::to_string(test_num) + ":", text_colour.cyan);
+        messenger.send_message(perf_test_descriptions.at(test_num-1), text_colour.cyan);
+        messenger.send_message("Test will loop 10 times.", text_colour.cyan);
+
+        uint32_t duration = 0;
+
+        for (uint8_t iteration = 0; iteration < 10; iteration++)
+        {
+            // messenger.silence_csv();
+            uint32_t time_start = 0;
+            uint32_t time_end = 0;
+
+            /* Tests greater than three share a yaml file */
+            uint8_t yaml_number = (3 <= test_num) ? 3 : test_num;
+
+            if (4 == test_num)
+            {
+                test_args.back() = "1000";
+            }
+            else if (5 == test_num)
+            {
+                test_args.back() = "1";
+                messenger.silence_csv();
+            }
+
+            test_args.at(1) = perf_test_config_yaml_path + std::to_string(yaml_number) + yaml_extension;
+            test_args.at(2) = perf_test_exit_yaml_path   + std::to_string(yaml_number) + yaml_extension;
+
+            time_start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            this->run_simulation(test_args);
+            time_end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+            duration += time_end - time_start;
+        }
+        duration /= 10;
+        messenger.send_message("Average duration (ms): " + std::to_string(duration) + "\n", text_colour.yellow);
     }
 
     return;

@@ -1,0 +1,101 @@
+# file: simulator.yaml
+#
+# details: input file that outlines the satellite configuration. the simulator
+# configuration adheres to the following format:
+#
+# author: Lily de Loe
+#
+# last edited: 2022-11-04
+
+# Satellite:
+#   Moment: [3-dimensional matrix]
+#   Position: [3-dimensional vector]
+#   Velcoity: [3-dimensional vector]
+Satellite:
+  Moment: [[0.02035470141,0.00004983389,0.00021768132],
+           [0.00004983389,0.01993812272,-0.00007588037],
+           [0.00021768132,-0.00007588037,0.0053506098]]
+  Position: [0, 0, 0]
+  Velocity: [0, 0, 0.19634954085]
+
+# Actuators:
+#   Name: [name of actuator]
+#     type: [actuator type], ReactionWheel
+#     Moment: [float]
+#     MaxAngVel: [float]
+#     MaxAngAccel: [float]
+#     MinAngVel: [float]
+#     MinAngAccel: [float]
+#     PollingTime: [float]
+#     Position: [3-dimensional vector]
+#     Velcoity: [3-dimensional vector]
+Actuators:
+  ReactionWheel1:
+    type: ReactionWheel
+    Moment: 0.00000925
+    MaxAngVel: 88
+    MaxAngAccel: 20
+    MinAngVel: 0
+    MinAngAccel: 0
+    PollingTime: 10
+    Position: [1.73205080757,1.73205080757,-1.73205080757]
+    AxisOfRotation: [0.577350269, 0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
+  ReactionWheel2:
+    type: ReactionWheel
+    Moment: 0.00000925
+    MaxAngVel: 88
+    MaxAngAccel: 20
+    MinAngVel: 0
+    MinAngAccel: 0
+    PollingTime: 10
+    Position: [1.73205080757,-1.73205080757,-1.73205080757]
+    AxisOfRotation: [0.577350269, -0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
+  ReactionWheel3:
+    type: ReactionWheel
+    Moment: 0.00000925
+    MaxAngVel: 88
+    MaxAngAccel: 20
+    MinAngVel: 0
+    MinAngAccel: 0
+    PollingTime: 10
+    Position: [-1.73205080757,-1.73205080757,-1.73205080757]
+    AxisOfRotation: [-0.577350269, -0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
+  ReactionWheel4:
+    type: ReactionWheel
+    Moment: 0.00000925
+    MaxAngVel: 88
+    MaxAngAccel: 20
+    MinAngVel: 0
+    MinAngAccel: 0
+    PollingTime: 10
+    Position: [-1.73205080757,1.73205080757,-1.73205080757]
+    AxisOfRotation: [-0.577350269, 0.577350269, -0.577350269]
+    Velocity: 0
+    Acceleration: 0
+
+# Sensors:
+#   Name: [name of sensor]
+#     type: [sensor type], Gyroscope, Accelerometer
+#     PollingTime: [float]
+#     Position: [3-dimensional matrix]
+Sensors:
+  Gyro1:
+    type: Gyroscope
+    PollingTime: 10
+    Position: [0,0,0]
+  Accel1:
+    type: Accelerometer
+    PollingTime: 10
+    Position: [0,0,0]
+
+# Timestep: [int], in ms
+TimeStep: 1
+
+# Timeout: [int], in ms
+Timeout: 300000

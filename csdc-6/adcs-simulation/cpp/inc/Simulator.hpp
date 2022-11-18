@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -200,15 +200,8 @@ private:
  *
  * @details exception used to indicate that a UI function has received bad arguments from the user.
 **/
-class simulation_timeout : public std::exception
+class simulation_timeout : public adcs_exception
 {
     public:
-        simulation_timeout(const char* msg) : message(msg) {}
-        const char* what()
-        {
-            return message;
-        }
-
-    private:
-        const char* message;
+        simulation_timeout(const char* msg) :  adcs_exception(msg) {}
 };

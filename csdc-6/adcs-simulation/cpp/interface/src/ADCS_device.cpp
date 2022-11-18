@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -17,9 +17,9 @@
 
 ADCS_device::ADCS_device(timestamp polling_time, Simulator* sim) : min_polling_increment(polling_time)
 {
-	if (NULL == sim)
+	if (nullptr == sim)
 	{
-		/* THROW APPROPRIATE EXCEPTION**/
+		throw invalid_adcs_param("sim pointer is null.");
 	}
 
 	this->sim = sim;

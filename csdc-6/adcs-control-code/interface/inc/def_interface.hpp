@@ -9,7 +9,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -17,6 +17,8 @@
 #include <string>
 #include <Eigen/Dense>
 #include <iomanip>
+
+#include "adcs_exception.hpp"
 
 #pragma once
 
@@ -44,17 +46,10 @@
  *
  * @details exception used to indicate that a UI function has received bad arguments from the user.
 **/
-class timestamp_nullptr : public std::exception
+class timestamp_nullptr : public adcs_exception
 {
     public:
-        timestamp_nullptr(const char* msg) : message(msg) {}
-        const char* what()
-        {
-            return message;
-        }
-
-    private:
-        const char* message;
+        timestamp_nullptr(const char* msg) : adcs_exception(msg) {}
 };
 
 /** ADCS specific timestamp definition. All time measurements use this structure.
@@ -441,6 +436,51 @@ typedef struct {
     float       position;
     timestamp   time;
 } actuator_state;
+
+/******************************************* EXCEPTIONS ******************************************/
+/**
+ * @exception device_not_ready
+ *
+ * @details exception used to indicate that an adcs device has not completed it's required poll delay.
+**/
+class device_not_ready : public adcs_exception
+{
+    public:
+        device_not_ready(const char* msg) :  adcs_exception(msg) {}
+};
+
+/**
+ * @exception invalid_actuator_state
+ *
+ * @details exception used to indicate that an actuator is in an invalid state.
+**/
+class invalid_actuator_state : public adcs_exception
+{
+    public:
+        invalid_actuator_state(const char* msg) :  adcs_exception(msg) {}
+};
+
+/**
+ * @exception invalid_dimensions_error
+ *
+ * @details exception used to indicate that invalid dimensions were provided.
+**/
+class invalid_dimensions_error : public adcs_exception
+{
+    public:
+        invalid_dimensions_error(const char* msg) :  adcs_exception(msg) {}
+};
+
+/**
+ * @exception invalid_adcs_param
+ *
+ * @details exception used to indicate that an adcs device has not been provided a valid parameter.
+**/
+class invalid_adcs_param : public adcs_exception
+{
+    public:
+        invalid_adcs_param(const char* msg) :  adcs_exception(msg) {}
+};
 
 /******************************************* INTERFACES ******************************************/
 

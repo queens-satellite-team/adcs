@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy, Lily de Loe
  *
  * Last Edited
- * 2022-11-08
+ * 2022-11-18
  *
 **/
 
@@ -106,21 +106,11 @@ void UI::run_command(std::vector<std::string> args)
         }
         catch(invalid_ui_args& e)
         {
-            messenger.send_warning(e.what());
+            messenger.send_warning(e.message());
         }
-        catch(...)
+        catch(adcs_exception &e)
         {
-            // This block catches all exceptions, and prints the error message. The user can decide
-            // if it requires restarting the simulation, or exiting.
-            std::exception_ptr e = std::current_exception();
-            try
-            {
-                std::rethrow_exception(e);
-            }
-            catch(const std::exception& e)
-            {
-                messenger.send_error(e.what());
-            }
+            messenger.send_error(e.message());
         }
     }
 
@@ -170,7 +160,7 @@ void UI::run_simulation(std::vector<std::string> args)
             }
             catch (simulation_timeout &e)
             {
-                messenger.send_message(e.what());
+                messenger.send_message(e.message());
 
             }
         }
@@ -212,7 +202,7 @@ void UI::run_simulation(std::vector<std::string> args)
                 }
                 catch (simulation_timeout &e)
                 {
-                    messenger.send_message(e.what());
+                    messenger.send_message(e.message());
                 }
             }
         }

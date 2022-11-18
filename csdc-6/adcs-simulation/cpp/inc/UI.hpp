@@ -12,7 +12,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -313,15 +313,8 @@ class UI
  *
  * @details exception used to indicate that a UI function has received bad arguments from the user.
 **/
-class invalid_ui_args : public std::exception
+class invalid_ui_args : public adcs_exception
 {
     public:
-        invalid_ui_args(const char* msg) : message(msg) {}
-        const char* what()
-        {
-            return message;
-        }
-
-    private:
-        const char* message;
+        invalid_ui_args(const char* msg) :  adcs_exception(msg) {}
 };

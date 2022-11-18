@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-10-11
+ * 2022-10-18
  *
 **/
 
@@ -31,14 +31,7 @@ actuator_state Actuator::get_target_state()
 
 void Actuator::set_current_state(actuator_state new_state)
 {
-    try
-    {
-        check_valid_state(new_state);
-    }
-    catch(const std::exception& e)
-    {
-        /* THROW APPROPRIATE EXCEPTION**/
-    }
+    check_valid_state(new_state);
 
     this->current_state = new_state;
 
@@ -60,19 +53,19 @@ void Actuator::check_valid_state(actuator_state state)
     if ( (this->max_state_values.acceleration < state.acceleration) ||
          (this->min_state_values.acceleration > state.acceleration) )
     {
-        /* THROW EXCEPTION*/
+        throw invalid_actuator_state("Actuator acceleration invalid.");
     }
 
     if ( (this->max_state_values.velocity < state.velocity) ||
          (this->min_state_values.velocity > state.velocity) )
     {
-        /* THROW EXCEPTION*/
+        throw invalid_actuator_state("Actuator velocity invalid.");
     }
 
     if ( (this->max_state_values.position < state.position) ||
          (this->min_state_values.position > state.position) )
     {
-        /* THROW EXCEPTION*/
+        throw invalid_actuator_state("Actuator position invalid.");
     }
 
     return;

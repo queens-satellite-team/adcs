@@ -4,12 +4,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 
-print("test")
-main()
-
 def plot_results(csv_name):
-#data = pd.read_csv("output/sim_out.csv")
-    print(csv_name)
     data = pd.read_csv(csv_name)
     time = data['Time']
 
@@ -25,7 +20,6 @@ def plot_results(csv_name):
     plt.plot(time, theta_y, label="y")
     plt.plot(time, theta_z, label="z")
     plt.legend()
-    #plt.show()
     plt.savefig('plots/Satellite_Position_vs_Time.png')
 
     omega_x = data['Satellite Omega x']
@@ -40,7 +34,6 @@ def plot_results(csv_name):
     plt.plot(time, omega_y, label="y")
     plt.plot(time, omega_z, label="z")
     plt.legend()
-    #plt.show()
     plt.savefig('plots/Satellite_Velocity_vs_Time.png')
 
     alpha_x = data['Satellite alpha x']
@@ -55,7 +48,6 @@ def plot_results(csv_name):
     plt.plot(time, alpha_y, label="y")
     plt.plot(time, alpha_z, label="z")
     plt.legend()
-    #plt.show()
     plt.savefig('plots/Satellite_Acceleration_vs_Time.png')
 
     accel_x = data['Accelerometer x']
@@ -70,7 +62,6 @@ def plot_results(csv_name):
     plt.plot(time, accel_y, label="y")
     plt.plot(time, accel_z, label="z")
     plt.legend()
-    #plt.show()
     plt.savefig('plots/Accelerometer_Reading_vs_Time.png')
 
     wheel_count = len([col for col in data.columns if "Reaction wheel" in col]) // 2
@@ -84,12 +75,12 @@ def plot_results(csv_name):
         plt.plot(time, rw_omega, label="omega")
         plt.plot(time, rw_alpha, label="alpha")
         plt.legend()
-        #plt.show()
-        print(i)
         plt.savefig('plots/Reaction wheel %d alpha.png' %(i+1))
 
 
 def main():
-    filepath = sys.argv[0]
+    filepath = sys.argv[1]
     plot_results(filepath)
-    print("made it here")
+
+if __name__ == "__main__":
+    main()

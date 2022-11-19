@@ -17,7 +17,6 @@ plt.plot(time, theta_x, label="x")
 plt.plot(time, theta_y, label="y")
 plt.plot(time, theta_z, label="z")
 plt.legend()
-#plt.show()
 plt.savefig('plots/Satellite_Position_vs_Time.png')
 
 omega_x = data['Satellite Omega x']
@@ -32,7 +31,6 @@ plt.plot(time, omega_x, label="x")
 plt.plot(time, omega_y, label="y")
 plt.plot(time, omega_z, label="z")
 plt.legend()
-#plt.show()
 plt.savefig('plots/Satellite_Velocity_vs_Time.png')
 
 alpha_x = data['Satellite alpha x']
@@ -47,7 +45,6 @@ plt.plot(time, alpha_x, label="x")
 plt.plot(time, alpha_y, label="y")
 plt.plot(time, alpha_z, label="z")
 plt.legend()
-#plt.show()
 plt.savefig('plots/Satellite_Acceleration_vs_Time.png')
 
 accel_x = data['Accelerometer x']
@@ -62,7 +59,6 @@ plt.plot(time, accel_x, label="x")
 plt.plot(time, accel_y, label="y")
 plt.plot(time, accel_z, label="z")
 plt.legend()
-#plt.show()
 plt.savefig('plots/Accelerometer_Reading_vs_Time.png')
 
 wheel_count = len([col for col in data.columns if "Reaction wheel" in col]) // 2
@@ -76,7 +72,5 @@ for i in range(wheel_count):
     plt.plot(time, rw_omega, label="omega")
     plt.plot(time, rw_alpha, label="alpha")
     plt.legend()
-    #plt.show()
-    print(i)
     plt.savefig('plots/Reaction wheel %d alpha.png' %(i+1))
 

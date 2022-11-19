@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy, Lily de Loe
  *
  * Last Edited
- * 2022-11-08
+ * 2022-11-19
  *
 **/
 
@@ -233,9 +233,8 @@ void UI::run_simulation(std::vector<std::string> args)
 
         //call the python script from inside C++
         char* csv_path = const_cast<char*>(messenger.get_output_file_path_string().c_str());
-        std::cout << csv_path << std::endl;
-        // const char* helpme = csv_path.c_str();
-        char* args[] = {csv_path, NULL};
+        char* python_path = const_cast<char*>("./results_visualization.py");
+        char* args[] = {python_path, csv_path, NULL};
 
         int fork_ret = fork();
         if (-1 != fork_ret)
@@ -243,7 +242,7 @@ void UI::run_simulation(std::vector<std::string> args)
             if (0 == fork_ret)
             {
                 std::cout << "starting execv" << std::endl;
-                int execv_ret = execv("./results_visualization.py", args);
+                int execv_ret = execv(args[0], args);
                 std::cout << "child done " << execv_ret << std::endl;
                 int errvalue = errno;
                 std::cout << "errno " << errvalue << std::endl;
@@ -265,7 +264,9 @@ void UI::run_simulation(std::vector<std::string> args)
 
         
 
-        //THIS PART WORKED BTW///////////
+        /**You can use this code to run results_visualization_old.py
+         * I'm leaving it in case we want an alternative but it can be removed in future
+        **/
         //char filename[] = "results_visualization_old.py";
 	    //FILE* fp;
 	    //Py_Initialize();
@@ -274,46 +275,6 @@ void UI::run_simulation(std::vector<std::string> args)
 	    //PyRun_SimpleFile(fp, filename);
 
         //Py_Finalize();
-        /////////////////////////////////
-
-
-        /**
-        std::string filename = "results_visualization";
-        //char fnc[] = "plot_results";
-        //Run a python function
-        PyObject *pName, *pModule, *pFunc, *pArgs; //*pValue;
-        std::cout << "PyObject" << std::endl;
-        pName = PyUnicode_FromString(filename.c_str()); //PyUnicode_FromString("results_visualization"); //(char*)"results_visualization");
-        std::cout << "pName" << std::endl;
-        if(pName == NULL) {
-            std::cout << "agh" << std::endl;
-        }
-        //pModule = PyImport_Import(pName);
-        pModule = PyImport_Import(pName);
-        std::cout << pModule->ob_type << std::endl;
-        if (pModule == nullptr) {
-            std::cout << "error importing" << std::endl;
-        } 
-        pFunc = PyObject_GetAttrString(pModule,"results_visualization");
-        std::cout << pFunc << std::endl;
-        if (pFunc == NULL) {
-            std::cout << "ahhhh" << std::endl;
-        } 
-        std::cout << "pFunc" << std::endl;
-        if (pFunc && PyCallable_Check(pFunc)) {
-            std::cout << "passed" << std::endl;
-            pArgs = PyTuple_Pack(1, csv_path);
-            PyObject_CallObject(pFunc, NULL); //pArgs);
-        }else{
-            std::cout << "sadness" << std::endl;
-        }
-
-        //auto result = _PyUnicode_AsString(pValue);
-        //std::cout << result << std::endl;
-        **/
-	    //Py_Finalize();
-
-
 
     }
     return;

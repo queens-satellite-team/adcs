@@ -167,6 +167,49 @@ class UI
         **/
         void clean_out(std::vector<std::string> args);
 
+        /**
+         * @name    run_unit_tests
+         *
+         * @details Input command to run all the unit or specified unit tests.
+         * 
+         * @note    for now this only runs all unit tests - future functionality may be added to
+         *          specify tests to run
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *             args[0] command "run_unit_tests"
+        **/
+        void run_unit_tests(std::vector<std::string> args);
+
+        /**
+         * @name    run_no_controller_unit_tests
+         *
+         * @details runs all the non-controller unit tests.
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *             args[0] command "unit_test"
+        **/
+        void run_no_controller_unit_tests(std::vector<std::string> args);
+
+        /**
+         * @name    run_controller_unit_tests
+         *
+         * @details runs all the controller-based unit tests.
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *             args[0] command "unit_test"
+        **/
+        void run_controller_unit_tests(std::vector<std::string> args);
+
+        /**
+         * @name    run_controller_unit_tests
+         *
+         * @details runs all the controller-based unit tests.
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *             args[0] command "unit_test"
+        **/
+        void run_perf_tests(std::vector<std::string> args);
+
     private:
         /**
          * @typedef UI::*commandFunc
@@ -197,8 +240,63 @@ class UI
         /* Number of expected args for the "exit" command */
         const uint8_t num_exit_args = 1;
 
-        /* Number of expected args for the "exit" command */
+        /* Number of expected args for the "clean_out" command */
         const uint8_t num_clean_out_args = 1;
+
+        /* Number of expected args for the "unit_test" command */
+        const uint8_t num_run_unit_tests_args = 1;
+
+        /* Number of expected args for the "perf_test" command */
+        const uint8_t num_perf_test_args = 1;
+
+        /* Path where yamls describing unit tests are expected */
+        const std::string expected_no_controller_unit_test_dir = "unit_tests/no_controller/";
+
+        /* Path where yamls describing unit tests are expected */
+        const std::string expected_controller_unit_test_dir = "unit_tests/controller/";
+
+        /* Path where yamls describing unit tests are expected */
+        const std::string expected_results_dir = "unit_tests/no_controller/expected_results/";
+
+        /* YAML file extension string */
+        const std::string yaml_extension = ".yaml";
+
+        /* CSV file extension string */
+        const std::string csv_extension = ".csv";
+
+        /* unit test name prefix (without the number) */
+        const std::string unit_test_name = "unit_test_";
+
+        /* unit test name prefix for the sim config (without the number) */
+        const std::string ut_controller_config_name = "test_config_";
+
+        /* unit test name prefix for the sim exit yaml (without the number) */
+        const std::string ut_controller_exit_name = "test_exit_";
+
+        /* unit test name prefix for the sim exit yaml (without the number) */
+        const std::string controller_test_output_name = "unit_test_out_";
+
+        const std::string perf_test_config_yaml_path = "unit_tests/performance/perf_test_config_";
+
+        const std::string perf_test_exit_yaml_path = "unit_tests/performance/perf_test_exit_";
+
+        const std::vector<std::string> perf_test_descriptions = 
+        {
+            "No initial velocity, requested postion = stationary",
+            "Some initial velocity, requested postion = stationary",
+            "No initial velocity, requested position = moved",
+            "Test 3 + reduced csv writes",
+            "test 3 + no csv writes"
+        };
+
+        /* number of performance tests to run */
+        const uint8_t num_performance_tests = 5;
+
+        /* number of unit tests to run without the controller */
+        const uint8_t num_no_controller_unit_tests = 6;
+
+        /* number of unit tests to run with the controller */
+        const uint8_t num_controller_unit_tests = 3;
 
         /* Path to the YAML file describing the final state of the previous simulation run. */
         std::string previous_end_state_yaml;
@@ -208,6 +306,7 @@ class UI
 
         /* Path to the YAML file describing the exit state of the controller. */
         std::string exit_conditions_yaml_path = "";
+
 };
 
 /**

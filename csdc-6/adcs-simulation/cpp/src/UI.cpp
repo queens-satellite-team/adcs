@@ -15,6 +15,7 @@
 #include <any>
 #include <iostream>
 #include <unistd.h> 
+#include <sys/wait.h>
 
 #include "Python.h"
 
@@ -231,12 +232,38 @@ void UI::run_simulation(std::vector<std::string> args)
         // }
 
         //call the python script from inside C++
-        std::string csv_path = messenger.get_output_file_path_string();
+        char* csv_path = const_cast<char*>(messenger.get_output_file_path_string().c_str());
         std::cout << csv_path << std::endl;
-        const char* helpme = csv_path.c_str();
-        const char* args[] = {"results_visualization.py", helpme, NULL};
+        // const char* helpme = csv_path.c_str();
+        char* args[] = {csv_path, NULL};
 
-        execv("./", args);
+        int fork_ret = fork();
+        if (-1 != fork_ret)
+        {
+            if (0 == fork_ret)
+            {
+                std::cout << "starting execv" << std::endl;
+                int execv_ret = execv("./results_visualization.py", args);
+                std::cout << "child done " << execv_ret << std::endl;
+                int errvalue = errno;
+                std::cout << "errno " << errvalue << std::endl;
+                std::cout << "meaning " << strerror(errvalue) << std::endl;
+            }
+            else
+            {
+                std::cout << "parent Path" << std::endl;
+                wait(NULL);
+                std::cout << "parent done done" << std::endl;
+            }
+        }
+        else
+        {
+            messenger.send_error("failed to start process.\n");
+        }
+
+        
+
+        
 
         //THIS PART WORKED BTW///////////
         //char filename[] = "results_visualization_old.py";

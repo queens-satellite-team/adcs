@@ -153,6 +153,17 @@ class Messenger
         **/
         void set_terminal_print_rate(uint32_t terminal_rate);
 
+
+        /**
+        * @name get_output_file_path_string
+        * @return the string name for the output csv
+        *
+        * @details getter for filepath to the output csv
+        **/
+        inline const std::string &get_output_file_path_string() {
+            return output_file_path_string;
+        };
+
     private:
         /**
          * @name    append_csv_output

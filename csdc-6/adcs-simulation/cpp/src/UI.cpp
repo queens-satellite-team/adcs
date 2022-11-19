@@ -14,6 +14,9 @@
 #include <vector>
 #include <any>
 #include <iostream>
+#include <unistd.h> 
+
+#include "Python.h"
 
 #include "UI.hpp"
 #include "Simulator.hpp"
@@ -226,6 +229,65 @@ void UI::run_simulation(std::vector<std::string> args)
         //     **/
         //     this->previous_end_state_yaml = final_state_yaml_path;
         // }
+
+        //call the python script from inside C++
+        std::string csv_path = messenger.get_output_file_path_string();
+        std::cout << csv_path << std::endl;
+        const char* helpme = csv_path.c_str();
+        const char* args[] = {"results_visualization.py", helpme, NULL};
+
+        execv("./", args);
+
+        //THIS PART WORKED BTW///////////
+        //char filename[] = "results_visualization_old.py";
+	    //FILE* fp;
+	    //Py_Initialize();
+
+	    //fp = _Py_fopen(filename, "r");
+	    //PyRun_SimpleFile(fp, filename);
+
+        //Py_Finalize();
+        /////////////////////////////////
+
+
+        /**
+        std::string filename = "results_visualization";
+        //char fnc[] = "plot_results";
+        //Run a python function
+        PyObject *pName, *pModule, *pFunc, *pArgs; //*pValue;
+        std::cout << "PyObject" << std::endl;
+        pName = PyUnicode_FromString(filename.c_str()); //PyUnicode_FromString("results_visualization"); //(char*)"results_visualization");
+        std::cout << "pName" << std::endl;
+        if(pName == NULL) {
+            std::cout << "agh" << std::endl;
+        }
+        //pModule = PyImport_Import(pName);
+        pModule = PyImport_Import(pName);
+        std::cout << pModule->ob_type << std::endl;
+        if (pModule == nullptr) {
+            std::cout << "error importing" << std::endl;
+        } 
+        pFunc = PyObject_GetAttrString(pModule,"results_visualization");
+        std::cout << pFunc << std::endl;
+        if (pFunc == NULL) {
+            std::cout << "ahhhh" << std::endl;
+        } 
+        std::cout << "pFunc" << std::endl;
+        if (pFunc && PyCallable_Check(pFunc)) {
+            std::cout << "passed" << std::endl;
+            pArgs = PyTuple_Pack(1, csv_path);
+            PyObject_CallObject(pFunc, NULL); //pArgs);
+        }else{
+            std::cout << "sadness" << std::endl;
+        }
+
+        //auto result = _PyUnicode_AsString(pValue);
+        //std::cout << result << std::endl;
+        **/
+	    //Py_Finalize();
+
+
+
     }
     return;
 }

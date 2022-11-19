@@ -7,6 +7,7 @@ endif()
 
 find_package(yaml-cpp REQUIRED)
 find_package(Eigen3 3.3 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -31,6 +32,7 @@ add_executable(simulator
 #ament_target_dependencies(simulator rclcpp std_msgs yaml-cpp)
 target_link_libraries(${PROJECT_NAME} ${YAML_CPP_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)
+target_link_libraries(${PROJECT_NAME} Python3::Python)
 include_directories(
     "${CMAKE_SOURCE_DIR}/inc",
     "${CMAKE_SOURCE_DIR}/interface/inc",

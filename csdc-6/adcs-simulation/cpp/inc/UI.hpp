@@ -82,6 +82,20 @@ class UI
         **/
         void run_simulation(std::vector<std::string> args);
 
+                /**
+         * @name    plot
+         *
+         * @details Input command to start the simulation. Instantiates a Simulator object with the
+         *          starting and end state YAML files, and starts the simulation. Returns when the
+         *          simulation is complete.
+         *
+         * @param args the user input arguments. Arguments are as follows:
+         *              args[0] command "start_sim"
+         *              args[1] path to the initial conditions YAML file
+         *              args[2] path to the "stop conditions" YAML file
+        **/
+        void plot(std::vector<std::string> args);
+
         /**
          * @name    parse_run_sim_args
          *
@@ -208,6 +222,10 @@ class UI
 
         /* Path to the YAML file describing the exit state of the controller. */
         std::string exit_conditions_yaml_path = "";
+
+        /* Number of expected args for the "plot" command */
+        const uint8_t num_plot_args = 2;
+        std::string results_path = "";
 };
 
 /**

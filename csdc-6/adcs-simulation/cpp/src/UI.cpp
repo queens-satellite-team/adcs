@@ -251,18 +251,12 @@ void UI::run_simulation(std::vector<std::string> args)
         {
             if (0 == fork_ret)
             {
-                std::cout << "starting execv" << std::endl;
                 int execv_ret = execv(args[0], args);
-                std::cout << "child done " << execv_ret << std::endl;
                 int errvalue = errno;
-                std::cout << "errno " << errvalue << std::endl;
-                std::cout << "meaning " << strerror(errvalue) << std::endl;
             }
             else
             {
-                std::cout << "parent Path" << std::endl;
                 wait(NULL);
-                std::cout << "parent done done" << std::endl;
             }
         }
         else
@@ -270,21 +264,6 @@ void UI::run_simulation(std::vector<std::string> args)
             messenger.send_error("failed to start process.\n");
         }
 
-        
-
-        
-
-        /**You can use this code to run results_visualization_old.py
-         * I'm leaving it in case we want an alternative but it can be removed in future
-        **/
-        //char filename[] = "results_visualization_old.py";
-	    //FILE* fp;
-	    //Py_Initialize();
-
-	    //fp = _Py_fopen(filename, "r");
-	    //PyRun_SimpleFile(fp, filename);
-
-        //Py_Finalize();
 
     }
     return;

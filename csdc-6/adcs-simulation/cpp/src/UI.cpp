@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy, Lily de Loe
  *
  * Last Edited
- * 2022-11-18
+ * 2022-11-19
  *
 **/
 
@@ -14,11 +14,16 @@
 #include <vector>
 #include <any>
 #include <iostream>
+
 #include <sstream>
 #include <fstream>
 #include <filesystem>
 #include <chrono>
 
+#include <unistd.h> 
+#include <sys/wait.h>
+
+#include "Python.h"
 #include "UI.hpp"
 #include "Simulator.hpp"
 #include "PointingModeController.hpp"
@@ -225,6 +230,31 @@ void UI::run_simulation(std::vector<std::string> args)
         //     **/
         //     this->previous_end_state_yaml = final_state_yaml_path;
         // }
+
+        //call the python script from inside C++
+        char* csv_path = const_cast<char*>(messenger.get_output_file_path_string().c_str());
+        char* python_path = const_cast<char*>("./results_visualization.py");
+        char* args[] = {python_path, csv_path, NULL};
+
+        int fork_ret = fork();
+        if (-1 != fork_ret)
+        {
+            if (0 == fork_ret)
+            {
+                int execv_ret = execv(args[0], args);
+                int errvalue = errno;
+            }
+            else
+            {
+                wait(NULL);
+            }
+        }
+        else
+        {
+            messenger.send_error("failed to start process.\n");
+        }
+
+
     }
     return;
 }

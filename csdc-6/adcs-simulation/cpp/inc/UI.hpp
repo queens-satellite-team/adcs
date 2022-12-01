@@ -306,6 +306,7 @@ class UI
 
         /* Path to the YAML file describing the exit state of the controller. */
         std::string exit_conditions_yaml_path = "";
+
 };
 
 /**

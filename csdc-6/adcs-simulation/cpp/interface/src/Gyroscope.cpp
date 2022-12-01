@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -18,7 +18,7 @@ gyro_state Gyroscope::take_measurement()
 {
     if (this->time_until_ready() > 0)
     {
-        /* THROW APPROPRIATE EXCEPTION**/
+        throw device_not_ready("Gyroscope not ready.");
     }
 
     gyro_state measurement = this->sim->gyroscope_take_measurement();

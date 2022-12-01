@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -18,7 +18,7 @@ measurement Accelerometer::take_measurement()
 {
     if (this->time_until_ready() > 0)
     {
-        /* THROW APPROPRIATE EXCEPTION**/
+        throw device_not_ready("Accelerometer not ready.");
     }
 
     Eigen::Vector3f measurement;

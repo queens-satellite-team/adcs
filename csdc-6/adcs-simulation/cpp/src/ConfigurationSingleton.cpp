@@ -29,7 +29,7 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     minAngVel = node["MinAngVel"].as<float>();
     minAngAccel = node["MinAngAccel"].as<float>();
 
-    pollingTime = node["PollingTime"].as<float>();
+    pollingTime = node["PollingTime"].as<int>();
 
     int i = 0;
     for (const auto &n : node["Position"]) {

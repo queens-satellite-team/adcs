@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-08
+ * 2022-11-18
  *
 **/
 
@@ -36,20 +36,12 @@ float Reaction_wheel::get_inertia_matrix()
 
 void Reaction_wheel::set_target_state(actuator_state new_target)
 {
-    try
-    {
-        check_valid_state(new_target);
-    }
-    catch(const std::exception& e)
-    {
-        /* THROW APPROPRIATE EXCEPTION**/
-    }
+    check_valid_state(new_target);
 
     if (this->time_until_ready() > 0)
     {
-        /* THROW APPROPRIATE EXCEPTION**/
+        throw device_not_ready("Reaction wheel not ready.");
     }
-
     this->target_state = new_target;
     timestamp cur_time = this->sim->reaction_wheel_update_desired_state(this->position, this->target_state);
     this->update_poll_time(cur_time);

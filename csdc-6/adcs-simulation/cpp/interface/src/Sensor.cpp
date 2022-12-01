@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-10-11
+ * 2022-10-18
  *
 **/
 
@@ -17,14 +17,14 @@ Sensor::Sensor(timestamp polling_time, Simulator* sim, std::vector<Eigen::Vector
 {
     if (num_sensors != positions.size())
     {
-        /* THROW EXCEPTION**/
+        throw invalid_dimensions_error("Number of sensors does not match.");
     }
 
     for (uint32_t i = 0; i < num_sensors; i++)
     {
         if (num_axes != positions.at(i).size())
         {
-            /* THROW EXCEPTION**/
+            throw invalid_dimensions_error("Number of sensor axes does not match.");
         }
     }
 
@@ -39,7 +39,7 @@ void Sensor::set_current_vals(std::vector<Eigen::VectorXf> physical_vals, timest
          (1 != physical_vals.size())      ||
          (3 != physical_vals.at(0).size()))
     {
-        /* SETUP DOES NOT MEET ASSUMPTIONS - THROW EXCEPTION*/
+       throw invalid_dimensions_error("Inputs do not meet sensor values dimensions.");
     }
 
     /* Default behaviour is to assume that the physical values require no modification.**/

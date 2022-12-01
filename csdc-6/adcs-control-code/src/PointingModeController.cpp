@@ -19,9 +19,19 @@ PointingModeController::PointingModeController(
     this->sensors = sensors;
     this->actuators = actuators;
     this->timer = timer;
+
+    for (const auto &s : sensors) {
+        if (Gyroscope* gyro = dynamic_cast<Gyroscope*>(s.second.get())) {
+            this->gyro = gyro;
+        }
+    }
 }
 
 void PointingModeController::begin(Eigen::Vector3f desired_attitude, timestamp ramp_time) {
+    while (this->gyro->time_until_ready() > 0) {
+        this->timer->sleep(this->gyro->time_until_ready());
+    }
+
     measurement initial_vals = this->take_updated_measurements();
     Eigen::Vector3f initial_attitude = initial_vals.vec;
     timestamp start = initial_vals.time_taken;
@@ -32,14 +42,18 @@ void PointingModeController::begin(Eigen::Vector3f desired_attitude, timestamp r
     prev_integral = Eigen::Vector3f::Zero();
 
     while(true) {
-        measurement m = this->take_updated_measurements();
-        timestamp delta_t = m.time_taken - prev_time;
-        timestamp since_start = m.time_taken - start;
-        prev_time = m.time_taken;
+        try {
+            measurement m = this->take_updated_measurements();
+            timestamp delta_t = m.time_taken - prev_time;
+            timestamp since_start = m.time_taken - start;
+            prev_time = m.time_taken;
 
-        float ramp_factor = since_start < ramp_time ? ((float) since_start / (float) ramp_time) : 1;
-        Eigen::Vector3f ramped_desired_attitude = ramp_factor * (desired_attitude - initial_attitude) + initial_attitude;
-        this->update(m.vec, ramped_desired_attitude, delta_t);
+            float ramp_factor = since_start < ramp_time ? ((float) since_start / (float) ramp_time) : 1;
+            Eigen::Vector3f ramped_desired_attitude = ramp_factor * (desired_attitude - initial_attitude) + initial_attitude;
+            this->update(m.vec, ramped_desired_attitude, delta_t);
+        } catch (device_not_ready &_e) {
+            this->timer->sleep(this->gyro->time_until_ready());
+        }
     }
 }
 
@@ -70,11 +84,18 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
     }
 
     Eigen::VectorXf rw_torques = A.transpose() * (A * A.transpose()).inverse() * desired_torque;
-    // std::cout << "Timestep:" << std::endl << (float) delta_t << std::endl;
-    // std::cout << "Error:" << std::endl << cur_error << std::endl;
-    // std::cout << "Derivative:" << std::endl << cur_derivative << std::endl;
-    // std::cout << "Integral:" << std::endl << cur_integral << std::endl;
-    // std::cout << "Torques:" << std::endl << desired_torque << std::endl;
+
+    // Check each torque to make sure it doesn't exceed the max, if it does
+    i = 0;
+    for (const auto &a : actuators) {
+        if (Reaction_wheel* rw = dynamic_cast<Reaction_wheel*>(a.second.get())) {
+            float max_t = rw->get_max_acceleration() * rw->get_inertia_matrix();
+            float rw_t = rw_torques[i++];
+            if (abs(rw_t) >= max_t) {
+                rw_torques = rw_torques * max_t / abs(rw_t) * 0.99;
+            }
+        }
+    }
 
     i = 0;
     for (const auto &a : actuators) {
@@ -91,11 +112,10 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
 }
 
 measurement PointingModeController::take_updated_measurements() {
-    for (const auto &s : sensors) {
-        if (Gyroscope* gyro = dynamic_cast<Gyroscope*>(s.second.get())) {
-            gyro_state state = gyro->take_measurement();
-            return { state.position, state.time_taken };
-        }
+    try {
+        gyro_state state = this->gyro->take_measurement();
+        return { state.position, state.time_taken };
+    } catch (device_not_ready *e) {
+        throw e;
     }
-    return { Eigen::Vector3f::Zero(), 0 };
 }

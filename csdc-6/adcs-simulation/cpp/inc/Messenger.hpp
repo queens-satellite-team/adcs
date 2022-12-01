@@ -7,7 +7,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
@@ -276,15 +276,19 @@ class Messenger
  *
  * @details exception used to indicate that a message to the messenger is not valid.
 **/
-class invalid_message : public std::exception
+class invalid_message : public adcs_exception
 {
     public:
-        invalid_message(const char* msg) : message(msg) {}
-        const char* what()
-        {
-            return message;
-        }
+        invalid_message(const char* msg) :  adcs_exception(msg) {}
+};
 
-    private:
-        const char* message;
+/**
+ * @exception invalid_messagenger_param
+ *
+ * @details exception used to indicate that a message to the messenger is not valid.
+**/
+class invalid_messagenger_param : public adcs_exception
+{
+    public:
+        invalid_messagenger_param(const char* msg) :  adcs_exception(msg) {}
 };

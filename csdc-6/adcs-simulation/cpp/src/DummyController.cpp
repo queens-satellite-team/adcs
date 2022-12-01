@@ -17,7 +17,7 @@ DummyController::DummyController(ADCS_timer *timer)
 {
     if (nullptr == timer)
     {
-        throw std::invalid_argument("pointer to timer was null in DummyController");
+        throw invalid_adcs_param("pointer to timer was null in DummyController");
     }
 
     this->timer = timer;

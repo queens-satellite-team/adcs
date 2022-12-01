@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-08
+ * 2022-12-01
  *
 **/
 
@@ -31,6 +31,10 @@ Simulator::Simulator(Messenger *messenger)
     timestamp t(config.GetTimestepInMilliSeconds(),0);
     this->timestep_length = t;
     this->last_called = -1;
+
+    this->variableTimestep = config.GetTimestepDecision();
+    this->maxStep = config.GetMaxTimestep();
+    this->minStep = config.GetMinTimestep();
 }
 
 void Simulator::init(sim_config initial_values, timestamp timeout)
@@ -44,15 +48,33 @@ void Simulator::init(sim_config initial_values, timestamp timeout)
 }
 
 timestamp Simulator::update_simulation() {
-    //timestamp time_passed = this->determine_time_passed();
     timestamp t(1, 0);
     this->simulate(t);
 
     return this->simulation_time;
 }
 
+timestamp Simulator::determine_timestep() {
+
+    //2*max error is defined as 2*0.005 degrees = 0.01 degrees
+    if (this->variableTimestep == true){
+        float calculated_timestep = (0.01*M_PI/180)/(this->system_vals.satellite.alpha_b.cwiseAbs().maxCoeff())*1000;
+        timestamp t(calculated_timestep,0);
+        this->timestep_length = t;
+        if (((float) timestep_length > maxStep/1000)) {
+            timestamp t(20,0);
+            this->timestep_length = t;
+        }else if ((float) timestep_length < minStep/1000) {
+            timestamp t(1,0);
+            this->timestep_length = t;
+        }
+    }
+
+    return timestep_length;
+
+}
+
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
-    //timestamp time_passed = this->determine_time_passed();
     timestamp t(1, 0);
     this->simulate(t + duration);
 
@@ -74,7 +96,9 @@ void Simulator::simulate(timestamp t) {
     timestamp end = this->simulation_time + t;
 
     while (this->simulation_time <= end) {
-        this->simulation_time = this->simulation_time + this->timestep_length;        
+        this->timestep_length = this->determine_timestep();
+        this->simulation_time = this->simulation_time + this->timestep_length;
+         
         this->timestep();
         this->messenger->update_simulation_state(this->system_vals, this->simulation_time);
         
@@ -88,6 +112,7 @@ void Simulator::simulate(timestamp t) {
 }
 
 void Simulator::timestep() {
+
     Eigen::Matrix3f inertia_b_inverse = system_vals.satellite.inertia_b.inverse();
     Eigen::Vector3f sum_rw = Eigen::Vector3f::Zero();
 

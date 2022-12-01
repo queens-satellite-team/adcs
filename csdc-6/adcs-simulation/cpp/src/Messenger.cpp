@@ -151,7 +151,6 @@ void Messenger::update_simulation_state(sim_config state, timestamp time)
     csv_write_count++;
 
     // Do we need any checks on state?
-
     if ( (!silent_sim_prints) &&
          (terminal_print_rate <= terminal_write_count) )
     {

@@ -157,6 +157,7 @@ void UI::run_simulation(std::vector<std::string> args)
         /* Timer used for control code */
         ADCS_timer timer(&simulator);
 
+
         /**
          * If 2 yaml paths are provided, initialize controller with second yaml. Otherwise,
          * initialize the dummy controller to run until the time runs out. 

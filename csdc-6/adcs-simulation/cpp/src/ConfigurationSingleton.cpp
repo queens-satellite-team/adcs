@@ -6,7 +6,7 @@
  * @authors Lily de Loe
  *
  * Last Edited
- * 2022-11-08
+ * 2022-12-01
  *
 **/
 
@@ -80,13 +80,37 @@ bool Configuration::Load(const std::string &configFile) {
         std::cout << "YAML ERROR ON SATELLITE STATE: " << e.what() <<std::endl;
     }
 
-    //load input timestep
+
+    //load condition for variable timestep
     try {
-        YAML::Node time = top["TimeStep"];
-        timestepInMilliSeconds = time.as<float>();
+        YAML::Node variableTimestep = top["VariableTimestep"];
+        useVariableTimestep = variableTimestep.as<bool>();
     } catch (YAML::Exception &e){
-        std::cout << "YAML ERROR ON TIMESTEP: " << e.what() <<std::endl;
+        std::cout << "YAML ERROR ON VARIABLE TIMESTEP: " << e.what() <<std::endl;
     }
+
+    if (useVariableTimestep == true) {
+    //load max and min timestep
+        try {
+            YAML::Node max = top["TimeStepMax"];
+            timeStepMax = max.as<int>();
+            YAML::Node min = top["TimeStepMin"];
+            timeStepMin = min.as<int>();
+        } catch (YAML::Exception &e){
+            std::cout << "YAML ERROR ON TIMESTEP BOUNDS: " << e.what() <<std::endl;
+        }
+    }
+
+    if (useVariableTimestep == false) {
+        //load input timestep
+        try {
+            YAML::Node time = top["TimeStep"];
+            timestepInMilliSeconds = time.as<float>();
+        } catch (YAML::Exception &e){
+            std::cout << "YAML ERROR ON TIMESTEP: " << e.what() <<std::endl;
+        }
+    }
+    
 
     //load timeout
     try {

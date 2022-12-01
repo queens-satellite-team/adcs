@@ -26,7 +26,6 @@ Simulator::Simulator(Messenger *messenger)
     }
 
     this->simulation_time = 0;
-    // TODO: should be configured in YAML
     auto &config = Configuration::GetInstance();
     timestamp t(config.GetTimestepInMilliSeconds(),0);
     this->timestep_length = t;
@@ -44,17 +43,15 @@ void Simulator::init(sim_config initial_values, timestamp timeout)
 }
 
 timestamp Simulator::update_simulation() {
-    //timestamp time_passed = this->determine_time_passed();
-    timestamp t(1, 0);
-    this->simulate(t);
+    timestamp time_passed = this->determine_time_passed();
+    this->simulate(time_passed);
 
     return this->simulation_time;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
-    //timestamp time_passed = this->determine_time_passed();
-    timestamp t(1, 0);
-    this->simulate(t + duration);
+    timestamp time_passed = this->determine_time_passed();
+    this->simulate(time_passed + duration);
 
     return this->simulation_time;
 }

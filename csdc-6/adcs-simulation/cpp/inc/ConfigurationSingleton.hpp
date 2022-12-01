@@ -28,14 +28,14 @@
 */
 struct SensorConfig {
     SensorConfig(SensorType t, const YAML::Node &node) : type(t){
-        pollingTime = node["PollingTime"].as<float>();
+        pollingTime = node["PollingTime"].as<int>();
         int j = 0;
         for (const auto &n : node["Position"]) {
             position(j++) = n.as<float>();
         }
     };
     virtual ~SensorConfig() = default;
-    float pollingTime;
+    int pollingTime;
     SensorType type;
     Eigen::Vector3f position;
 };

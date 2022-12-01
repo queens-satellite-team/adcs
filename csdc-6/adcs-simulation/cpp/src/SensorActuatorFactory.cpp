@@ -28,10 +28,10 @@ std::shared_ptr<Sensor> SensorActuatorFactory::GetSensor(const std::string &name
 
     switch(sensor->type){
     case SensorType::Accelerometer:
-        ret = std::make_shared<Accelerometer>(timestamp(sensor->pollingTime), sim, sensor->position);
+        ret = std::make_shared<Accelerometer>(timestamp(sensor->pollingTime, 0), sim, sensor->position);
         break;
     case SensorType::Gyroscope:
-        ret = std::make_shared<Gyroscope>(timestamp(sensor->pollingTime), sim, sensor->position);
+        ret = std::make_shared<Gyroscope>(timestamp(sensor->pollingTime, 0), sim, sensor->position);
         break;
     }
     return ret;
@@ -67,7 +67,7 @@ std::shared_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &
             initial_vals.position = 0; //this is unused
             initial_vals.time = 0; //this is unused
             initial_vals.velocity = reac->velocity;
-            ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime), sim, reac->position, min, max, initial_vals, reac->axisOfRotation, reac->momentOfInertia);
+            ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime, 0), sim, reac->position, max, min, initial_vals, reac->axisOfRotation, reac->momentOfInertia);
             break;
         }
     }

@@ -57,6 +57,14 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Actuator>> actuators;
 
     /**
+    * @property gyro [Gyroscope *]
+    *
+    * @details A pointer to the gyroscope as this is currently the only sensor
+    * for which measurements are actually used.
+   **/
+    Gyroscope *gyro;
+
+    /**
     * @property prev_error [Eigen::Vector3f]
     *
     * @details The error term, stored to persist between controller timesteps

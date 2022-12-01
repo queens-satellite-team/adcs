@@ -48,22 +48,29 @@ Eigen::Vector3f Actuator::get_axis_of_rotation()
     return this->axis_of_rotation;
 }
 
+float Actuator::get_max_acceleration() {
+    return this->max_state_values.acceleration;
+}
+
 void Actuator::check_valid_state(actuator_state state)
 {
-    if ( (this->max_state_values.acceleration < state.acceleration) ||
-         (this->min_state_values.acceleration > state.acceleration) )
+    if ( (this->max_state_values.acceleration < abs(state.acceleration)) ||
+         (this->min_state_values.acceleration > abs(state.acceleration)) )
     {
+        std::cout << "Max: " << max_state_values.acceleration << std::endl;
+        std::cout << "Min: " << min_state_values.acceleration << std::endl;
+        std::cout << "Cur: " << state.acceleration << std::endl;
         throw invalid_actuator_state("Actuator acceleration invalid.");
     }
 
-    if ( (this->max_state_values.velocity < state.velocity) ||
-         (this->min_state_values.velocity > state.velocity) )
+    if ( (this->max_state_values.velocity < abs(state.velocity)) ||
+         (this->min_state_values.velocity > abs(state.velocity)) )
     {
         throw invalid_actuator_state("Actuator velocity invalid.");
     }
 
-    if ( (this->max_state_values.position < state.position) ||
-         (this->min_state_values.position > state.position) )
+    if ( (this->max_state_values.position < abs(state.position)) ||
+         (this->min_state_values.position > abs(state.position)) )
     {
         throw invalid_actuator_state("Actuator position invalid.");
     }

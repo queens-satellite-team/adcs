@@ -11,6 +11,7 @@
 **/
 
 #include <Eigen/Dense>
+#include <iostream>
 
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
@@ -23,6 +24,7 @@ ADCS_device::ADCS_device(timestamp polling_time, Simulator* sim) : min_polling_i
 	}
 
 	this->sim = sim;
+	this->last_polled = 0;
 }
 
 timestamp ADCS_device::time_until_ready()

@@ -40,6 +40,7 @@ UI::UI()
     allowed_commands["clean_out"]   = std::bind(&UI::clean_out,         this, std::placeholders::_1);
     allowed_commands["unit_test"]   = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
     allowed_commands["perf_test"]   = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
+    allowed_commands["clean_plots"] = std::bind(&UI::clean_plots,       this, std::placeholders::_1);
 
     /* Aliases */
     allowed_commands["ss"] = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
@@ -48,6 +49,7 @@ UI::UI()
     allowed_commands["co"] = std::bind(&UI::clean_out,         this, std::placeholders::_1);
     allowed_commands["ut"] = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
     allowed_commands["pt"] = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
+    allowed_commands["cp"] = std::bind(&UI::clean_plots,       this, std::placeholders::_1);
 }
 
 void UI::start_ui_loop()
@@ -232,8 +234,25 @@ void UI::run_simulation(std::vector<std::string> args)
         // }
 
         //call the python script from inside C++
-        char* csv_path = const_cast<char*>(messenger.get_output_file_path_string().c_str());
-        char* python_path = const_cast<char*>("./results_visualization.py");
+        if (!silent_plots)
+        {
+            plot_simulation_results(messenger.get_output_file_path_string());
+        }
+    }
+
+    this->reset_simulation_argument_defaults();
+    return;
+}
+
+void UI::reset_simulation_argument_defaults()
+{
+    this->silent_plots = this->default_silent_plots;
+}
+
+void UI::plot_simulation_results(std::string csv_path_in)
+{
+        char* csv_path = const_cast<char*>(csv_path_in.c_str());
+        char* python_path = const_cast<char*>(python_plot_file_dir.c_str());
         char* args[] = {python_path, csv_path, NULL};
 
         int fork_ret = fork();
@@ -241,8 +260,7 @@ void UI::run_simulation(std::vector<std::string> args)
         {
             if (0 == fork_ret)
             {
-                int execv_ret = execv(args[0], args);
-                int errvalue = errno;
+                execv(args[0], args);
             }
             else
             {
@@ -253,10 +271,6 @@ void UI::run_simulation(std::vector<std::string> args)
         {
             messenger.send_error("failed to start process.\n");
         }
-
-
-    }
-    return;
 }
 
 void UI::parse_run_sim_args(std::vector<std::string> args)
@@ -298,13 +312,13 @@ void UI::parse_run_sim_args(std::vector<std::string> args)
         while (0 != args.size())
         {
             if ( ("--silent" == args.back()) ||
-                ("-s"       == args.back()) )
+                 ("-s"       == args.back()) )
             {
                 messenger.silence_sim_prints();
                 args.pop_back();
             }
             else if ( ("--csv_rate" == args.back()) ||
-                    ("-c"         == args.back()) )
+                      ("-c"         == args.back()) )
             {
                 args.pop_back();
                 if (0 < args.size())
@@ -322,7 +336,7 @@ void UI::parse_run_sim_args(std::vector<std::string> args)
                 }
             }
             else if ( ("--print_rate" == args.back()) ||
-                    ("-p"           == args.back()) )
+                      ("-p"           == args.back()) )
             {
                 args.pop_back();
                 if (0 < args.size())
@@ -338,6 +352,12 @@ void UI::parse_run_sim_args(std::vector<std::string> args)
                     }
                     args.pop_back();
                 }
+            }
+            else if ( ("--silence_plots" == args.back()) ||
+                      ("-sp"             == args.back()))
+            {
+                this->silent_plots = true;
+                args.pop_back();
             }
             else
             {
@@ -479,6 +499,20 @@ void UI::clean_out(std::vector<std::string> args)
     return;
 }
 
+void UI::clean_plots(std::vector<std::string> args)
+{
+    if (num_clean_plots_args != args.size())
+    {
+        throw invalid_ui_args("Invalid number of arguments.");
+    }
+
+    if (std::filesystem::exists(this->plot_dir))
+    {
+        std::filesystem::remove_all(this->plot_dir);
+    }
+    return;
+}
+
 void UI::run_unit_tests(std::vector<std::string> args)
 {
     if (num_run_unit_tests_args != args.size())
@@ -505,7 +539,8 @@ void UI::run_no_controller_unit_tests(std::vector<std::string> args)
     {
         "start_sim",
         "",
-        "-s"
+        "-s",
+        "-sp"
     };
 
     std::vector<std::string> co_args = {"clean_out"};
@@ -528,7 +563,7 @@ void UI::run_no_controller_unit_tests(std::vector<std::string> args)
         std::ifstream out_file(messenger.get_default_csv_output_file());
         if (!out_file.is_open())
         {
-            throw invalid_ui_args("Unable to open output path.");
+            throw invalid_ui_args("Unable to open output path to compare with expected results.");
         }
 
         /* Find which columns contain the accelerations*/
@@ -642,7 +677,8 @@ void UI::run_controller_unit_tests(std::vector<std::string> args)
         "-c",
         "100",
         "-p",
-        "100000"
+        "100000",
+        "-sp"
     };
 
     for (uint8_t test_num = 1; test_num <= num_controller_unit_tests; test_num++)
@@ -663,6 +699,7 @@ void UI::run_controller_unit_tests(std::vector<std::string> args)
         std::filesystem::path new_output_path = std::filesystem::current_path() / new_name;
 
         std::filesystem::rename(output_path, new_output_path);
+        this->plot_simulation_results(new_output_path.string());
     }
 
     return;

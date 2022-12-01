@@ -7,3 +7,4 @@ Makefile
 bin/
 output/
 cmake_install.cmake
+plots/

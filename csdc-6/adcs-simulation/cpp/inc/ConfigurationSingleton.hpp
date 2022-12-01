@@ -59,9 +59,9 @@ struct ActuatorConfig {
 * @details struct outling the configuration of a gryoscope according to the input YAML
 * parameters
 */
-struct GyroConfig : public SensorConfig {
-    GyroConfig(const YAML::Node &node);
-
+struct GyroConfig : public SensorConfig
+{
+    GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyroscope, node) {}
 };
 
 /**
@@ -70,9 +70,9 @@ struct GyroConfig : public SensorConfig {
 * @details struct outling the configuration of an accelerometer according to the input YAML
 * parameters
 */
-struct AccelerometerConfig : public SensorConfig {
-    AccelerometerConfig(const YAML::Node &node);
-
+struct AccelerometerConfig : public SensorConfig
+{
+    AccelerometerConfig(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer, node) {}
 };
 
 /**

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import sys
+import os
+import re
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def plot_results(csv_name):
+def plot_results(csv_name, outpath):
     data = pd.read_csv(csv_name)
     time = data['Time']
 
@@ -20,7 +22,7 @@ def plot_results(csv_name):
     plt.plot(time, theta_y, label="y")
     plt.plot(time, theta_z, label="z")
     plt.legend()
-    plt.savefig('plots/Satellite_Position_vs_Time.png')
+    plt.savefig(outpath + '/Satellite_Position_vs_Time.png')
 
     omega_x = data['Satellite Omega x']
     omega_y = data['Satellite Omega y']
@@ -34,7 +36,7 @@ def plot_results(csv_name):
     plt.plot(time, omega_y, label="y")
     plt.plot(time, omega_z, label="z")
     plt.legend()
-    plt.savefig('plots/Satellite_Velocity_vs_Time.png')
+    plt.savefig(outpath + '/Satellite_Velocity_vs_Time.png')
 
     alpha_x = data['Satellite alpha x']
     alpha_y = data['Satellite alpha y']
@@ -48,7 +50,7 @@ def plot_results(csv_name):
     plt.plot(time, alpha_y, label="y")
     plt.plot(time, alpha_z, label="z")
     plt.legend()
-    plt.savefig('plots/Satellite_Acceleration_vs_Time.png')
+    plt.savefig(outpath + '/Satellite_Acceleration_vs_Time.png')
 
     accel_x = data['Accelerometer x']
     accel_y = data['Accelerometer y']
@@ -62,7 +64,7 @@ def plot_results(csv_name):
     plt.plot(time, accel_y, label="y")
     plt.plot(time, accel_z, label="z")
     plt.legend()
-    plt.savefig('plots/Accelerometer_Reading_vs_Time.png')
+    plt.savefig(outpath + '/Accelerometer_Reading_vs_Time.png')
 
     wheel_count = len([col for col in data.columns if "Reaction wheel" in col]) // 2
     for i in range(wheel_count):
@@ -75,12 +77,19 @@ def plot_results(csv_name):
         plt.plot(time, rw_omega, label="omega")
         plt.plot(time, rw_alpha, label="alpha")
         plt.legend()
-        plt.savefig('plots/Reaction wheel %d alpha.png' %(i+1))
+        plt.savefig(outpath + '/Reaction wheel %d alpha.png' %(i+1))
 
 
 def main():
     filepath = sys.argv[1]
-    plot_results(filepath)
+    if (not os.path.exists('plots')):
+        os.mkdir('plots')
+    filename = re.search('output/(.*).csv', filepath)
+    outpath = 'plots/' + filename.group(1)
+    if (not os.path.exists(outpath)):
+        os.mkdir(outpath)
+
+    plot_results(filepath, outpath)
 
 if __name__ == "__main__":
     main()

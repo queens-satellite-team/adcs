@@ -13,14 +13,6 @@
 #include "ConfigurationSingleton.hpp"
 #include <iostream>
 
-GyroConfig::GyroConfig(const YAML::Node &node) : SensorConfig(SensorType::Gyroscope, node) {
-
-}
-
-AccelerometerConfig::AccelerometerConfig(const YAML::Node &node) : SensorConfig(SensorType::Accelerometer, node) {
-
-}
-
 ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfig(ActuatorType::ReactionWheel) {
     momentOfInertia = node["Moment"].as<float>();
 

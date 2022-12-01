@@ -245,14 +245,13 @@ void UI::run_simulation(std::vector<std::string> args)
         char* csv_path = const_cast<char*>(messenger.get_output_file_path_string().c_str());
         char* python_path = const_cast<char*>("./results_visualization.py");
         char* args[] = {python_path, csv_path, NULL};
-
+  
         int fork_ret = fork();
         if (-1 != fork_ret)
         {
             if (0 == fork_ret)
             {
-                int execv_ret = execv(args[0], args);
-                int errvalue = errno;
+                execv(args[0], args);
             }
             else
             {

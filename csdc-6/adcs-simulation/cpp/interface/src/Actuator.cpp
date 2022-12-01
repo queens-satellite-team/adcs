@@ -57,9 +57,6 @@ void Actuator::check_valid_state(actuator_state state)
     if ( (this->max_state_values.acceleration < abs(state.acceleration)) ||
          (this->min_state_values.acceleration > abs(state.acceleration)) )
     {
-        std::cout << "Max: " << max_state_values.acceleration << std::endl;
-        std::cout << "Min: " << min_state_values.acceleration << std::endl;
-        std::cout << "Cur: " << state.acceleration << std::endl;
         throw invalid_actuator_state("Actuator acceleration invalid.");
     }
 

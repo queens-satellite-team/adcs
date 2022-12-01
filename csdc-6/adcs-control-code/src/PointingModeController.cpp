@@ -93,8 +93,6 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
             float rw_t = rw_torques[i++];
             if (abs(rw_t) >= max_t) {
                 rw_torques = rw_torques * max_t / abs(rw_t) * 0.99;
-                std::cout << rw_t << ", " << max_t << std::endl;
-                std::cout << rw_torques << std::endl;
             }
         }
     }

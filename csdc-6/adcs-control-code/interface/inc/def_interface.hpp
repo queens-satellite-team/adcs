@@ -17,7 +17,6 @@
 #include <string>
 #include <Eigen/Dense>
 #include <iomanip>
-#include <iostream>
 
 #include "adcs_exception.hpp"
 
@@ -140,14 +139,6 @@ class timestamp
         {
             timestamp result;
 
-            // std::cout << "LHS" << std::endl;
-            // std::cout << "Seconds:" << this->second << std::endl;
-	        // std::cout << "Milliseconds: " << this->millisecond << std::endl << std::endl;
-
-            // std::cout << "RHS" << std::endl;
-            // std::cout << "Seconds:" << b.second << std::endl;
-	        // std::cout << "Milliseconds: " << b.millisecond << std::endl << std::endl;
-
             if (b.second > this->second)
             {
                 // explicitly allow underflow of the seconds field
@@ -168,9 +159,6 @@ class timestamp
             {
                 result.millisecond = this->millisecond - b.millisecond;
             }
-
-            // std::cout << "Seconds:" << result.second << std::endl;
-	        // std::cout << "Milliseconds: " << result.millisecond << std::endl;
 
             rebalance_timestamp(&result.millisecond, &result.second);
             return result;

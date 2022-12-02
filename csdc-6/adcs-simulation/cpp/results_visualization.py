@@ -5,6 +5,7 @@ import os
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
+import webbrowser
 
 def plot_results(csv_name, outpath):
     data = pd.read_csv(csv_name)
@@ -13,11 +14,11 @@ def plot_results(csv_name, outpath):
     timestep = data['Timestep']*1000
 
     plt.figure(1)
-    plt.title("Satellite Position vs. Time")
+    plt.title("Timestep vs. Time")
     plt.xlabel("Time [s]")
     plt.ylabel("Timestep [ms]")
     plt.plot(time, timestep)
-    plt.savefig(outpath + '/Tiemstep_vs_Time.png')
+    plt.savefig(outpath + '/Timestep_vs_Time.png')
 
     theta_x = data['Satellite theta x']
     theta_y = data['Satellite theta y']
@@ -32,6 +33,7 @@ def plot_results(csv_name, outpath):
     plt.plot(time, theta_z, label="z")
     plt.legend()
     plt.savefig(outpath + '/Satellite_Position_vs_Time.png')
+    webbrowser.open(outpath + '/Satellite_Position_vs_Time.png')
 
     
 

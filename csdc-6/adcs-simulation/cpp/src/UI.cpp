@@ -694,6 +694,7 @@ void UI::run_controller_unit_tests(std::vector<std::string> args)
         "100",
         "-p",
         "100000",
+        "-sp"
     };
 
     for (uint8_t test_num = 1; test_num <= num_controller_unit_tests; test_num++)

@@ -255,10 +255,10 @@ class Messenger
         const bool default_silent_csv_prints = false;
 
         /* default print rate to the csv file in ms */
-        const uint32_t default_csv_print_rate = 1;
+        const timestamp default_csv_print_rate = timestamp(1,0);
 
         /* default print rate to the terminal in ms */
-        const uint32_t default_terminal_print_rate = 10;
+        const timestamp default_terminal_print_rate = timestamp(10,0);
 
         /* full string of the output path */
         std::string output_file_path_string = "";
@@ -270,22 +270,16 @@ class Messenger
         bool silent_csv_prints = false;
 
         /* print rate to the csv file in ms */
-        uint32_t csv_print_rate = 1;
+        timestamp csv_print_rate = timestamp(1,0);
 
         /* print rate to the terminal in ms */
-        uint32_t terminal_print_rate = 10;
+        timestamp terminal_print_rate = timestamp(10,0);
 
-        /**
-         * number of attempts to write to csv. Each count corresponds to 1 ms, and gets reset when
-         * it reaches csv_print_rate
-        **/
-        uint32_t csv_write_count = 0;
+        /* Previous time the csv was updated */
+        timestamp previous_csv_write = 0;
 
-        /**
-         * number of attempts to write to the terminal. Each count corresponds to 1 ms, and gets
-         * reset when it reaches csv_print_rate
-        **/
-        uint32_t terminal_write_count = 0;
+        /* Previous time the terminal was updated */
+        timestamp previous_terminal_write = 0;
 
         /* Buffer variable for the simulation output data. */
         std::stringstream output_file_buffer;

@@ -114,22 +114,19 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
 
 void Messenger::update_simulation_state(sim_config state, timestamp time, timestamp timestep)
 {
-    terminal_write_count++;
-    csv_write_count++;
-
     if ( (!silent_sim_prints) &&
-         (terminal_print_rate <= terminal_write_count) )
+         (terminal_print_rate <= (time - previous_terminal_write)) )
     {
         this->append_cout_output(state, time, timestep);
+        previous_terminal_write = time;
     }
 
-    if ( (csv_print_rate <= csv_write_count) &&
-         (!silent_csv_prints) )
+    if ( (!silent_csv_prints) &&
+         (csv_print_rate <= (time - previous_csv_write)) )
     {
         this->append_csv_output(state, time, timestep);
-        csv_write_count = 0;
+        previous_csv_write = time;
     }
-
 
     return;
 }
@@ -145,7 +142,7 @@ void Messenger::append_cout_output(sim_config state, timestamp time, timestamp t
     // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
 
     for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
-    {   
+    {
         std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
 
         if (i < state.reaction_wheels.size() - 1)
@@ -155,7 +152,7 @@ void Messenger::append_cout_output(sim_config state, timestamp time, timestamp t
     }
     std::cout << std::endl;
 
-    terminal_write_count = 0;
+    return;
 }
 
 void Messenger::append_csv_output(sim_config state, timestamp time, timestamp timestep)
@@ -261,15 +258,15 @@ void Messenger::reset_defaults()
 
 void Messenger::set_csv_print_rate(uint32_t csv_rate)
 {
-    this->csv_print_rate = csv_rate;
-    this->send_message("CSV update period: " + std::to_string(this->csv_print_rate) + "ms.");
+    this->csv_print_rate = timestamp(csv_rate,0);
+    this->send_message("CSV update period: " + this->csv_print_rate.pretty_string() + "ms.");
     return;
 }
 
 void Messenger::set_terminal_print_rate(uint32_t terminal_rate)
 {
-    this->terminal_print_rate = terminal_rate;
-    this->send_message("Terminal print period: " + std::to_string(this->terminal_print_rate) + "ms.");
+    this->terminal_print_rate = timestamp(terminal_rate,0);
+    this->send_message("Terminal print period: " + this->terminal_print_rate.pretty_string() + "ms.");
     return;
 }
 

@@ -94,8 +94,16 @@ Sensors:
     PollingTime: 10
     Position: [0,0,0]
 
+# VariableTimestep: [bool], TRUE for variable timestep, FALSE for fixed timestep
+VariableTimestep: TRUE
+
+# TimeStepMax: [int], in ms, only use if VariableTimestep: TRUE
+TimeStepMax: 50
+# TimeStepMin: [int], in ms, only use if VariableTimestep: TRUE
+TimeStepMin: 1
+
 # Timestep: [int], in ms
-TimeStep: 1
+#TimeStep: 1
 
 # Timeout: [int], in ms
 Timeout: 300000

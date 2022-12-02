@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-18
+ * 2022-12-01
  *
 **/
 
@@ -53,6 +53,14 @@ public:
     * up to date values for a sensor
    **/
     timestamp update_simulation();
+
+    /**
+    * @name determine_timestep
+    * @returns [timestamp], the newly calculated timestep
+    *
+    * @details Updates the desired timestep
+    * */
+    timestamp determine_timestep();
 
     /**
     * @name set_adcs_sleep
@@ -172,6 +180,27 @@ private:
      * by the simualor will advance the simulation time by this amount.
     **/
     timestamp timestep_length;
+
+    /**
+     * @property timestep [bool]
+     *
+     * @details either TRUE (variable timestep) or FALSE (fixed timestep)
+    **/
+    bool variableTimestep;
+
+    /**
+     * @property maxStep [float]
+     *
+     * @details max allowed timestep from user
+    **/
+    float maxStep;
+
+    /**
+     * @property minStep [float]
+     *
+     * @details min allowed timestep from user
+    **/
+    float minStep;
 
     /**
      * @property system_vals [sim_config]

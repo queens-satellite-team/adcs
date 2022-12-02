@@ -15,6 +15,8 @@
 #include <memory>
 #include <vector>
 
+#include <random>
+
 #include "def_interface.hpp"
 #include "CommonStructs.hpp"
 #include "Messenger.hpp"
@@ -193,6 +195,14 @@ private:
      * @details  maximum amount of time the simulator is allowed to run.
     **/
     timestamp timeout;
+
+    /**
+     * @property rng [std::default_random_engine]
+     * 
+     * @details  random number generator for measurement noise simulation.
+    **/
+    std::default_random_engine rng;
+
 };
 
 /**

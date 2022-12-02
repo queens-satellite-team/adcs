@@ -12,6 +12,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <random>
 
 #include "ConfigurationSingleton.hpp"
 #include "SensorActuatorFactory.hpp"
@@ -31,6 +32,9 @@ Simulator::Simulator(Messenger *messenger)
     timestamp t(config.GetTimestepInMilliSeconds(),0);
     this->timestep_length = t;
     this->last_called = -1;
+
+    this->rng = std::default_random_engine();
+    this->rng.seed(69); // TODO: remove this in favour of psuedorandom (done for testing)
 }
 
 void Simulator::init(sim_config initial_values, timestamp timeout)
@@ -161,9 +165,11 @@ gyro_state Simulator::gyroscope_take_measurement()
     this->update_simulation();
     gyro_state ret;
 
+    std::normal_distribution<double> distribution(0.0, 0.02); // mean = 0, stdev = 0.02 rad (~1 deg)
+
     ret.acceleration = this->system_vals.gyroscope.alpha;
     ret.velocity     = this->system_vals.gyroscope.omega;
-    ret.position     = this->system_vals.gyroscope.theta;
+    ret.position     = this->system_vals.gyroscope.theta + Eigen::Vector3f::Ones()*float(distribution(this->rng));
     ret.time_taken   = this->simulation_time;
 
     return ret;

@@ -6,11 +6,7 @@
  * @authors Lily de Loe, Aidan Sheedy
  *
  * Last Edited
-<<<<<<< HEAD
- * 2022-12-01
-=======
  * 2022-11-15
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
  *
 **/
 
@@ -239,7 +235,6 @@ public:
     }
 
     /**
-<<<<<<< HEAD
     * @name GetTimestepDecision
     * @return whether or not to use variable timestep
     * 
@@ -270,8 +265,6 @@ public:
     }
 
     /**
-=======
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     * @name    getTimeout
     * 
     * @returns the timeout, in seconds, as a float
@@ -368,7 +361,6 @@ private:
     int timestepInMilliSeconds;
 
     /**
-<<<<<<< HEAD
      * @details int storing the timeout in milliseconds
     */
     int timeoutInMilliseconds;
@@ -388,12 +380,6 @@ private:
     */
     float timeStepMin;
 
-=======
-     * @details float storing the timeout in milliseconds
-    */
-    int timeoutInMilliseconds;
-
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     /* the desired satellite position for the controller */
     Eigen::Vector3f desiredSatellitePosition;
 

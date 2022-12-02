@@ -67,11 +67,7 @@ std::shared_ptr<Actuator> SensorActuatorFactory::GetActuator(const std::string &
             initial_vals.position = 0; //this is unused
             initial_vals.time = 0; //this is unused
             initial_vals.velocity = reac->velocity;
-<<<<<<< HEAD
-            ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime), sim, reac->position, min, max, initial_vals, reac->axisOfRotation, reac->momentOfInertia);
-=======
             ret = std::make_shared<Reaction_wheel>(timestamp(reac->pollingTime, 0), sim, reac->position, max, min, initial_vals, reac->axisOfRotation, reac->momentOfInertia);
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
             break;
         }
     }

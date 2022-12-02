@@ -47,13 +47,10 @@ Eigen::Vector3f Actuator::get_axis_of_rotation()
 {
     return this->axis_of_rotation;
 }
-<<<<<<< HEAD
-=======
 
 float Actuator::get_max_acceleration() {
     return this->max_state_values.acceleration;
 }
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
 
 void Actuator::check_valid_state(actuator_state state)
 {

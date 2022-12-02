@@ -28,13 +28,10 @@ PointingModeController::PointingModeController(
 }
 
 void PointingModeController::begin(Eigen::Vector3f desired_attitude, timestamp ramp_time) {
-<<<<<<< HEAD
-=======
     while (this->gyro->time_until_ready() > 0) {
         this->timer->sleep(this->gyro->time_until_ready());
     }
 
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     measurement initial_vals = this->take_updated_measurements();
     Eigen::Vector3f initial_attitude = initial_vals.vec;
     timestamp start = initial_vals.time_taken;
@@ -45,16 +42,6 @@ void PointingModeController::begin(Eigen::Vector3f desired_attitude, timestamp r
     prev_integral = Eigen::Vector3f::Zero();
 
     while(true) {
-<<<<<<< HEAD
-        measurement m = this->take_updated_measurements();
-        timestamp delta_t = m.time_taken - prev_time;
-        timestamp since_start = m.time_taken - start;
-        prev_time = m.time_taken;
-
-        float ramp_factor = since_start < ramp_time ? ((float) since_start / (float) ramp_time) : 1;
-        Eigen::Vector3f ramped_desired_attitude = ramp_factor * (desired_attitude - initial_attitude) + initial_attitude;
-        this->update(m.vec, ramped_desired_attitude, delta_t);
-=======
         try {
             measurement m = this->take_updated_measurements();
             timestamp delta_t = m.time_taken - prev_time;
@@ -67,7 +54,6 @@ void PointingModeController::begin(Eigen::Vector3f desired_attitude, timestamp r
         } catch (device_not_ready &_e) {
             this->timer->sleep(this->gyro->time_until_ready());
         }
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     }
 }
 
@@ -98,13 +84,6 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
     }
 
     Eigen::VectorXf rw_torques = A.transpose() * (A * A.transpose()).inverse() * desired_torque;
-<<<<<<< HEAD
-    // std::cout << "Timestep:" << std::endl << (float) delta_t << std::endl;
-    // std::cout << "Error:" << std::endl << cur_error << std::endl;
-    // std::cout << "Derivative:" << std::endl << cur_derivative << std::endl;
-    // std::cout << "Integral:" << std::endl << cur_integral << std::endl;
-    // std::cout << "Torques:" << std::endl << desired_torque << std::endl;
-=======
 
     // Check each torque to make sure it doesn't exceed the max, if it does
     i = 0;
@@ -117,7 +96,6 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
             }
         }
     }
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
 
     i = 0;
     for (const auto &a : actuators) {
@@ -130,19 +108,6 @@ void PointingModeController::update(Eigen::Vector3f current_attitude, Eigen::Vec
             });
             i++;
         }
-<<<<<<< HEAD
-    }
-}
-
-measurement PointingModeController::take_updated_measurements() {
-    for (const auto &s : sensors) {
-        if (Gyroscope* gyro = dynamic_cast<Gyroscope*>(s.second.get())) {
-            gyro_state state = gyro->take_measurement();
-            return { state.position, state.time_taken };
-        }
-    }
-    return { Eigen::Vector3f::Zero(), 0 };
-=======
     }
 }
 
@@ -153,5 +118,4 @@ measurement PointingModeController::take_updated_measurements() {
     } catch (device_not_ready *e) {
         throw e;
     }
->>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
 }

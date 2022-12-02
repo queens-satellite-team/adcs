@@ -249,8 +249,7 @@ void UI::run_simulation(std::vector<std::string> args)
         {
             if (0 == fork_ret)
             {
-                int execv_ret = execv(args[0], args);
-                int errvalue = errno;
+                execv(args[0], args);
             }
             else
             {

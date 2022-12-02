@@ -51,7 +51,7 @@ timestamp Simulator::update_simulation() {
     return this->simulation_time;
 }
 
-timestamp Simulator::determine_timestep() 
+void Simulator::determine_timestep() 
 {
     //2*max error is defined as 2*0.005 degrees = 0.01 degrees
     if (true == this->variableTimestep)
@@ -71,7 +71,7 @@ timestamp Simulator::determine_timestep()
         }
     }
 
-    return timestep_length;
+    return;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {

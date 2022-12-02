@@ -187,32 +187,53 @@ class Messenger
         }
 
         /**
-         * @name    set_terminal_print_rate
+         * @name    silence_csv
          *
-         * @details sets the print rate to the terminal in terms of simulation time.
-         *
-         * @param   csv_rate [uint32_t] the timestep in ms that the terminal will be updated
+         * @details prevents any outputs to the csv file during the simulation
         **/
         void silence_csv();
 
         /**
-         * @name    close_open_csv
-         *
-         * @details closes the CSV file if open.
-        **/
-        void close_open_csv();
+         * @name    write_output_buffer
+         * 
+         * @details saves the file buffer to a new csv file
+        */
+        void write_output_buffer();
 
     private:
         /**
+         * @name    write_cout_header
+         * 
+         * @details writes a header to the terminal for the simulation run
+         * 
+         * @param   num_reaction_wheels the number of reaction wheels used. This is necessary for
+         *                              the number of columns to print.
+        **/
+        void write_cout_header(uint32_t num_reaction_wheels);
+
+        /**
+         * @name    write_csv_header
+         * 
+         * @details writes a header to the csv file for the simulation run
+         * 
+         * @param   num_reaction_wheels the number of reaction wheels used. This is necessary for
+         *                              the number of columns to print.
+        **/
+        void write_csv_header(uint32_t num_reaction_wheels);
+
+        /**
          * @name    append_csv_output
          *
-         * @details appends a simulation state to the end of the csv output file.
+         * @details appends a simulation state to the csv output buffer.
         **/
         void append_csv_output(sim_config state, timestamp time);
 
-        void write_cout_header(uint32_t num_reaction_wheels);
-
-        void write_csv_header(uint32_t num_reaction_wheels);
+        /**
+         * @name    append_cout_output
+         * 
+         * @details appends a simulation state to the terminal.
+        **/
+        void append_cout_output(sim_config state, timestamp time);
 
     private:
         /* Character used to denote user control of the terminal.**/
@@ -266,9 +287,8 @@ class Messenger
         **/
         uint32_t terminal_write_count = 0;
 
-        /* CSV file to write logs to */
-        std::ofstream open_output_file;
-
+        /* Buffer variable for the simulation output data. */
+        std::stringstream output_file_buffer;
 };
 
 /**

@@ -122,15 +122,15 @@ class UI
          *
          * @details creates an actuator object and populates it in an unordered map to be used by the
          *          control code.
-        **/  
+        **/
         void create_actuator(const std::string &name, Simulator *sim, std::unordered_map<std::string, std::shared_ptr<Actuator>> *actuators);
 
         /**
          * @name get_sim_config
-         * 
+         *
          * @param config configuration singleton used to get the simulation initial parameters.
-         * 
-         * @returns the initial configuration fo the satellite 
+         *
+         * @returns the initial configuration fo the satellite
         **/
         sim_config get_sim_config(Configuration &config);
 
@@ -171,7 +171,7 @@ class UI
          * @name    run_unit_tests
          *
          * @details Input command to run all the unit or specified unit tests.
-         * 
+         *
          * @note    for now this only runs all unit tests - future functionality may be added to
          *          specify tests to run
          *
@@ -210,6 +210,31 @@ class UI
         **/
         void run_perf_tests(std::vector<std::string> args);
 
+        /**
+         * @name    plot_simulation_results
+         *
+         * @details plots the simulation results from the csv_path provided
+         *
+         * @param   csv_path the path to the results to plot
+        **/
+        void plot_simulation_results(std::string csv_path);
+
+        /**
+         * @name    reset_simulation_argument_defaults
+         *
+         * @details resets the simulation parameters to their defaults
+        **/
+        void reset_simulation_argument_defaults();
+
+        /**
+         * @name    clean_plots
+         *
+         * @details deletes all plots in the plots folder
+         *
+         * @param args the user input arguments. There should be none.
+        */
+        void clean_plots(std::vector<std::string> args);
+
     private:
         /**
          * @typedef UI::*commandFunc
@@ -229,7 +254,7 @@ class UI
         bool terminal_active;
 
         /* Max number of args for the "start_sim" command */
-        const uint8_t max_run_simulation_args = 8;
+        const uint8_t max_run_simulation_args = 9;
 
         /* Min number of args for the "start_sim" command */
         const uint8_t min_run_simulation_args = 2;
@@ -248,6 +273,9 @@ class UI
 
         /* Number of expected args for the "perf_test" command */
         const uint8_t num_perf_test_args = 1;
+
+        /* Number of expected args for the "clean_plots" command */
+        const uint8_t num_clean_plots_args = 1;
 
         /* Path where yamls describing unit tests are expected */
         const std::string expected_no_controller_unit_test_dir = "unit_tests/no_controller/";
@@ -276,11 +304,14 @@ class UI
         /* unit test name prefix for the sim exit yaml (without the number) */
         const std::string controller_test_output_name = "unit_test_out_";
 
+        /* path to the perfomance test config yaml file (without the number or file extension) */
         const std::string perf_test_config_yaml_path = "unit_tests/performance/perf_test_config_";
 
+        /* path to the perfomance test exit yaml file (without the number or file extension) */
         const std::string perf_test_exit_yaml_path = "unit_tests/performance/perf_test_exit_";
 
-        const std::vector<std::string> perf_test_descriptions = 
+        /* Description of each performance test */
+        const std::vector<std::string> perf_test_descriptions =
         {
             "No initial velocity, requested postion = stationary",
             "Some initial velocity, requested postion = stationary",
@@ -288,6 +319,12 @@ class UI
             "Test 3 + reduced csv writes",
             "test 3 + no csv writes"
         };
+
+        /* directory of the plotting script */
+        const std::string python_plot_file_dir = "./results_visualization.py";
+
+        /* directory of the plotting output */
+        const std::string plot_dir = "./plots";
 
         /* number of performance tests to run */
         const uint8_t num_performance_tests = 5;
@@ -297,6 +334,12 @@ class UI
 
         /* number of unit tests to run with the controller */
         const uint8_t num_controller_unit_tests = 3;
+
+        /* default value of the silent plots flag */
+        const bool default_silent_plots = false;
+
+        /* flag to indicate if results should be plotted. */
+        bool silent_plots = false;
 
         /* Path to the YAML file describing the final state of the previous simulation run. */
         std::string previous_end_state_yaml;

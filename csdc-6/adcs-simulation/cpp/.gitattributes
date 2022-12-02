@@ -3,3 +3,4 @@
 
 # Set bash scripts to use lf for wsl
 *.sh text eol=lf
+*.py text eol=lf

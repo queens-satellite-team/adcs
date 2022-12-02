@@ -118,22 +118,6 @@ class Sensor : public ADCS_device {
         virtual ~Sensor(){}
 
         /**
-         * @note commenting out for now but this may need to be removed entirely. Keeping until a decision is made.
-         * 
-         * @name    take_measurement
-         *
-         * @details this function takes a measurement using the sensor. The simulation is also told
-         *          to update.
-         *
-         * @returns the required measurement if succesful.
-        **/
-        // virtual measurement take_measurement() // MAY need to create a default implementation
-        // {
-        //     measurement empty;
-        //     return empty;
-        // } 
-
-        /**
          * @name    set_current_vals
          *
          * @details this function sets the new raw sensor values from the simulation and calculates

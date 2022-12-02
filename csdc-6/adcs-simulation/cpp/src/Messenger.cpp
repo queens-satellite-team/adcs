@@ -95,15 +95,102 @@ void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 
 void Messenger::write_csv_header(uint32_t num_reaction_wheels)
 {
+    /* Empty the output buffer */
+    this->output_file_buffer.clear();
+    this->output_file_buffer.str(std::string());
+
+    /* Write the new header */
+    this->output_file_buffer << "Time,Satellite theta x,Satellite theta y,Satellite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
+    this->output_file_buffer << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,";//Gyro x,Gyro y,Gyro z,";
+    for (uint32_t i = 0; i < num_reaction_wheels; i++)
+    {
+        this->output_file_buffer << "Reaction wheel " << i << " Omega,Reaction wheel " << i << " alpha,";
+    }
+    this->output_file_buffer << std::endl;
+
+    return;
+}
+
+
+void Messenger::update_simulation_state(sim_config state, timestamp time)
+{
+    terminal_write_count++;
+    csv_write_count++;
+
+    if ( (!silent_sim_prints) &&
+         (terminal_print_rate <= terminal_write_count) )
+    {
+        this->append_cout_output(state, time);
+    }
+
+    if ( (csv_print_rate <= csv_write_count) &&
+         (!silent_csv_prints) )
+    {
+        this->append_csv_output(state, time);
+        csv_write_count = 0;
+    }
+
+
+    return;
+}
+
+void Messenger::append_cout_output(sim_config state, timestamp time)
+{
+    std::cout << std::setw(6) << std::setfill('0') << std::setprecision(5) << std::internal;
+    std::cout << text_colour.reset << time.pretty_string() << "\t" << std::setprecision(4) << std::fixed;
+    std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t\t";
+    std::cout << state.satellite.omega_b.x() << ", " << state.satellite.omega_b.y() << ", " << state.satellite.omega_b.z() << ";\t\t";
+    std::cout << state.satellite.alpha_b.x() << ", " << state.satellite.alpha_b.y() << ", " << state.satellite.alpha_b.z() << ";\t";
+
+    std::cout << state.accelerometer.measurement.x() << ", " << state.accelerometer.measurement.y() << ", " << state.accelerometer.measurement.z() << ";\t";
+    // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
+
+    for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
+    {   
+        std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
+
+        if (i < state.reaction_wheels.size() - 1)
+        {
+            std::cout << "\t";
+        }
+    }
+    std::cout << std::endl;
+
+    terminal_write_count = 0;
+}
+
+void Messenger::append_csv_output(sim_config state, timestamp time)
+{
+    this->output_file_buffer << (float)time << ",";
+    this->output_file_buffer << state.satellite.theta_b.x() << "," << state.satellite.theta_b.y() << "," << state.satellite.theta_b.z() << ",";
+    this->output_file_buffer << state.satellite.omega_b.x() << "," << state.satellite.omega_b.y() << "," << state.satellite.omega_b.z() << ",";
+    this->output_file_buffer << state.satellite.alpha_b.x() << "," << state.satellite.alpha_b.y() << "," << state.satellite.alpha_b.z() << ",";
+
+    this->output_file_buffer << state.accelerometer.measurement.x() << "," << state.accelerometer.measurement.y() << "," << state.accelerometer.measurement.z() << ",";
+    // output_file << state.gyroscope.measurement.x()     << "," << state.gyroscope.measurement.y()     << "," << state.gyroscope.measurement.z()     << ",";
+
+    for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
+    {
+        this->output_file_buffer << state.reaction_wheels.at(i).omega << "," << state.reaction_wheels.at(i).alpha << ",";
+    }
+    this->output_file_buffer << std::endl;
+
+    return;
+}
+
+void Messenger::write_output_buffer()
+{
     /* Determine output file name */
-    std::string csv_path = this->default_csv_path;
+    // std::string cwd = std::filesystem::current_path();
+    std::string csv_path = "./" + this->default_csv_path;
     std::string suffix = "";
     uint32_t suffix_num = 0;
 
-    if (!std::filesystem::exists(csv_path))
+    if(!std::filesystem::exists( csv_path))
     {
         std::filesystem::create_directory(csv_path);
     }
+
     csv_path += this->default_csv_name;
 
     /* search for file if it exists, increment if it does */
@@ -118,111 +205,29 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
         suffix = std::to_string(suffix_num);
     }
 
+    /* Open the file and write out the buffer */
     if ("-1" != this->output_file_path_string)
     {
         this->output_file_path_string = csv_path + suffix + this->csv_ext;
 
-        this->open_output_file.open(output_file_path_string, std::fstream::out | std::fstream::app);
-        if (this->open_output_file.is_open())
+        std::ofstream output_file(output_file_path_string, std::fstream::out | std::fstream::app);
+        if (output_file.is_open())
         {
-            this->open_output_file << "Time,Satellite theta x,Satellite theta y,Satellite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
-            this->open_output_file << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,";//Gyro x,Gyro y,Gyro z,";
-            for (uint32_t i = 0; i < num_reaction_wheels; i++)
+            if ("" == output_file_buffer.str())
             {
-                this->open_output_file << "Reaction wheel " << i << " Omega,Reaction wheel " << i << " alpha,";
+                send_error("output buffer is empty");
             }
-            this->open_output_file << std::endl;
+            std::string line;
+            while (getline(this->output_file_buffer, line))
+            {
+                output_file << line << std::endl;
+            }
+            output_file.close();
         }
         else
         {
             throw invalid_messagenger_param(std::string("Unable to open file " + output_file_path_string).c_str());
         }
-    }
-
-    /* NOTE -> CSV is still open at this piont. Not closed until requested by sim. */
-
-    return;
-}
-
-
-void Messenger::update_simulation_state(sim_config state, timestamp time)
-{
-    terminal_write_count++;
-    csv_write_count++;
-
-    // Do we need any checks on state?
-
-    if ( (!silent_sim_prints) &&
-         (terminal_print_rate <= terminal_write_count) )
-    {
-        std::cout << text_colour.reset << time.pretty_string() << "\t" << std::setprecision(4) << std::fixed;
-        std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t\t";
-        std::cout << state.satellite.omega_b.x() << ", " << state.satellite.omega_b.y() << ", " << state.satellite.omega_b.z() << ";\t\t";
-        std::cout << state.satellite.alpha_b.x() << ", " << state.satellite.alpha_b.y() << ", " << state.satellite.alpha_b.z() << ";\t";
-
-        std::cout << state.accelerometer.measurement.x() << ", " << state.accelerometer.measurement.y() << ", " << state.accelerometer.measurement.z() << ";\t";
-        // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
-
-        for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
-        {   
-            std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
-
-            if (i < state.reaction_wheels.size() - 1)
-            {
-                std::cout << "\t";
-            }
-        }
-        std::cout << std::endl;
-
-        terminal_write_count = 0;
-    }
-
-    if ( (csv_print_rate <= csv_write_count) &&
-         (!silent_csv_prints) )
-    {
-        this->append_csv_output(state, time);
-        csv_write_count = 0;
-    }
-
-
-    return;
-}
-
-void Messenger::append_csv_output(sim_config state, timestamp time)
-{
-    /* don't bother trying to append if the file was never started. */
-    if ("-1" != this->output_file_path_string)
-    {
-        if (this->open_output_file.is_open())
-        {
-            this->open_output_file << (float)time << ",";
-            this->open_output_file << state.satellite.theta_b.x() << "," << state.satellite.theta_b.y() << "," << state.satellite.theta_b.z() << ",";
-            this->open_output_file << state.satellite.omega_b.x() << "," << state.satellite.omega_b.y() << "," << state.satellite.omega_b.z() << ",";
-            this->open_output_file << state.satellite.alpha_b.x() << "," << state.satellite.alpha_b.y() << "," << state.satellite.alpha_b.z() << ",";
-
-            this->open_output_file << state.accelerometer.measurement.x() << "," << state.accelerometer.measurement.y() << "," << state.accelerometer.measurement.z() << ",";
-            // output_file << state.gyroscope.measurement.x()     << "," << state.gyroscope.measurement.y()     << "," << state.gyroscope.measurement.z()     << ",";
-
-            for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
-            {
-                this->open_output_file << state.reaction_wheels.at(i).omega << "," << state.reaction_wheels.at(i).alpha << ",";
-            }
-            this->open_output_file << std::endl;
-        }
-        else
-        {
-            throw invalid_messagenger_param(std::string("File is not open" + output_file_path_string).c_str());
-        }
-    }
- 
-    return;
-}
-
-void Messenger::close_open_csv()
-{
-    if (this->open_output_file.is_open())
-    {
-        this->open_output_file.close();
     }
 }
 

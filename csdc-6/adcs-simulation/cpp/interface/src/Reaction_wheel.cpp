@@ -21,7 +21,7 @@ Reaction_wheel::Reaction_wheel(timestamp polling_time, Simulator* sim, Eigen::Ve
 
     if(inertia_matrix == 0)
     {
-        std::cout << "YEEEET" << std::endl;
+        throw invalid_adcs_param("Reaction wheel inertia is 0. (YEET was not succesful)");
     }
 
     this->inertia_matrix = inertia_matrix;

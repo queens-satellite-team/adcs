@@ -41,6 +41,7 @@ UI::UI()
     allowed_commands["unit_test"]   = std::bind(&UI::run_unit_tests,    this, std::placeholders::_1);
     allowed_commands["perf_test"]   = std::bind(&UI::run_perf_tests,    this, std::placeholders::_1);
     allowed_commands["clean_plots"] = std::bind(&UI::clean_plots,       this, std::placeholders::_1);
+    allowed_commands["help"]        = std::bind(&UI::help,              this, std::placeholders::_1);
 
     /* Aliases */
     allowed_commands["ss"] = std::bind(&UI::run_simulation,    this, std::placeholders::_1);
@@ -52,9 +53,30 @@ UI::UI()
     allowed_commands["cp"] = std::bind(&UI::clean_plots,       this, std::placeholders::_1);
 }
 
+void UI::help(std::vector<std::string> args)
+{
+    if ( (max_help_args < args.size()) ||
+         (min_help_args > args.size()) )
+    {
+        throw invalid_ui_args("Invalid number of parameters.");
+    }
+
+    if (min_help_args == args.size())
+    {
+        messenger.send_message(HelpMessages::get_generic_help());
+    }
+    else
+    {
+        messenger.send_message(HelpMessages::get_command_help(args.at(1)));
+    }
+    
+    return;
+}
+
 void UI::start_ui_loop()
 {
     this->terminal_active = true;
+    messenger.send_message(HelpMessages::introduction());
     messenger.prompt_char();
 
     /**

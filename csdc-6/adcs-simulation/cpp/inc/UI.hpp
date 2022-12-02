@@ -25,6 +25,7 @@
 #include "sim_interface.hpp"
 #include "ConfigurationSingleton.hpp"
 #include "Messenger.hpp"
+#include "HelpMessages.hpp"
 
 /**
  * @class   UI
@@ -90,8 +91,9 @@ class UI
          *              input_yaml_path - path to the input yaml (required)
          *              exit_yaml_path  - path to the output yaml (optional)
          *              --silent        - mutes the terminal during the simulation (optional)
-         *              -- csv_rate r   - sets the csv print rate to r (ms) (optional)
-         *              -- print_rate r - sets the terminal print rate to r (ms) (optional)
+         *              --csv_rate r    - sets the csv print rate to r (ms) (optional)
+         *              --print_rate r  - sets the terminal print rate to r (ms) (optional)
+         *              --silence_plots - prevents writing to the output csv (optional)
          *
          * @param args the user input arguments. Arguments are as follows:
          *              args[0]  command "clean_out"
@@ -235,6 +237,8 @@ class UI
         */
         void clean_plots(std::vector<std::string> args);
 
+        void help(std::vector<std::string> args);
+
     private:
         /**
          * @typedef UI::*commandFunc
@@ -276,6 +280,12 @@ class UI
 
         /* Number of expected args for the "clean_plots" command */
         const uint8_t num_clean_plots_args = 1;
+
+        /* Number of max args for the "help" command */
+        const uint8_t max_help_args = 2;
+
+        /* Number of min args for the "help" command */
+        const uint8_t min_help_args = 1;
 
         /* Path where yamls describing unit tests are expected */
         const std::string expected_no_controller_unit_test_dir = "unit_tests/no_controller/";

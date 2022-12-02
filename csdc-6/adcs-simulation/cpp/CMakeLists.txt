@@ -20,6 +20,7 @@ add_executable(simulator
     src/UI.cpp
     src/Messenger.cpp
     src/DummyController.cpp
+    src/HelpMessages.cpp
     interface/src/Actuator.cpp
     interface/src/ADCS_device.cpp
     interface/src/ADCS_timer.cpp

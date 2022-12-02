@@ -235,6 +235,36 @@ public:
     }
 
     /**
+    * @name GetTimestepDecision
+    * @return whether or not to use variable timestep
+    * 
+    * @details getter for the timestep method
+    */
+    inline const bool &GetTimestepDecision(){
+        return useVariableTimestep;
+    }
+
+    /**
+    * @name GetMaxTimestep
+    * @return whether or not to use variable timestep
+    * 
+    * @details getter for the timestep method
+    */
+    inline const float &GetMaxTimestep(){
+        return timeStepMax;
+    }
+
+    /**
+    * @name GetMinTimestep
+    * @return whether or not to use variable timestep
+    * 
+    * @details getter for the timestep method
+    */
+    inline const float &GetMinTimestep(){
+        return timeStepMin;
+    }
+
+    /**
     * @name    getTimeout
     * 
     * @returns the timeout, in seconds, as a float
@@ -331,9 +361,24 @@ private:
     int timestepInMilliSeconds;
 
     /**
-     * @details float storing the timeout in milliseconds
+     * @details int storing the timeout in milliseconds
     */
     int timeoutInMilliseconds;
+
+    /**
+     * @details bool storing whether or not to use variable timestep
+    */
+    bool useVariableTimestep;
+
+    /**
+     * @details max timestep allowed for the calculated variable timestep
+    */
+    float timeStepMax;
+
+    /**
+     * @details min timestep allowed for the calculated variable timestep
+    */
+    float timeStepMin;
 
     /* the desired satellite position for the controller */
     Eigen::Vector3f desiredSatellitePosition;

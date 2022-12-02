@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-08
+ * 2022-12-01
  *
 **/
 
@@ -24,19 +24,21 @@ Simulator::Simulator(Messenger *messenger)
     {
         this->messenger = messenger;
     }
-
-    this->simulation_time = 0;
-    auto &config = Configuration::GetInstance();
-    timestamp t(config.GetTimestepInMilliSeconds(),0);
-    this->timestep_length = t;
-    this->last_called = -1;
 }
 
-void Simulator::init(sim_config initial_values, timestamp timeout)
+void Simulator::init(sim_config initial_values, timestamp timeout, timestamp initial_timestep, bool variableTimestep, timestamp max_timestep, timestamp min_timestep)
 {
     /* TODO may need a check here**/
     this->system_vals = initial_values;
-    this->timeout = timeout;
+    this->timeout     = timeout;
+
+    this->simulation_time = 0;
+    this->timestep_length = initial_timestep;
+    this->last_called     = -1;
+
+    this->variableTimestep = variableTimestep;
+    this->max_timestep     = max_timestep;
+    this->min_timestamp    = min_timestep;
 
     messenger->send_message("Starting simulation, timeout: " + this->timeout.pretty_string());
     messenger->start_new_sim(initial_values.reaction_wheels.size());
@@ -47,6 +49,29 @@ timestamp Simulator::update_simulation() {
     this->simulate(time_passed);
 
     return this->simulation_time;
+}
+
+void Simulator::determine_timestep() 
+{
+    //2*max error is defined as 2*0.005 degrees = 0.01 degrees
+    if (true == this->variableTimestep)
+    {
+        // formula is: timestep = 2 * error / acceleration. Result is in seconds, *1000 to conver to ms
+        float calculated_timestep_in_ms = (2 * max_error_in_rad)/(this->system_vals.satellite.alpha_b.cwiseAbs().maxCoeff())*1000;
+        timestamp t(calculated_timestep_in_ms,0);
+
+        this->timestep_length = t;
+        if ((timestep_length > max_timestep))
+        {
+            this->timestep_length = max_timestep;
+        }
+        else if (timestep_length < min_timestamp)
+        {
+            this->timestep_length = min_timestamp;
+        }
+    }
+
+    return;
 }
 
 timestamp Simulator::set_adcs_sleep(timestamp duration) {
@@ -71,9 +96,10 @@ void Simulator::simulate(timestamp t) {
     timestamp end = this->simulation_time + t;
 
     while (this->simulation_time <= end) {
-        this->simulation_time = this->simulation_time + this->timestep_length;        
+        this->determine_timestep();
+        this->simulation_time = this->simulation_time + this->timestep_length;
         this->timestep();
-        this->messenger->update_simulation_state(this->system_vals, this->simulation_time);
+        this->messenger->update_simulation_state(this->system_vals, this->simulation_time, this->timestep_length);
         
         /* end simulation if the timeout is reached. */
         if (this->timeout < this->simulation_time)

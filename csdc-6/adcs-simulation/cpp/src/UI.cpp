@@ -167,7 +167,23 @@ void UI::run_simulation(std::vector<std::string> args)
 
         /* Get Simulation config info */
         timestamp timeout(config.getTimeout(),0);
-        simulator.init(this->get_sim_config(config), timeout);
+        timestamp initial_timestep = timestamp(config.GetTimestepInMilliSeconds(),0);
+        if (0 == initial_timestep)
+        {
+            initial_timestep = timestamp(1,0);
+        }
+
+        bool variableTimestep = config.GetTimestepDecision();
+        timestamp max_timestep = timestamp(0,0);
+        timestamp min_timestamp = timestamp(0,0);
+
+        if (true == variableTimestep)
+        {
+            max_timestep = config.GetMaxTimestep();
+            min_timestamp = config.GetMinTimestep();
+        }
+
+        simulator.init(this->get_sim_config(config), timeout, initial_timestep, variableTimestep, max_timestep, min_timestamp);
 
         /* Timer used for control code */
         ADCS_timer timer(&simulator);

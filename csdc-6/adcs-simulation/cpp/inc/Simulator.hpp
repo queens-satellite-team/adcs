@@ -6,7 +6,7 @@
  * @authors Lily de Loe, Justin Paoli, Aidan Sheedy
  *
  * Last Edited
- * 2022-11-18
+ * 2022-12-01
  *
 **/
 
@@ -28,42 +28,50 @@
 class Simulator {
 public:
     /**
-    * @class Simulator
-    * @param configFile [string], the filename of the YAML config file
-    *
-    * @details constructor for the simulator class. Calls the configuration
-    * singleton to instantiate all of the sensors and actuators present in the
-    * simulation based on the properties of the provided YAML configuration file.
-   **/
+     * @class Simulator
+     * @param configFile [string], the filename of the YAML config file
+     *
+     * @details constructor for the simulator class. Calls the configuration
+     * singleton to instantiate all of the sensors and actuators present in the
+     * simulation based on the properties of the provided YAML configuration file.
+    **/
     Simulator(Messenger *messenger);
 
     /**
-    * @name init
-    *
-    * @details Initializes the simulation with starting values.
-   **/
-    void init(sim_config initial_values, timestamp timeout);
+     * @name init
+     *
+     * @details Initializes the simulation with starting values.
+    **/
+    void init(sim_config initial_values, timestamp timeout, timestamp initial_timestep, bool variableTimestep, timestamp max_timestep, timestamp min_timestep);
 
     /**
-    * @name update_simulation
-    * @returns [timestamp], the simulation time at the end of calculations
-    *
-    * @details Updates the simulation based on the amount of time the
-    * control code spent running. Used when the control code requests
-    * up to date values for a sensor
-   **/
+     * @name update_simulation
+     * @returns [timestamp], the simulation time at the end of calculations
+     *
+     * @details Updates the simulation based on the amount of time the
+     * control code spent running. Used when the control code requests
+     * up to date values for a sensor
+    **/
     timestamp update_simulation();
 
     /**
-    * @name set_adcs_sleep
-    * @param duration [timestamp], the additional time to simulate
-    * @returns [timestamp], the simulation time at the end of calculations
-    *
-    * @details Updates the simulation based on the amount of time the
-    * control code spent running plus some additional specified time.
-    * Used when the control code is not ready for new sensor data and
-    * intends to sleep until new data can be processed.
-   **/
+     * @name determine_timestep
+     *
+     * @details Updates the desired timestep based on an error equation. Restricts the timestep to
+     *          be within the min and max described in the YAML.
+    **/
+    void determine_timestep();
+
+    /**
+     * @name set_adcs_sleep
+     * @param duration [timestamp], the additional time to simulate
+     * @returns [timestamp], the simulation time at the end of calculations
+     *
+     * @details Updates the simulation based on the amount of time the
+     * control code spent running plus some additional specified time.
+     * Used when the control code is not ready for new sensor data and
+     * intends to sleep until new data can be processed.
+    **/
     timestamp set_adcs_sleep(timestamp duration);
 
     /**
@@ -148,6 +156,9 @@ private:
     timestamp determine_time_passed();
 
 private:
+    /* max error allowed per timestep in position accuracy - the first term is in degrees */
+    const float max_error_in_rad = 0.00005 * M_PI / 180;
+
     /**
      * @property simulation_time [timestamp]
      *
@@ -172,6 +183,27 @@ private:
      * by the simualor will advance the simulation time by this amount.
     **/
     timestamp timestep_length;
+
+    /**
+     * @property timestep [bool]
+     *
+     * @details either TRUE (variable timestep) or FALSE (fixed timestep)
+    **/
+    bool variableTimestep;
+
+    /**
+     * @property maxStep [float]
+     *
+     * @details max allowed timestep from user
+    **/
+    timestamp max_timestep;
+
+    /**
+     * @property minStep [float]
+     *
+     * @details min allowed timestep from user
+    **/
+    timestamp min_timestamp;
 
     /**
      * @property system_vals [sim_config]

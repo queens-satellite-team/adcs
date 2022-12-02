@@ -76,7 +76,7 @@ void Messenger::write_cout_header(uint32_t num_reaction_wheels)
 {
     if(!silent_sim_prints)
     {
-        std::cout << text_colour.magenta << "Time" << "\t\t";
+        std::cout << text_colour.magenta << "Time" << "\t\t" << "Timestep" << "\t\t";
         std::cout << "Sat tx, Sat ty, Sat tz;\t\t" << "Sat wx, Sat wy, Sat wz;\t\t" << "Sat ax, Sat ay, Sat az;\t\t";
         std::cout << "Accel x, Accel y, Accel z;\t";// << "Gyro x, Gyro y, Gyro z;\t\t";
         for (uint32_t i = 0; i < num_reaction_wheels; i++)
@@ -100,7 +100,7 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
     this->output_file_buffer.str(std::string());
 
     /* Write the new header */
-    this->output_file_buffer << "Time,Satellite theta x,Satellite theta y,Satellite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
+    this->output_file_buffer << "Time,Timestep,Satellite theta x,Satellite theta y,Satellite theta z,Satellite Omega x,Satellite Omega y,Satellite Omega z,";
     this->output_file_buffer << "Satellite alpha x,Satellite alpha y,Satellite alpha z,Accelerometer x,Accelerometer y,Accelerometer z,";//Gyro x,Gyro y,Gyro z,";
     for (uint32_t i = 0; i < num_reaction_wheels; i++)
     {
@@ -112,32 +112,28 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
 }
 
 
-void Messenger::update_simulation_state(sim_config state, timestamp time)
+void Messenger::update_simulation_state(sim_config state, timestamp time, timestamp timestep)
 {
-    terminal_write_count++;
-    csv_write_count++;
-
     if ( (!silent_sim_prints) &&
-         (terminal_print_rate <= terminal_write_count) )
+         (terminal_print_rate <= (time - previous_terminal_write)) )
     {
-        this->append_cout_output(state, time);
+        this->append_cout_output(state, time, timestep);
+        previous_terminal_write = time;
     }
 
-    if ( (csv_print_rate <= csv_write_count) &&
-         (!silent_csv_prints) )
+    if ( (!silent_csv_prints) &&
+         (csv_print_rate <= (time - previous_csv_write)) )
     {
-        this->append_csv_output(state, time);
-        csv_write_count = 0;
+        this->append_csv_output(state, time, timestep);
+        previous_csv_write = time;
     }
-
 
     return;
 }
 
-void Messenger::append_cout_output(sim_config state, timestamp time)
+void Messenger::append_cout_output(sim_config state, timestamp time, timestamp timestep)
 {
-    std::cout << std::setw(6) << std::setfill('0') << std::setprecision(5) << std::internal;
-    std::cout << text_colour.reset << time.pretty_string() << "\t" << std::setprecision(4) << std::fixed;
+    std::cout << text_colour.reset << time.pretty_string() << "\t" << timestep.pretty_string() << "\t";
     std::cout << state.satellite.theta_b.x() << ", " << state.satellite.theta_b.y() << ", " << state.satellite.theta_b.z() << ";\t\t";
     std::cout << state.satellite.omega_b.x() << ", " << state.satellite.omega_b.y() << ", " << state.satellite.omega_b.z() << ";\t\t";
     std::cout << state.satellite.alpha_b.x() << ", " << state.satellite.alpha_b.y() << ", " << state.satellite.alpha_b.z() << ";\t";
@@ -146,7 +142,7 @@ void Messenger::append_cout_output(sim_config state, timestamp time)
     // std::cout << state.gyroscope.measurement.x()     << ", " << state.gyroscope.measurement.y()     << ", " << state.gyroscope.measurement.z() << ";";
 
     for (uint32_t i = 0; i < state.reaction_wheels.size(); i++)
-    {   
+    {
         std::cout << "\t" << state.reaction_wheels.at(i).omega << ", " << state.reaction_wheels.at(i).alpha << ";";
 
         if (i < state.reaction_wheels.size() - 1)
@@ -156,12 +152,12 @@ void Messenger::append_cout_output(sim_config state, timestamp time)
     }
     std::cout << std::endl;
 
-    terminal_write_count = 0;
+    return;
 }
 
-void Messenger::append_csv_output(sim_config state, timestamp time)
+void Messenger::append_csv_output(sim_config state, timestamp time, timestamp timestep)
 {
-    this->output_file_buffer << (float)time << ",";
+    this->output_file_buffer << (float)time << "," << (float)timestep <<",";
     this->output_file_buffer << state.satellite.theta_b.x() << "," << state.satellite.theta_b.y() << "," << state.satellite.theta_b.z() << ",";
     this->output_file_buffer << state.satellite.omega_b.x() << "," << state.satellite.omega_b.y() << "," << state.satellite.omega_b.z() << ",";
     this->output_file_buffer << state.satellite.alpha_b.x() << "," << state.satellite.alpha_b.y() << "," << state.satellite.alpha_b.z() << ",";
@@ -262,15 +258,15 @@ void Messenger::reset_defaults()
 
 void Messenger::set_csv_print_rate(uint32_t csv_rate)
 {
-    this->csv_print_rate = csv_rate;
-    this->send_message("CSV update period: " + std::to_string(this->csv_print_rate) + "ms.");
+    this->csv_print_rate = timestamp(csv_rate,0);
+    this->send_message("CSV update period: " + this->csv_print_rate.pretty_string() + "ms.");
     return;
 }
 
 void Messenger::set_terminal_print_rate(uint32_t terminal_rate)
 {
-    this->terminal_print_rate = terminal_rate;
-    this->send_message("Terminal print period: " + std::to_string(this->terminal_print_rate) + "ms.");
+    this->terminal_print_rate = timestamp(terminal_rate,0);
+    this->send_message("Terminal print period: " + this->terminal_print_rate.pretty_string() + "ms.");
     return;
 }
 

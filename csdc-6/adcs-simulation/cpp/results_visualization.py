@@ -5,16 +5,26 @@ import os
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
+import webbrowser
 
 def plot_results(csv_name, outpath):
     data = pd.read_csv(csv_name)
     time = data['Time']
 
+    timestep = data['Timestep']*1000
+
+    plt.figure(1)
+    plt.title("Timestep vs. Time")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Timestep [ms]")
+    plt.plot(time, timestep)
+    plt.savefig(outpath + '/Timestep_vs_Time.png')
+
     theta_x = data['Satellite theta x']
     theta_y = data['Satellite theta y']
     theta_z = data['Satellite theta z']
 
-    plt.figure(1)
+    plt.figure(2)
     plt.title("Satellite Position vs. Time")
     plt.xlabel("Time [s]")
     plt.ylabel("Satellite Position [rad]")
@@ -23,12 +33,15 @@ def plot_results(csv_name, outpath):
     plt.plot(time, theta_z, label="z")
     plt.legend()
     plt.savefig(outpath + '/Satellite_Position_vs_Time.png')
+    webbrowser.open(outpath + '/Satellite_Position_vs_Time.png')
+
+    
 
     omega_x = data['Satellite Omega x']
     omega_y = data['Satellite Omega y']
     omega_z = data['Satellite Omega z']
 
-    plt.figure(2)
+    plt.figure(3)
     plt.title("Satellite Velocity vs. Time")
     plt.xlabel("Time [s]")
     plt.ylabel("Satellite Velocity [rad/s]")
@@ -42,7 +55,7 @@ def plot_results(csv_name, outpath):
     alpha_y = data['Satellite alpha y']
     alpha_z = data['Satellite alpha z']
 
-    plt.figure(3)
+    plt.figure(4)
     plt.title("Satellite Acceleration vs. Time")
     plt.xlabel("Time [s]")
     plt.ylabel("Satellite Acceleration [rad/s^2]")
@@ -56,7 +69,7 @@ def plot_results(csv_name, outpath):
     accel_y = data['Accelerometer y']
     accel_z = data['Accelerometer z']
 
-    plt.figure(4)
+    plt.figure(5)
     plt.title("Accelerometer Reading vs. Time")
     plt.xlabel("Time [s]")
     plt.ylabel("Accelerometer [m/s^2]")
@@ -68,7 +81,7 @@ def plot_results(csv_name, outpath):
 
     wheel_count = len([col for col in data.columns if "Reaction wheel" in col]) // 2
     for i in range(wheel_count):
-        plt.figure(5+i)
+        plt.figure(6+i)
         rw_omega = data['Reaction wheel %d Omega' % i]
         rw_alpha = data['Reaction wheel %d alpha' % i]
 

@@ -95,7 +95,7 @@ class Messenger
          *              acceleration.
          * @param time  time of the update.
         **/
-        void update_simulation_state(sim_config state, timestamp time);
+        void update_simulation_state(sim_config state, timestamp time, timestamp timestep);
 
         /**
          * @name    prompt_char
@@ -226,14 +226,14 @@ class Messenger
          *
          * @details appends a simulation state to the csv output buffer.
         **/
-        void append_csv_output(sim_config state, timestamp time);
+        void append_csv_output(sim_config state, timestamp time, timestamp timestep);
 
         /**
          * @name    append_cout_output
          * 
          * @details appends a simulation state to the terminal.
         **/
-        void append_cout_output(sim_config state, timestamp time);
+        void append_cout_output(sim_config state, timestamp time, timestamp timestep);
 
     private:
         /* Character used to denote user control of the terminal.**/

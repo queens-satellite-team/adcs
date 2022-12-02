@@ -98,7 +98,7 @@ Sensors:
 VariableTimestep: TRUE
 
 # TimeStepMax: [int], in ms, only use if VariableTimestep: TRUE
-TimeStepMax: 50
+TimeStepMax: 20
 # TimeStepMin: [int], in ms, only use if VariableTimestep: TRUE
 TimeStepMin: 1
 

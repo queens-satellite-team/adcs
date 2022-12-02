@@ -42,7 +42,7 @@ public:
     *
     * @details Initializes the simulation with starting values.
    **/
-    void init(sim_config initial_values, timestamp timeout);
+    void init(sim_config initial_values, timestamp timeout, timestamp initial_timestep, bool variableTimestep, timestamp max_timestep, timestamp min_timestep);
 
     /**
     * @name update_simulation
@@ -156,6 +156,9 @@ private:
     timestamp determine_time_passed();
 
 private:
+    /* max error allowed per timestep in position accuracy - the first term is in degrees */
+    const float max_error_in_rad = 0.00005 * M_PI / 180;
+
     /**
      * @property simulation_time [timestamp]
      *
@@ -193,14 +196,14 @@ private:
      *
      * @details max allowed timestep from user
     **/
-    float maxStep;
+    timestamp max_timestep;
 
     /**
      * @property minStep [float]
      *
      * @details min allowed timestep from user
     **/
-    float minStep;
+    timestamp min_timestamp;
 
     /**
      * @property system_vals [sim_config]

@@ -199,8 +199,7 @@ void Messenger::write_output_buffer()
         if (UINT32_MAX <= suffix_num)
         {
             this->output_file_path_string = "-1";
-            send_error("Unable to create output CSV, too many files exist.");
-            // throw invalid_messagenger_param("Unable to create output CSV, too many files exist.");
+            throw invalid_messagenger_param("Unable to create output CSV, too many files exist.");
         }
         suffix_num++;
         suffix = std::to_string(suffix_num);
@@ -227,8 +226,7 @@ void Messenger::write_output_buffer()
         }
         else
         {
-            send_error("Unable to open file " + output_file_path_string);
-            //throw invalid_messagenger_param(std::string("Unable to open file " + output_file_path_string).c_str());
+            throw invalid_messagenger_param(std::string("Unable to open file " + output_file_path_string).c_str());
         }
     }
 }

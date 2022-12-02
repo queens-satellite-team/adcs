@@ -34,7 +34,11 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
+<<<<<<< HEAD
     MaxAngAccel: 20
+=======
+    MaxAngAccel: 6000
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -46,7 +50,11 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
+<<<<<<< HEAD
     MaxAngAccel: 20
+=======
+    MaxAngAccel: 6000
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -58,7 +66,11 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
+<<<<<<< HEAD
     MaxAngAccel: 20
+=======
+    MaxAngAccel: 6000
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -70,7 +82,11 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
+<<<<<<< HEAD
     MaxAngAccel: 20
+=======
+    MaxAngAccel: 6000
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -94,6 +110,7 @@ Sensors:
     PollingTime: 10
     Position: [0,0,0]
 
+<<<<<<< HEAD
 # VariableTimestep: [bool], TRUE for variable timestep, FALSE for fixed timestep
 VariableTimestep: TRUE
 
@@ -107,3 +124,10 @@ TimeStepMin: 1
 
 # Timeout: [int], in ms
 Timeout: 1000
+=======
+# Timestep: [int], in ms
+TimeStep: 1
+
+# Timeout: [int], in ms
+Timeout: 600000
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db

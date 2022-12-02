@@ -34,7 +34,7 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
-    MaxAngAccel: 20
+    MaxAngAccel: 6000
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -46,7 +46,7 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
-    MaxAngAccel: 20
+    MaxAngAccel: 6000
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -58,7 +58,7 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
-    MaxAngAccel: 20
+    MaxAngAccel: 6000
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -70,7 +70,7 @@ Actuators:
     type: ReactionWheel
     Moment: 0.00000925
     MaxAngVel: 88
-    MaxAngAccel: 20
+    MaxAngAccel: 6000
     MinAngVel: 0
     MinAngAccel: 0
     PollingTime: 10
@@ -107,3 +107,6 @@ TimeStepMin: 1
 
 # Timeout: [int], in ms
 Timeout: 1000 #600000
+
+# Timeout: [int], in ms
+Timeout: 600000

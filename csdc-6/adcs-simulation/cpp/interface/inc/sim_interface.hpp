@@ -254,6 +254,17 @@ class Actuator : public ADCS_device
         **/
         Eigen::Vector3f get_axis_of_rotation();
 
+<<<<<<< HEAD
+=======
+        /**
+         * @name get_max_acceleration
+         * @returns [float], the maximum acceleration of the actuator
+         * 
+         * @details accessor for the max acceleration of the actuator
+        **/
+       float get_max_acceleration();
+
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     protected:
         /**
          * @name    set_current_state

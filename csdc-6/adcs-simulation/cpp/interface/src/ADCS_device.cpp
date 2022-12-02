@@ -6,23 +6,25 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-11-07
+ * 2022-11-18
  *
 **/
 
 #include <Eigen/Dense>
+#include <iostream>
 
 #include "sim_interface.hpp"
 #include "Simulator.hpp"
 
 ADCS_device::ADCS_device(timestamp polling_time, Simulator* sim) : min_polling_increment(polling_time)
 {
-	if (NULL == sim)
+	if (nullptr == sim)
 	{
-		/* THROW APPROPRIATE EXCEPTION**/
+		throw invalid_adcs_param("sim pointer is null.");
 	}
 
 	this->sim = sim;
+	this->last_polled = 0;
 }
 
 timestamp ADCS_device::time_until_ready()

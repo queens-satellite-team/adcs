@@ -23,6 +23,15 @@
 #include <filesystem>
 #include <chrono>
 
+#include <sstream>
+#include <fstream>
+#include <filesystem>
+#include <chrono>
+
+#include <unistd.h> 
+#include <sys/wait.h>
+
+#include "Python.h"
 #include "UI.hpp"
 #include "Simulator.hpp"
 #include "PointingModeController.hpp"
@@ -110,21 +119,11 @@ void UI::run_command(std::vector<std::string> args)
         }
         catch(invalid_ui_args& e)
         {
-            messenger.send_warning(e.what());
+            messenger.send_warning(e.message());
         }
-        catch(...)
+        catch(adcs_exception &e)
         {
-            // This block catches all exceptions, and prints the error message. The user can decide
-            // if it requires restarting the simulation, or exiting.
-            std::exception_ptr e = std::current_exception();
-            try
-            {
-                std::rethrow_exception(e);
-            }
-            catch(const std::exception& e)
-            {
-                messenger.send_error(e.what());
-            }
+            messenger.send_error(e.message());
         }
     }
 
@@ -157,7 +156,6 @@ void UI::run_simulation(std::vector<std::string> args)
         /* Timer used for control code */
         ADCS_timer timer(&simulator);
 
-
         /**
          * If 2 yaml paths are provided, initialize controller with second yaml. Otherwise,
          * initialize the dummy controller to run until the time runs out. 
@@ -175,7 +173,7 @@ void UI::run_simulation(std::vector<std::string> args)
             }
             catch (simulation_timeout &e)
             {
-                messenger.send_message(e.what());
+                messenger.send_message(e.message());
 
             }
         }
@@ -217,7 +215,7 @@ void UI::run_simulation(std::vector<std::string> args)
                 }
                 catch (simulation_timeout &e)
                 {
-                    messenger.send_message(e.what());
+                    messenger.send_message(e.message());
                 }
             }
         }
@@ -245,13 +243,14 @@ void UI::run_simulation(std::vector<std::string> args)
         char* csv_path = const_cast<char*>(messenger.get_output_file_path_string().c_str());
         char* python_path = const_cast<char*>("./results_visualization.py");
         char* args[] = {python_path, csv_path, NULL};
-  
+
         int fork_ret = fork();
         if (-1 != fork_ret)
         {
             if (0 == fork_ret)
             {
-                execv(args[0], args);
+                int execv_ret = execv(args[0], args);
+                int errvalue = errno;
             }
             else
             {

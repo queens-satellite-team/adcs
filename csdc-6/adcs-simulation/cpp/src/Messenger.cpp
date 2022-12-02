@@ -112,7 +112,7 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
         if (UINT32_MAX <= suffix_num)
         {
             this->output_file_path_string = "-1";
-            throw std::invalid_argument("Unable to create output CSV, too many files exist.");
+            throw invalid_messagenger_param("Unable to create output CSV, too many files exist.");
         }
         suffix_num++;
         suffix = std::to_string(suffix_num);
@@ -135,7 +135,7 @@ void Messenger::write_csv_header(uint32_t num_reaction_wheels)
         }
         else
         {
-            throw std::invalid_argument("Unable to open file " + output_file_path_string);
+            throw invalid_messagenger_param(std::string("Unable to open file " + output_file_path_string).c_str());
         }
     }
 
@@ -210,7 +210,7 @@ void Messenger::append_csv_output(sim_config state, timestamp time)
         }
         else
         {
-            throw std::invalid_argument("File is not open" + output_file_path_string);
+            throw invalid_messagenger_param(std::string("File is not open" + output_file_path_string).c_str());
         }
     }
  

@@ -29,7 +29,7 @@ ReactionWheelConfig::ReactionWheelConfig(const YAML::Node &node) : ActuatorConfi
     minAngVel = node["MinAngVel"].as<float>();
     minAngAccel = node["MinAngAccel"].as<float>();
 
-    pollingTime = node["PollingTime"].as<float>();
+    pollingTime = node["PollingTime"].as<int>();
 
     int i = 0;
     for (const auto &n : node["Position"]) {
@@ -111,6 +111,14 @@ bool Configuration::Load(const std::string &configFile) {
         }
     }
     
+
+    //load timeout
+    try {
+        YAML::Node timeout = top["Timeout"];
+        timeoutInMilliseconds = timeout.as<int>();
+    } catch (YAML::Exception &e){
+        std::cout << "YAML ERROR ON TIMEOUT: " << e.what() <<std::endl;
+    }
 
     //load timeout
     try {

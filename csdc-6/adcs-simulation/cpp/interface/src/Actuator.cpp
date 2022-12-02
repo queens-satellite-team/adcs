@@ -6,7 +6,7 @@
  * @authors Aidan Sheedy
  *
  * Last Edited
- * 2022-10-11
+ * 2022-10-18
  *
 **/
 
@@ -31,14 +31,7 @@ actuator_state Actuator::get_target_state()
 
 void Actuator::set_current_state(actuator_state new_state)
 {
-    try
-    {
-        check_valid_state(new_state);
-    }
-    catch(const std::exception& e)
-    {
-        /* THROW APPROPRIATE EXCEPTION**/
-    }
+    check_valid_state(new_state);
 
     this->current_state = new_state;
 
@@ -54,25 +47,32 @@ Eigen::Vector3f Actuator::get_axis_of_rotation()
 {
     return this->axis_of_rotation;
 }
+<<<<<<< HEAD
+=======
+
+float Actuator::get_max_acceleration() {
+    return this->max_state_values.acceleration;
+}
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
 
 void Actuator::check_valid_state(actuator_state state)
 {
-    if ( (this->max_state_values.acceleration < state.acceleration) ||
-         (this->min_state_values.acceleration > state.acceleration) )
+    if ( (this->max_state_values.acceleration < abs(state.acceleration)) ||
+         (this->min_state_values.acceleration > abs(state.acceleration)) )
     {
-        /* THROW EXCEPTION*/
+        throw invalid_actuator_state("Actuator acceleration invalid.");
     }
 
-    if ( (this->max_state_values.velocity < state.velocity) ||
-         (this->min_state_values.velocity > state.velocity) )
+    if ( (this->max_state_values.velocity < abs(state.velocity)) ||
+         (this->min_state_values.velocity > abs(state.velocity)) )
     {
-        /* THROW EXCEPTION*/
+        throw invalid_actuator_state("Actuator velocity invalid.");
     }
 
-    if ( (this->max_state_values.position < state.position) ||
-         (this->min_state_values.position > state.position) )
+    if ( (this->max_state_values.position < abs(state.position)) ||
+         (this->min_state_values.position > abs(state.position)) )
     {
-        /* THROW EXCEPTION*/
+        throw invalid_actuator_state("Actuator position invalid.");
     }
 
     return;

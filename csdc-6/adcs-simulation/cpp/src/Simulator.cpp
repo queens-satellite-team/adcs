@@ -26,7 +26,6 @@ Simulator::Simulator(Messenger *messenger)
     }
 
     this->simulation_time = 0;
-    // TODO: should be configured in YAML
     auto &config = Configuration::GetInstance();
     timestamp t(config.GetTimestepInMilliSeconds(),0);
     this->timestep_length = t;
@@ -112,7 +111,10 @@ void Simulator::simulate(timestamp t) {
 }
 
 void Simulator::timestep() {
+<<<<<<< HEAD
 
+=======
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
     Eigen::Matrix3f inertia_b_inverse = system_vals.satellite.inertia_b.inverse();
     Eigen::Vector3f sum_rw = Eigen::Vector3f::Zero();
 
@@ -122,9 +124,15 @@ void Simulator::timestep() {
         // change this if either w_rw or I_rw become a matrix!
         sum_rw += (wheel.inertia * wheel.alpha * wheel.axis_of_rotation) 
             + system_vals.satellite.omega_b.cross(wheel.axis_of_rotation * wheel.omega * wheel.inertia);
+<<<<<<< HEAD
 
 
 
+=======
+
+
+
+>>>>>>> a37556cb78d280d475d3860ff0e31914ab7c45db
         // Update reaction wheel velocity 
         wheel.omega += wheel.alpha * (float) this->timestep_length;
         //we need to consider alpha but this will be done by the controller

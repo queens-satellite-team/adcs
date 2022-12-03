@@ -1,0 +1,18 @@
+# file: simulator.yaml
+#
+# details: input file that outlines the desired attitude of the satellite
+#
+# author: Aidan Sheedy
+#
+# last edited: 2022-11-15
+
+# Satellite:
+#   DesiredPosition:     [3-dimensional vector<float>]
+#   MaxAbsoluteVelocity: [float]
+Satellite:
+  DesiredPosition: [0.5, 0.5, 0.5]
+  AllowedJitter: 0.1
+  RequiredAccuracy: 0.5
+
+# HoldTime: [int], in ms
+HoldTime: 1000

@@ -20,10 +20,12 @@ The following tools and software are necessary to build and run the simulation:
 |Tool|Description|Download|Necessity|
 |-|-|-|-|
 |WSL|The Windows Subststem for Linux is a commandline tool that allows linux to be run within windows. This is necessary for building some of the tools used by the simulator.|https://learn.microsoft.com/en-us/windows/wsl/install|Required|
-|VSCode|VSCode is a text editor that has functionality very close to an IDE. It is the recommended text-edit for the simulator.|https://code.visualstudio.com/download|Recommeded|
+|VSCode|VSCode is a text editor that has functionality very close to an IDE. It is the recommended text edit for the simulator.|https://code.visualstudio.com/download|Recommeded|
 
-### WSL packages
-After installing WSL, make sure to install the following packages as well:
+Of course if you're using native linux you don't need to do anything special here.
+
+### Linux packages
+After installing WSL, make sure to install the following packages as well. You can run the command in a WSL terminal (or in any terminal if you're using native Linux):
 |Package|Description|Command|
 |-|-|-|
 |cmake|cmake is a tool that allows simple compilation of binaries for c++ projects.|`sudo apt install cmake`|
@@ -63,7 +65,7 @@ From there, you can run any of the following commands. For more assitance, you c
 - `resume_sim <exit_yaml>`  
   Currently not implemented.
 
-- `unit_test`
+- `unit_test`  
     Runs a predefined set of tests to ensure the simulation is working properly. The first 6 are scenarios that have been calculated analytically. The results are compared against the exptected results and a pass/fail is assigned. The last three tests use the controller, in the following three scenarios:
     1. The satellite is given an initial state of rest, and is asked to stay in that state for 600 seconds
     2. The satellite is given an initial velocity, and is asked to return to it's original state.
@@ -71,7 +73,7 @@ From there, you can run any of the following commands. For more assitance, you c
 
    The output directory and plotting directories are cleared before running the tests, so make sure to save any results you want before running this test.
 
-- `perf_test`
+- `perf_test`  
   Runs a predefined set of tests in order to benchmark the efficiency of the simulator. Three tests are run ten times each and their run time is then averaged and displayed to the user. This should be used to determine how changes to the simulator effect efficiency. The tests run are the same as the controller-based unit tests with some minor differences.  
 
   The output directory and plotting directories are cleared before running the tests, so make sure to save any results you want before running this test.
@@ -84,3 +86,24 @@ From there, you can run any of the following commands. For more assitance, you c
 
 - `clean_plots`  
   Deletes all plot files in the `plots` folder.
+
+## Future Work
+The following items are to be implemented in the future:
+
+### Physics
+- [ ] Orbital modelling
+- [ ] Magnetic field modelling
+- [ ] Sun position and intensity modelling
+- [ ] Make the sensors more accurate to the actual hardware, and implement missing sensors and actuators
+- [ ] Add noise to all sensor measurements and actuator outputs
+  - [ ] Filter the noise on sensors using a Kalman sensor
+
+### UI
+- [ ] Allow continuation of the previous simulation run whever it exited
+- [ ] Implement a GUI
+  - [ ] Add a 3D model of the satellite (an .stl file or similar should be provided) that shows the simulation as it progresses
+
+### Other functionality
+- [ ] Explicitly dissalow all invalid timestamp constructors
+- [ ] Change the reaction wheels to pass their ID instead of their position to the simulator
+- [ ] Add functionality to run each unit test individually as a command line option

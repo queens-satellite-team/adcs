@@ -773,7 +773,8 @@ void UI::run_perf_tests(std::vector<std::string> args)
         "",
         "-s",
         "-c",
-        "1000"
+        "1000",
+        "-sp"
     };
 
     for (uint8_t test_num = 1; test_num <= 3; test_num++)//num_performance_tests; test_num++)

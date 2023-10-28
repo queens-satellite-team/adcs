@@ -7,7 +7,7 @@
 #include <string>
 
 class CommandExecuter {
- public:
+public:
   void boot_command();
   void interrupts_command();
   void point_command();
@@ -15,4 +15,4 @@ class CommandExecuter {
   void powermode_command();
 };
 
-#endif  // SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_
+#endif // SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_

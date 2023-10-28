@@ -4,14 +4,12 @@
 #include <string>
 
 class CommandHandler {
- private:
+private:
   enum Commands { BOOT = 1, INTERRUPTS = 2, POINT = 3, TLE = 4, POWERMODE = 5 };
-  int command_code = 0;  // if value is 0, no command retrieved
+  int command_code = 0; // if value is 0, no command retrieved
 
- public:
-  void get_command_code(int x) {
-    command_code = x;
-  }
+public:
+  void get_command_code(int x) { command_code = x; }
 
   void handle_command() {
     CommandExecuter executer;

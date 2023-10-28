@@ -1,4 +1,4 @@
-// Copyright 2023 Hana Turcke
+// Copyright 2023 QSET
 #ifndef SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_
 #define SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_
 #include <cmath>

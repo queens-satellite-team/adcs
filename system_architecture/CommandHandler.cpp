@@ -1,4 +1,4 @@
-// Copyright 2023 Hana Turcke
+// Copyright 2023 QSET
 #ifndef EM_ARCHITECTURE_COMMANDEXECUTER_H
 #include "CommandExecuter.h"
 #include <string>

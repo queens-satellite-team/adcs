@@ -1,0 +1,27 @@
+name: Clang Lint
+
+on:
+  push:
+    branches:
+      - main # Replace 'main' with your upstream branch name
+
+jobs:
+  clang-lint:
+    name: Lint with Clang
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install-pacman: true
+
+      - name: Install Clang
+        run: pacman -S --noconfirm clang
+
+      - name: Run Clang Static Analyzer
+        run: clang-tidy src/**/*.cpp -- -I./includelang-tidy src/**/*.cpp -- -I./include

@@ -1,26 +1,10 @@
-#include <iostream>
-#include <cmath>
-#include <map>
-#include <string>
-
 using namespace std;
 
-class CommandExecuter{
+class CommandExecuter {
 
-        void boot_command(){
-
-        }
-        void interrupts_command(){
-
-        }
-        void point_command(){
-
-        }
-        void tle_command(){
-
-        }
-        void powermode_command(){
-
-        }
-
+  void boot_command() { return; }
+  void interrupts_command() { return; }
+  void point_command() { return; }
+  void tle_command() { return; }
+  void powermode_command() { return; }
 };

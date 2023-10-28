@@ -1,21 +1,15 @@
+// Copyright 2023 Hana Turcke
+#ifndef EM_ARCHITECTURE_COMMANDEXECUTER_H
 #include "CommandExecuter.h"
 #include <string>
 
-using namespace std;
-
 class CommandHandler {
-  //------ attributes ------
-private:
+ private:
   enum Commands { BOOT = 1, INTERRUPTS = 2, POINT = 3, TLE = 4, POWERMODE = 5 };
+  int command_code = 0;  // if value is 0, no command retrieved
 
-  // if the value is 0x0 then we haven't gotten a command
-private:
-  int command_code = 0;
-
-public:
+ public:
   void get_command_code(int x) {
-    // sets the command_code variable from hardware signal
-    // dummy value until hardware interaction is coded
     command_code = x;
   }
 
@@ -50,8 +44,6 @@ public:
     default:
       printf("Bad.");
       break;
-
-    }; // end switch
-
-  }; // end command_handler()
+    }
+  }
 };

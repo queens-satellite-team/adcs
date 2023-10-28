@@ -1,7 +1,7 @@
-using namespace std;
-
+// Copyright 2023 Hana Turcke
+#ifndef SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H
+#include "CommandExecuter.h"
 class CommandExecuter {
-
   void boot_command() { return; }
   void interrupts_command() { return; }
   void point_command() { return; }

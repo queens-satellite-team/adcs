@@ -1,12 +1,13 @@
+// Copyright 2023 Hana Turcke
+#ifndef SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_
+#define SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_
 #include <cmath>
 #include <iostream>
 #include <map>
 #include <string>
 
-using namespace std;
-
 class CommandExecuter {
-public:
+ public:
   void boot_command();
   void interrupts_command();
   void point_command();
@@ -14,3 +15,4 @@ public:
   void powermode_command();
 };
 
+#endif  // SYSTEM_ARCHITECTURE_COMMANDEXECUTER_H_
